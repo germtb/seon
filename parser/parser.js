@@ -254,21 +254,42 @@ export class ArrayAccessExpression extends Expression {
 	}
 }
 
+const binaryOperators = [
+	'+',
+	'*',
+	'/',
+	'-',
+	'%',
+	'**',
+	'<',
+	'>',
+	'>=',
+	'<=',
+	'==',
+	'!=',
+	'&&',
+	'||'
+]
+
 const rules = {
 	BinaryExpression: 'Expression',
 	ExpressionBinaryOperatorExpression: 'BinaryExpression',
 	NumberExpression: 'Expression',
 	Number: 'NumberExpression',
-	'+': 'BinaryOperator',
-	'*': 'BinaryOperator'
+	...binaryOperators.reduce(
+		(acc, o) => ({ ...acc, [o]: 'BinaryOperator ' }),
+		{}
+	)
 }
 
 const generators = {
 	ExpressionBinaryOperatorExpression: (left, operator, right) =>
 		new BinaryExpression(left, right, operator),
 	Number: token => new NumberExpression(token.value),
-	'+': () => new BinaryOperator('+'),
-	'*': () => new BinaryOperator('*')
+	...binaryOperators.reduce(
+		(acc, o) => ({ ...acc, [o]: () => new BinaryOperator(o) }),
+		{}
+	)
 }
 
 const parse = (tokens: Array<any>): any => {

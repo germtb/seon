@@ -35,4 +35,52 @@ describe('parser', () => {
 			)
 		)
 	})
+
+	test('converts a /', () => {
+		const tokens = tokenizer('1234 / 3')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(
+			new BinaryExpression(
+				new NumberExpression(1234),
+				new NumberExpression(3),
+				new BinaryOperator('/')
+			)
+		)
+	})
+
+	test('converts a -', () => {
+		const tokens = tokenizer('1234 - 3')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(
+			new BinaryExpression(
+				new NumberExpression(1234),
+				new NumberExpression(3),
+				new BinaryOperator('-')
+			)
+		)
+	})
+
+	test('converts a -', () => {
+		const tokens = tokenizer('1234 - 3')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(
+			new BinaryExpression(
+				new NumberExpression(1234),
+				new NumberExpression(3),
+				new BinaryOperator('-')
+			)
+		)
+	})
+
+	test('converts a ==', () => {
+		const tokens = tokenizer('1234 == 3')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(
+			new BinaryExpression(
+				new NumberExpression(1234),
+				new NumberExpression(3),
+				new BinaryOperator('==')
+			)
+		)
+	})
 })

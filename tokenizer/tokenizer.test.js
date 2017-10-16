@@ -17,6 +17,10 @@ describe('tokenizer', () => {
 		expect(tokenizer('false')).toEqual([{ type: 'Boolean', value: false }])
 	})
 
+	test('produces a == token', () => {
+		expect(tokenizer('==')).toEqual([{ type: '==' }])
+	})
+
 	test('produces a = token', () => {
 		expect(tokenizer('=')).toEqual([{ type: '=' }])
 	})

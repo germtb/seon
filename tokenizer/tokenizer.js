@@ -53,9 +53,9 @@ const biTokens = {
 		second: '=',
 		type: '=='
 	},
-	'=': {
-		first: '=',
-		second: '!',
+	'!': {
+		first: '!',
+		second: '=',
 		type: '!='
 	},
 	'<': {
