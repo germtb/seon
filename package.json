@@ -1,0 +1,21 @@
+{
+	"name": "miniscript",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "jest"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-plugin-transform-flow-strip-types": "^6.22.0",
+		"babel-preset-env": "^1.6.0",
+		"babel-preset-flow": "^6.23.0",
+		"flow-bin": "^0.57.2",
+		"jest": "^21.2.1",
+		"jest-flow-transform": "^1.0.1"
+	}
+}
