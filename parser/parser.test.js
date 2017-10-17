@@ -3,7 +3,9 @@ import parse, {
 	NumberExpression,
 	BinaryExpression,
 	BinaryOperator,
-	FunctionExpression
+	FunctionExpression,
+	Parameter,
+	CallExpression
 } from './parser'
 
 describe('parser', () => {
@@ -106,6 +108,25 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new FunctionExpression(['x', 'y'], new NumberExpression(10))
+		])
+	})
+
+	test('converts a parameter to an array of parameters', () => {
+		const tokens = tokenizer('x: 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			{
+				type: '[Parameter]',
+				values: [new Parameter('x', new NumberExpression(10))]
+			}
+		])
+	})
+
+	test('converts a function call', () => {
+		const tokens = tokenizer('f x: 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new CallExpression('f', [new Parameter('x', new NumberExpression(10))])
 		])
 	})
 })

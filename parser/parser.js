@@ -368,6 +368,26 @@ const grammar = [
 		['[Identifier]', '=>', 'Expression'],
 		(identifiers, b, expression) =>
 			new FunctionExpression(identifiers.values.map(x => x.value), expression)
+	),
+	new Production(
+		'Parameter',
+		['Identifier', ':', 'Expression'],
+		(identifier, _, expression) => new Parameter(identifier.value, expression)
+	),
+	new Production(
+		'[Parameter]',
+		['[Parameter]', ',', 'Parameter'],
+		(parameters, a, parameter) =>
+			arrayOf('Parameter', [...parameters, parameter])
+	),
+	new Production('[Parameter]', ['Parameter'], parameter =>
+		arrayOf('Parameter', [parameter])
+	),
+	new Production(
+		'CallExpression',
+		['Identifier', '[Parameter]'],
+		(identifier, parameters) =>
+			new CallExpression(identifier.value, parameters.values)
 	)
 ]
 
