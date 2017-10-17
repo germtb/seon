@@ -5,70 +5,37 @@ type Token = {
 	value?: any
 }
 
-const monoTokens = {
-	'[': {
-		type: '['
-	},
-	']': {
-		type: ']'
-	},
-	'{': { type: '{' },
-	'}': { type: '}' },
-	')': { type: ')' },
-	'(': { type: '(' },
-	'=': { type: '=' },
-	'+': { type: '+' },
-	'-': { type: '-' },
-	'*': { type: '*' },
-	'/': { type: '/' },
-	'%': { type: '%' },
-	',': { type: ',' },
-	':': { type: ':' },
-	'&': { type: '&' },
-	'|': { type: '|' },
-	'!': { type: '!' },
-	'.': { type: '.' },
-	'>': { type: '>' },
-	'<': { type: '<' }
-}
-
-const biTokens = {
-	'*': {
-		first: '*',
-		second: '*',
-		type: '**'
-	},
-	'&': {
-		first: '&',
-		second: '&',
-		type: '&&'
-	},
-	'|': {
-		first: '|',
-		second: '|',
-		type: '||'
-	},
-	'=': {
-		first: '=',
-		second: '=',
-		type: '=='
-	},
-	'!': {
-		first: '!',
-		second: '=',
-		type: '!='
-	},
-	'<': {
-		first: '<',
-		second: '=',
-		type: '<='
-	},
-	'>': {
-		first: '>',
-		second: '=',
-		type: '>='
-	}
-}
+const simpleTokens = [
+	'**',
+	'&&',
+	'||',
+	'==',
+	'!=',
+	'<=',
+	'>=',
+	'=>',
+	'[',
+	']',
+	'{',
+	'}',
+	')',
+	'(',
+	'=',
+	'+',
+	'-',
+	'_',
+	'*',
+	'/',
+	'%',
+	',',
+	':',
+	'&',
+	'|',
+	'!',
+	'.',
+	'>',
+	'<'
+]
 
 const keywords = {
 	true: {
@@ -106,11 +73,11 @@ export default (code: string): Array<Token> => {
 		} else if (character === "'") {
 			currentToken = ''
 			inString = true
-		} else if (biTokens[character] && biTokens[character].second === peek) {
-			tokens.push({ type: biTokens[character].type })
+		} else if (peek && simpleTokens.includes(character + peek)) {
+			tokens.push({ type: character + peek })
 			i += 1
-		} else if (monoTokens[character]) {
-			tokens.push({ type: monoTokens[character].type })
+		} else if (simpleTokens.includes(character)) {
+			tokens.push({ type: character })
 		} else if (/[0-9]/.test(character)) {
 			currentToken += character
 			if (peek && /[0-9]/.test(peek) && i !== code.length - 1) {

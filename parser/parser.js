@@ -6,10 +6,6 @@ export class Node {
 	constructor(type: string) {
 		this.type = type
 	}
-
-	supertype(): string {
-		return 'Node'
-	}
 }
 
 export class File extends Node {
@@ -25,19 +21,11 @@ export class Expression extends Node {
 	constructor(type: string) {
 		super(type)
 	}
-
-	supertype(): string {
-		return 'Expression'
-	}
 }
 
 export class Statement extends Node {
 	constructor(type: string) {
 		super(type)
-	}
-
-	supertype(): string {
-		return 'Statement'
 	}
 }
 
@@ -271,26 +259,91 @@ const binaryOperators = [
 	'||'
 ]
 
-const rules = {
-	BinaryExpression: 'Expression',
-	ExpressionBinaryOperatorExpression: 'BinaryExpression',
-	NumberExpression: 'Expression',
-	Number: 'NumberExpression',
-	...binaryOperators.reduce(
-		(acc, o) => ({ ...acc, [o]: 'BinaryOperator ' }),
-		{}
-	)
+class Production {
+	nonterminal: string
+	terminals: Array<string>
+	generator: Function
+
+	constructor(nonterminal, terminals, generator) {
+		this.nonterminal = nonterminal
+		this.terminals = terminals
+		this.generator = generator
+	}
+
+	matches(nodes) {
+		return (
+			this.terminals.length === nodes.length &&
+			nodes.reduce(
+				(acc, node, index) => acc && matches(node, this.terminals[index]),
+				true
+			)
+		)
+	}
 }
 
-const generators = {
-	ExpressionBinaryOperatorExpression: (left, operator, right) =>
-		new BinaryExpression(left, right, operator),
-	Number: token => new NumberExpression(token.value),
-	...binaryOperators.reduce(
-		(acc, o) => ({ ...acc, [o]: () => new BinaryOperator(o) }),
-		{}
-	)
+const matchTable = {
+	Node: ['Node'],
+	File: ['File', 'Node'],
+	Parameter: ['Parameter', 'Node'],
+	BinaryOperator: ['BinaryOperator', 'Node'],
+	UnaryOperator: ['UnaryOperator', 'Node'],
+	PatternMatchingDefault: ['PatternMatchingDefault', 'Node'],
+	PatternMatchingCase: ['PatternMatchingCase', 'Node'],
+	PatternMatchingExpression: ['PatternMatchingExpression', 'Node'],
+
+	Statement: ['Statement', 'Node'],
+	BlockStatement: ['BlockStatement', 'Statement', 'Node'],
+	Declaration: ['Declaration', 'Statement', 'Node'],
+
+	Expression: ['Expression', 'Node'],
+	Identifier: ['Identifier', 'Expression', 'Node'],
+	BooleanExpression: ['BooleanExpression', 'Expression', 'Node'],
+	NumberExpression: ['NumberExpression', 'Expression', 'Node'],
+	StringExpression: ['StringExpression', 'Expression', 'Node'],
+	EmptyArrayExpression: ['EmptyArrayExpression', 'Expression', 'Node'],
+	ArrayExpression: ['ArrayExpression', 'Expression', 'Node'],
+	FunctionExpression: ['FunctionExpression', 'Expression', 'Node'],
+	CallExpression: ['CallExpression', 'Expression', 'Node'],
+	BinaryExpression: ['BinaryExpression', 'Expression', 'Node'],
+	UnaryExpression: ['UnaryExpression', 'Expression', 'Node'],
+	ArrayAccessExpression: ['ArrayAccessExpression', 'Expression', 'Node']
 }
+
+const matches = (node: string, type: string) => {
+	return matchTable[node] ? matchTable[node].includes(type) : node === type
+}
+
+const grammar = [
+	...binaryOperators.map(
+		o => new Production('BinaryOperator', [o], () => new BinaryOperator(o))
+	),
+	new Production(
+		'NumberExpression',
+		['Number'],
+		number => new NumberExpression(number.value)
+	),
+	new Production(
+		'Expression',
+		['Expression', 'BinaryOperator', 'Expression'],
+		(left, op, right) => new BinaryExpression(left, right, op)
+	),
+	new Production(
+		'FunctionExpression',
+		['_', '=>', 'Expression'],
+		(a, b, expression) => new FunctionExpression([], expression)
+	),
+	new Production(
+		'FunctionExpression',
+		['_', '=>', 'Expression'],
+		(a, b, expression) => new FunctionExpression([], expression)
+	),
+	new Production(
+		'FunctionExpression',
+		['Identifier', '=>', 'Expression'],
+		(identifier, b, expression) =>
+			new FunctionExpression([identifier.value], expression)
+	)
+]
 
 const parse = (tokens: Array<any>): any => {
 	const stack = []
@@ -300,21 +353,21 @@ const parse = (tokens: Array<any>): any => {
 		stack.push(token)
 
 		for (let j = 0; j < 3; j++) {
-			const rule = stack
-				.slice(i - j, i + 1)
-				.map(t => (t.supertype && t.supertype()) || t.type)
-				.join('')
+			const rule = stack.slice(i - j, i + 1).map(r => r.type)
+			const production = grammar.find(r => {
+				return r.matches(rule)
+			})
 
-			if (rules[rule]) {
+			if (production) {
 				const tokens = stack.splice(i - j, i + 1)
-				const node = generators[rule](...tokens)
+				const node = production.generator(...tokens)
 				stack.push(node)
 				j = 0
 			}
 		}
 	}
 
-	return stack[0]
+	return stack
 }
 
 export default parse
