@@ -100,4 +100,12 @@ describe('parser', () => {
 			new FunctionExpression(['x'], new NumberExpression(10))
 		])
 	})
+
+	test('converts a function with one parameter', () => {
+		const tokens = tokenizer('x y => 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new FunctionExpression(['x', 'y'], new NumberExpression(10))
+		])
+	})
 })

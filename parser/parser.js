@@ -310,8 +310,17 @@ const matchTable = {
 }
 
 const matches = (node: string, type: string) => {
-	return matchTable[node] ? matchTable[node].includes(type) : node === type
+	if (matchTable[node]) {
+		return matchTable[node].includes(type)
+	} else {
+		return node === type
+	}
 }
+
+const arrayOf = (type, values) => ({
+	type: `[${type}]`,
+	values
+})
 
 const grammar = [
 	...binaryOperators.map(
@@ -328,9 +337,20 @@ const grammar = [
 		(left, op, right) => new BinaryExpression(left, right, op)
 	),
 	new Production(
-		'FunctionExpression',
-		['_', '=>', 'Expression'],
-		(a, b, expression) => new FunctionExpression([], expression)
+		'[Identifier]',
+		['Identifier', '[Identifier]', '=>'],
+		(identifiers, identifier, b) => [
+			arrayOf('Identifier', [...identifiers, identifier]),
+			b
+		]
+	),
+	new Production(
+		'[Identifier]',
+		['Identifier', 'Identifier', '=>'],
+		(identifier1, identifier2, b) => [
+			arrayOf('Identifier', [identifier1, identifier2]),
+			b
+		]
 	),
 	new Production(
 		'FunctionExpression',
@@ -342,6 +362,12 @@ const grammar = [
 		['Identifier', '=>', 'Expression'],
 		(identifier, b, expression) =>
 			new FunctionExpression([identifier.value], expression)
+	),
+	new Production(
+		'FunctionExpression',
+		['[Identifier]', '=>', 'Expression'],
+		(identifiers, b, expression) =>
+			new FunctionExpression(identifiers.values.map(x => x.value), expression)
 	)
 ]
 
@@ -352,7 +378,7 @@ const parse = (tokens: Array<any>): any => {
 		const token = tokens[i]
 		stack.push(token)
 
-		for (let j = 0; j < 3; j++) {
+		for (let j = 0; j <= 3; j++) {
 			const rule = stack.slice(i - j, i + 1).map(r => r.type)
 			const production = grammar.find(r => {
 				return r.matches(rule)
@@ -361,7 +387,7 @@ const parse = (tokens: Array<any>): any => {
 			if (production) {
 				const tokens = stack.splice(i - j, i + 1)
 				const node = production.generator(...tokens)
-				stack.push(node)
+				stack.push(...[].concat(node))
 				j = 0
 			}
 		}
