@@ -29,11 +29,11 @@ export class Statement extends Node {
 	}
 }
 
-export class Identifier extends Node {
+export class IdentifierExpression extends Node {
 	name: string
 
 	constructor(name: string) {
-		super('Identifier')
+		super('IdentifierExpression')
 		this.name = name
 	}
 }
@@ -112,10 +112,10 @@ export class Parameter extends Node {
 }
 
 export class CallExpression extends Expression {
-	callee: Identifier
+	callee: IdentifierExpression
 	parameters: Array<Parameter>
 
-	constructor(callee: Identifier, parameters: Array<Parameter>) {
+	constructor(callee: IdentifierExpression, parameters: Array<Parameter>) {
 		super('CallExpression')
 		this.callee = callee
 		this.parameters = parameters
@@ -258,19 +258,22 @@ const binaryOperators = [
 class Production {
 	terminals: Array<string>
 	generator: Function
+	onPeek: Function
 
-	constructor(terminals, generator) {
+	constructor(terminals, generator, onPeek = () => true) {
 		this.terminals = terminals
 		this.generator = generator
+		this.onPeek = onPeek
 	}
 
-	matches(nodes) {
+	matches(nodes, peek) {
 		return (
 			this.terminals.length === nodes.length &&
 			nodes.reduce(
 				(acc, node, index) => acc && matches(node, this.terminals[index]),
 				true
-			)
+			) &&
+			this.onPeek(peek)
 		)
 	}
 }
@@ -290,7 +293,7 @@ const matchTable = {
 	Declaration: ['Declaration', 'Statement', 'Node'],
 
 	Expression: ['Expression', 'Node'],
-	Identifier: ['Identifier', 'Expression', 'Node'],
+	IdentifierExpression: ['IdentifierExpression', 'Expression', 'Node'],
 	BooleanExpression: ['BooleanExpression', 'Expression', 'Node'],
 	NumberExpression: ['NumberExpression', 'Expression', 'Node'],
 	StringExpression: ['StringExpression', 'Expression', 'Node'],
@@ -321,54 +324,65 @@ const arrayOf = <T>(
 
 const grammar: Array<Production> = [
 	...binaryOperators.map(o => new Production([o], () => new BinaryOperator(o))),
+	new Production(
+		['Identifier'],
+		identifier => new IdentifierExpression(identifier.value)
+	),
 	new Production(['String'], s => new StringExpression(s.value)),
 	new Production(['Number'], number => new NumberExpression(number.value)),
 	new Production(
 		['Expression', 'BinaryOperator', 'Expression'],
-		(left, op, right) => new BinaryExpression(left, right, op)
+		(left, op, right) => new BinaryExpression(left, right, op),
+		peek => !binaryOperators.includes(peek)
 	),
 
 	// FunctionExpression
-	new Production(['(', 'Identifier'], (a, identifier) => [
+	new Production(['(', 'IdentifierExpression'], (a, identifier) => [
 		{ type: '(' },
-		arrayOf('Identifier', [identifier])
+		arrayOf('IdentifierExpression', [identifier])
 	]),
 	new Production(
-		['[Identifier]', ',', 'Identifier'],
+		['[IdentifierExpression]', ',', 'IdentifierExpression'],
 		(identifiers, a, identifier, b) => {
-			return arrayOf('Identifier', [...identifiers.values, identifier])
-		}
-	),
-	new Production(
-		['(', '[Identifier]', ')', '=>', 'Expression'],
-		(a, identifiers, b, c, expression) =>
-			new FunctionExpression(identifiers.values.map(x => x.value), expression)
-	),
-	new Production(
-		['_', '=>', 'Expression'],
-		(a, b, expression) => new FunctionExpression([], expression)
-	),
-
-	// Declaration
-	new Production(
-		['Identifier', '=', 'Expression'],
-		(identifier, b, expression) => {
-			return new Declaration(identifier.value, expression)
-		}
-	),
-
-	// FunctionCall
-	new Production(
-		['[Identifier]', ':', 'Expression'],
-		(identifiers, a, expression) => {
-			return arrayOf('Parameter', [
-				new Parameter(identifiers.values[0].value, expression)
+			return arrayOf('IdentifierExpression', [
+				...identifiers.values,
+				identifier
 			])
 		}
 	),
 	new Production(
-		['Identifier', ':', 'Expression'],
-		(identifier, _, expression) => new Parameter(identifier.value, expression)
+		['(', '[IdentifierExpression]', ')', '=>', 'Expression'],
+		(a, identifiers, b, c, expression) =>
+			new FunctionExpression(identifiers.values.map(x => x.name), expression),
+		peek => !binaryOperators.includes(peek)
+	),
+	new Production(
+		['_', '=>', 'Expression'],
+		(a, b, expression) => new FunctionExpression([], expression),
+		peek => !binaryOperators.includes(peek)
+	),
+
+	// Declaration
+	new Production(
+		['IdentifierExpression', '=', 'Expression'],
+		(identifier, b, expression) => new Declaration(identifier.name, expression),
+		peek => !binaryOperators.includes(peek)
+	),
+
+	// FunctionCall
+	new Production(
+		['[IdentifierExpression]', ':', 'Expression'],
+		(identifiers, a, expression) => {
+			return arrayOf('Parameter', [
+				new Parameter(identifiers.values[0].name, expression)
+			])
+		},
+		peek => !binaryOperators.includes(peek)
+	),
+	new Production(
+		['IdentifierExpression', ':', 'Expression'],
+		(identifier, _, expression) => new Parameter(identifier.name, expression),
+		peek => !binaryOperators.includes(peek)
 	),
 	new Production(
 		['[Parameter]', ',', 'Parameter'],
@@ -376,19 +390,21 @@ const grammar: Array<Production> = [
 			arrayOf('Parameter', [...parameters.values, parameter])
 	),
 	new Production(
-		['Identifier', '(', '[Parameter]', ')'],
+		['IdentifierExpression', '(', '[Parameter]', ')'],
 		(identifier, a, parameters) =>
-			new CallExpression(identifier.value, parameters.values)
+			new CallExpression(identifier.name, parameters.values)
 	),
 
 	// PatternMatchingExpression
 	new Production(
 		['|', '_', '->', 'Expression'],
-		(a, b, c, result) => new PatternMatchingDefault(result)
+		(a, b, c, result) => new PatternMatchingDefault(result),
+		peek => !binaryOperators.includes(peek)
 	),
 	new Production(
 		['|', 'Expression', '->', 'Expression'],
-		(a, pattern, b, result) => new PatternMatchingCase(pattern, result)
+		(a, pattern, b, result) => new PatternMatchingCase(pattern, result),
+		peek => !binaryOperators.includes(peek)
 	),
 	new Production(
 		['PatternMatchingCase', 'PatternMatchingDefault'],
@@ -425,13 +441,14 @@ const parse = (
 
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i]
+		const peek = i < tokens.length - 1 ? tokens[i + 1] : {}
 		stack.push(token)
 
 		for (let j = 1; j <= Math.min(5, stack.length); j++) {
 			const nodes = stack.slice(stack.length - j).map(r => r.type)
 
 			const production = grammar.find(r => {
-				return r.matches(nodes)
+				return r.matches(nodes, peek.type)
 			})
 
 			if (production) {

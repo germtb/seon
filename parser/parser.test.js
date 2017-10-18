@@ -1,6 +1,7 @@
 import tokenizer from '../tokenizer/tokenizer'
 import parse, {
 	File,
+	IdentifierExpression,
 	NumberExpression,
 	BinaryExpression,
 	BinaryOperator,
@@ -177,19 +178,20 @@ describe('parser', () => {
 		])
 	})
 
-	// test('converts fibonacci', () => {
-	// 	const tokens = tokenizer(`
-	// 		fib = n =>
-	// 			| 1 -> 1
-	// 			| 2 -> 1
-	// 			| _ -> fib(n + 1) + fib(n + 2)
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new Declaration(
-	// 			'fib',
-	// 			new FunctionExpression(['n'], new PatternMatchingExpression())
-	// 		)
-	// 	])
-	// })
+	test('converts a function with a body with expression of expressions', () => {
+		const tokens = tokenizer('(n) => n + n')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new FunctionExpression(
+					['n'],
+					new BinaryExpression(
+						new IdentifierExpression('n'),
+						new IdentifierExpression('n'),
+						new BinaryOperator('+')
+					)
+				)
+			])
+		])
+	})
 })
