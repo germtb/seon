@@ -193,15 +193,6 @@ export class UnaryOperator extends Node {
 	}
 }
 
-export class PatternMatchingDefault extends Node {
-	result: Expression
-
-	constructor(result: Expression) {
-		super('PatternMatchingDefault')
-		this.result = result
-	}
-}
-
 export class PatternMatchingCase extends Node {
 	pattern: Expression
 	result: Expression
@@ -209,6 +200,15 @@ export class PatternMatchingCase extends Node {
 	constructor(pattern: Expression, result: Expression) {
 		super('PatternMatchingCase')
 		this.pattern = pattern
+		this.result = result
+	}
+}
+
+export class PatternMatchingDefault extends Node {
+	result: Expression
+
+	constructor(result: Expression) {
+		super('PatternMatchingDefault')
 		this.result = result
 	}
 }
@@ -256,12 +256,10 @@ const binaryOperators = [
 ]
 
 class Production {
-	nonterminal: string
 	terminals: Array<string>
 	generator: Function
 
-	constructor(nonterminal, terminals, generator) {
-		this.nonterminal = nonterminal
+	constructor(terminals, generator) {
 		this.terminals = terminals
 		this.generator = generator
 	}
@@ -305,7 +303,7 @@ const matchTable = {
 	ArrayAccessExpression: ['ArrayAccessExpression', 'Expression', 'Node']
 }
 
-const matches = (node: string, type: string) => {
+const matches = (node: string, type: string): boolean => {
 	if (matchTable[node]) {
 		return matchTable[node].includes(type)
 	} else {
@@ -313,100 +311,131 @@ const matches = (node: string, type: string) => {
 	}
 }
 
-const arrayOf = (type, values) => ({
+const arrayOf = <T>(
+	type: string,
+	values: Array<T>
+): { type: string, values: Array<T> } => ({
 	type: `[${type}]`,
 	values
 })
 
-const grammar = [
-	...binaryOperators.map(
-		o => new Production('BinaryOperator', [o], () => new BinaryOperator(o))
-	),
+const grammar: Array<Production> = [
+	...binaryOperators.map(o => new Production([o], () => new BinaryOperator(o))),
+	new Production(['String'], s => new StringExpression(s.value)),
+	new Production(['Number'], number => new NumberExpression(number.value)),
 	new Production(
-		'NumberExpression',
-		['Number'],
-		number => new NumberExpression(number.value)
-	),
-	new Production(
-		'Expression',
 		['Expression', 'BinaryOperator', 'Expression'],
 		(left, op, right) => new BinaryExpression(left, right, op)
 	),
+
+	// FunctionExpression
+	new Production(['(', 'Identifier'], (a, identifier) => [
+		{ type: '(' },
+		arrayOf('Identifier', [identifier])
+	]),
 	new Production(
-		'[Identifier]',
-		['Identifier', '[Identifier]', '=>'],
-		(identifiers, identifier, b) => [
-			arrayOf('Identifier', [...identifiers, identifier]),
-			b
-		]
+		['[Identifier]', ',', 'Identifier'],
+		(identifiers, a, identifier, b) => {
+			return arrayOf('Identifier', [...identifiers.values, identifier])
+		}
 	),
 	new Production(
-		'[Identifier]',
-		['Identifier', 'Identifier', '=>'],
-		(identifier1, identifier2, b) => [
-			arrayOf('Identifier', [identifier1, identifier2]),
-			b
-		]
-	),
-	new Production(
-		'FunctionExpression',
-		['_', '=>', 'Expression'],
-		(a, b, expression) => new FunctionExpression([], expression)
-	),
-	new Production(
-		'Declaration',
-		['Identifier', '=', 'Expression'],
-		(identifier, b, expression) => new Declaration(identifier.value, expression)
-	),
-	new Production(
-		'FunctionExpression',
-		['Identifier', '=>', 'Expression'],
-		(identifier, b, expression) =>
-			new FunctionExpression([identifier.value], expression)
-	),
-	new Production(
-		'FunctionExpression',
-		['[Identifier]', '=>', 'Expression'],
-		(identifiers, b, expression) =>
+		['(', '[Identifier]', ')', '=>', 'Expression'],
+		(a, identifiers, b, c, expression) =>
 			new FunctionExpression(identifiers.values.map(x => x.value), expression)
 	),
 	new Production(
-		'Parameter',
+		['_', '=>', 'Expression'],
+		(a, b, expression) => new FunctionExpression([], expression)
+	),
+
+	// Declaration
+	new Production(
+		['Identifier', '=', 'Expression'],
+		(identifier, b, expression) => {
+			return new Declaration(identifier.value, expression)
+		}
+	),
+
+	// FunctionCall
+	new Production(
+		['[Identifier]', ':', 'Expression'],
+		(identifiers, a, expression) => {
+			return arrayOf('Parameter', [
+				new Parameter(identifiers.values[0].value, expression)
+			])
+		}
+	),
+	new Production(
 		['Identifier', ':', 'Expression'],
 		(identifier, _, expression) => new Parameter(identifier.value, expression)
 	),
 	new Production(
-		'[Parameter]',
 		['[Parameter]', ',', 'Parameter'],
 		(parameters, a, parameter) =>
-			arrayOf('Parameter', [...parameters, parameter])
-	),
-	new Production('[Parameter]', ['Parameter'], parameter =>
-		arrayOf('Parameter', [parameter])
+			arrayOf('Parameter', [...parameters.values, parameter])
 	),
 	new Production(
-		'CallExpression',
-		['Identifier', '[Parameter]'],
-		(identifier, parameters) =>
+		['Identifier', '(', '[Parameter]', ')'],
+		(identifier, a, parameters) =>
 			new CallExpression(identifier.value, parameters.values)
-	)
+	),
+
+	// PatternMatchingExpression
+	new Production(
+		['|', '_', '->', 'Expression'],
+		(a, b, c, result) => new PatternMatchingDefault(result)
+	),
+	new Production(
+		['|', 'Expression', '->', 'Expression'],
+		(a, pattern, b, result) => new PatternMatchingCase(pattern, result)
+	),
+	new Production(
+		['PatternMatchingCase', 'PatternMatchingDefault'],
+		(casePattern, defaultPattern) =>
+			new PatternMatchingExpression([casePattern], defaultPattern)
+	),
+	new Production(
+		['PatternMatchingCase', 'PatternMatchingExpression'],
+		(patternMatchingCase, patternMatchingExpression) => {
+			return new PatternMatchingExpression(
+				[patternMatchingCase, ...patternMatchingExpression.casePatterns],
+				patternMatchingExpression.defaultPattern
+			)
+		}
+	),
+
+	// File
+	new Production(['Node', '$'], statement => {
+		return new File([statement])
+	}),
+	new Production(['Node', 'File'], (statement, file) => {
+		return new File([statement, ...file.nodes])
+	})
 ]
 
-const parse = (tokens: Array<any>): any => {
-	const stack = []
+type Terminal = { type: string }
+type Nonterminal = Node
+
+const parse = (
+	tokens: Array<Terminal | Nonterminal>
+): Array<Terminal | Nonterminal> => {
+	tokens.push({ type: '$' })
+	const stack: Array<Terminal | Nonterminal> = []
 
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i]
 		stack.push(token)
 
-		for (let j = 0; j <= 3; j++) {
-			const rule = stack.slice(i - j, i + 1).map(r => r.type)
+		for (let j = 1; j <= Math.min(5, stack.length); j++) {
+			const nodes = stack.slice(stack.length - j).map(r => r.type)
+
 			const production = grammar.find(r => {
-				return r.matches(rule)
+				return r.matches(nodes)
 			})
 
 			if (production) {
-				const tokens = stack.splice(i - j, i + 1)
+				const tokens = stack.splice(stack.length - j)
 				const node = production.generator(...tokens)
 				stack.push(...[].concat(node))
 				j = 0

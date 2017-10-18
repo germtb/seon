@@ -64,6 +64,11 @@ PatternMatchingCase < Node
 	pattern: Expression
 	result: Expression
 
+PatternMatchingExpression < Node
+	casePatterns: Array<PatternMatchingCase>
+	defaultPattern: PatternMatchingDefault
+
+
 ArrayAccessExpression < Expression
 	object: Expression
 	property: number
@@ -115,10 +120,22 @@ f1(y: 10)(x: 10) == 100
 
 # Pattern matching
 
-cap = x =>
-  0 = 10 |
-  10 < x < 100 = x |
-  100
+cap = (x: string): string => x
+  | [y, ...ys] -> y
+  | [] -> 0
+
+fib = n => n
+	| 1 | 2 -> 1
+	| n -> fib(n: n - 1) + fib(n: n - 2)
+
+if = foo =>
+  | true -> 0
+  | false -> 1
+
+y = x | [y, ...ys] => y | _ => 0
+
+ternary = x => | true -> 1 | false -> 0
+
 cap = x => 0 = 10 | 10 < x < 100 = x | 100
 ternary = x => x == 10 = 10 | 100
 x = y == 10 = 10 | 100

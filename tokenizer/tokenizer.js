@@ -2,7 +2,7 @@
 
 type Token = {
 	type: string,
-	value?: any
+	value?: string | boolean | number
 }
 
 const simpleTokens = [
@@ -14,6 +14,7 @@ const simpleTokens = [
 	'<=',
 	'>=',
 	'=>',
+	'->',
 	'[',
 	']',
 	'{',
