@@ -194,4 +194,61 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('converts fibonacci', () => {
+		const tokens = tokenizer(`
+			fib = (n) =>
+				| 1 -> 1
+				| 2 -> 1
+				| _ -> fib(n: n - 1) + fib(n: n - 2)
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					'fib',
+					new FunctionExpression(
+						['n'],
+						new PatternMatchingExpression(
+							[
+								new PatternMatchingCase(
+									new NumberExpression(1),
+									new NumberExpression(1)
+								),
+								new PatternMatchingCase(
+									new NumberExpression(2),
+									new NumberExpression(1)
+								)
+							],
+							new PatternMatchingDefault(
+								new BinaryExpression(
+									new CallExpression('fib', [
+										new Parameter(
+											'n',
+											new BinaryExpression(
+												new IdentifierExpression('n'),
+												new NumberExpression(1),
+												new BinaryOperator('-')
+											)
+										)
+									]),
+									new CallExpression('fib', [
+										new Parameter(
+											'n',
+											new BinaryExpression(
+												new IdentifierExpression('n'),
+												new NumberExpression(2),
+												new BinaryOperator('-')
+											)
+										)
+									]),
+									new BinaryOperator('+')
+								)
+							)
+						)
+					)
+				)
+			])
+		])
+	})
 })

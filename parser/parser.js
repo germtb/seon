@@ -286,7 +286,11 @@ const matchTable = {
 	UnaryOperator: ['UnaryOperator', 'Node'],
 	PatternMatchingDefault: ['PatternMatchingDefault', 'Node'],
 	PatternMatchingCase: ['PatternMatchingCase', 'Node'],
-	PatternMatchingExpression: ['PatternMatchingExpression', 'Node'],
+	PatternMatchingExpression: [
+		'PatternMatchingExpression',
+		'Expression',
+		'Node'
+	],
 
 	Statement: ['Statement', 'Node'],
 	BlockStatement: ['BlockStatement', 'Statement', 'Node'],
@@ -333,7 +337,7 @@ const grammar: Array<Production> = [
 	new Production(
 		['Expression', 'BinaryOperator', 'Expression'],
 		(left, op, right) => new BinaryExpression(left, right, op),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 
 	// FunctionExpression
@@ -354,19 +358,19 @@ const grammar: Array<Production> = [
 		['(', '[IdentifierExpression]', ')', '=>', 'Expression'],
 		(a, identifiers, b, c, expression) =>
 			new FunctionExpression(identifiers.values.map(x => x.name), expression),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 	new Production(
 		['_', '=>', 'Expression'],
 		(a, b, expression) => new FunctionExpression([], expression),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 
 	// Declaration
 	new Production(
 		['IdentifierExpression', '=', 'Expression'],
 		(identifier, b, expression) => new Declaration(identifier.name, expression),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 
 	// FunctionCall
@@ -377,12 +381,12 @@ const grammar: Array<Production> = [
 				new Parameter(identifiers.values[0].name, expression)
 			])
 		},
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 	new Production(
 		['IdentifierExpression', ':', 'Expression'],
 		(identifier, _, expression) => new Parameter(identifier.name, expression),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 	new Production(
 		['[Parameter]', ',', 'Parameter'],
@@ -399,12 +403,12 @@ const grammar: Array<Production> = [
 	new Production(
 		['|', '_', '->', 'Expression'],
 		(a, b, c, result) => new PatternMatchingDefault(result),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 	new Production(
 		['|', 'Expression', '->', 'Expression'],
 		(a, pattern, b, result) => new PatternMatchingCase(pattern, result),
-		peek => !binaryOperators.includes(peek)
+		peek => !binaryOperators.includes(peek) && peek !== '('
 	),
 	new Production(
 		['PatternMatchingCase', 'PatternMatchingDefault'],
