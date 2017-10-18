@@ -169,10 +169,6 @@ export class BinaryOperator extends Node {
 		super('BinaryOperator')
 		this.operator = operator
 	}
-
-	supertype(): string {
-		return 'BinaryOperator'
-	}
 }
 
 export class UnaryExpression extends Expression {
@@ -356,6 +352,11 @@ const grammar = [
 		'FunctionExpression',
 		['_', '=>', 'Expression'],
 		(a, b, expression) => new FunctionExpression([], expression)
+	),
+	new Production(
+		'Declaration',
+		['Identifier', '=', 'Expression'],
+		(identifier, b, expression) => new Declaration(identifier.value, expression)
 	),
 	new Production(
 		'FunctionExpression',

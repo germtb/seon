@@ -1,74 +1,75 @@
 # Tokens
-
 Node
-  type: string
+	type: string
 
-Identifier < Node
-  name: string
+File < Node
+	nodes: Array<Node>
 
 Expression < Node
 
+Statement < Node
+
+Identifier < Node
+	name: string
+
 BooleanExpression < Expression
-  value: true | false
+	value: boolean
 
 NumberExpression < Expression
-  value: number
-
-EmptyArrayExpression < Expression
-
-ArrayExpression < Expression
-  value: [ Expression ]
+	value: number
 
 StringExpression < Expression
-  value: string
+	value: string
+
+ArrayExpression < Expression
+	value: Array<Expression>
 
 FunctionExpression < Expression
-  parameters: [ string ]
-  body: Expression | BlockStatement
+	parameters: Array<string>
+	body: BlockStatement | Expression
+
+BlockStatement < Statement
+	statements: Array<Statement>
+
+Parameter < Node
+	id: string
+	value: Expression
+
+CallExpression < Expression
+	callee: Identifier
+	parameters: Array<Parameter>
+
+Declaration < Statement
+	name: string
+	value: Expression
+
+BinaryExpression < Expression
+	left: Expression
+	right: Expression
+	operator: BinaryOperator
+
+BinaryOperator < Node
+
+UnaryExpression < Expression
+	expression: Expression
+	operator: UnaryOperator
+
+UnaryOperator < Node
+	operator: UnaryOperatorType
+
+PatternMatchingDefault < Node
+	result: Expression
+
+PatternMatchingCase < Node
+	pattern: Expression
+	result: Expression
+
+ArrayAccessExpression < Expression
+	object: Expression
+	property: number
 
 BlockStatement < Node
   body: [ Expression ]
-
-Parameter < Node
-  id: string
-  value: Expression
-
-CallExpression < Expression
-  callee: Identifier
-  parameters: [ Parameter ]
-
-Declaration < Statement
-  name: string
-  value: Expression
-
-BinaryExpression < Expression
-  left: Expression
-  right: Expression
-  operator: BinaryOperator
-
-BinaryOperator < Node
-  operator: + | - | * | / | ** | % | && | || | type | == | != | < | <= | > | >=
-
-UnaryExpression < Expression
-  argument: Expression
-  operator: UnaryOperator
-
-UnaryOperator < Node
-  operator: - | !
-
-PatternMatchingExpression < Expression
-  patterns: [ PatternMatchingCase | PatternMatchingDefault ]
-
-PatternMatchingCase < Node
-  case: Expression
-  result: Expression
-
-PatternMatchingDefault < Expression
-  result: Expression
-
-ArrayAccessExpression < Expression
-  object: Expression
-  property: Expression
 
 # Primitives
 BooleanExpression: true, false

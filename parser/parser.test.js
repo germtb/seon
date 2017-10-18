@@ -5,7 +5,8 @@ import parse, {
 	BinaryOperator,
 	FunctionExpression,
 	Parameter,
-	CallExpression
+	CallExpression,
+	Declaration
 } from './parser'
 
 describe('parser', () => {
@@ -128,5 +129,11 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new CallExpression('f', [new Parameter('x', new NumberExpression(10))])
 		])
+	})
+
+	test('converts a declaration', () => {
+		const tokens = tokenizer('x = 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new Declaration('x', new NumberExpression(10))])
 	})
 })
