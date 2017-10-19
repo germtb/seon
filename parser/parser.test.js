@@ -1,6 +1,10 @@
 import tokenizer from '../tokenizer/tokenizer'
-import parse, {
+import parse from './parser'
+import {
 	File,
+	UnaryOperator,
+	BooleanExpression,
+	UnaryExpression,
 	IdentifierExpression,
 	NumberExpression,
 	BinaryExpression,
@@ -12,7 +16,7 @@ import parse, {
 	PatternMatchingCase,
 	PatternMatchingDefault,
 	PatternMatchingExpression
-} from './parser'
+} from './nodes'
 
 describe('parser', () => {
 	test('converts a number', () => {
@@ -21,7 +25,17 @@ describe('parser', () => {
 		expect(nodes).toEqual([new File([new NumberExpression(1234)])])
 	})
 
-	test('converts a +', () => {
+	test('converts a unary expression', () => {
+		const tokens = tokenizer('!true')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new UnaryExpression(new UnaryOperator('!'), new BooleanExpression(true))
+			])
+		])
+	})
+
+	test('converts a binary expression', () => {
 		const tokens = tokenizer('1234 + 3')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -30,20 +44,6 @@ describe('parser', () => {
 					new NumberExpression(1234),
 					new NumberExpression(3),
 					new BinaryOperator('+')
-				)
-			])
-		])
-	})
-
-	test('converts a ==', () => {
-		const tokens = tokenizer('1234 == 3')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new BinaryExpression(
-					new NumberExpression(1234),
-					new NumberExpression(3),
-					new BinaryOperator('==')
 				)
 			])
 		])
