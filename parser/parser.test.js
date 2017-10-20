@@ -4,6 +4,7 @@ import {
 	File,
 	ObjectExpression,
 	ObjectProperty,
+	ObjectAccessExpression,
 	UnaryOperator,
 	BooleanExpression,
 	UnaryExpression,
@@ -267,6 +268,16 @@ describe('parser', () => {
 				new ObjectExpression([
 					new ObjectProperty('x', new NumberExpression(100))
 				])
+			])
+		])
+	})
+
+	test('converts an object access expression', () => {
+		const tokens = tokenizer('x.hello')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectAccessExpression(new IdentifierExpression('x'), 'hello')
 			])
 		])
 	})

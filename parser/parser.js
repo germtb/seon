@@ -12,6 +12,7 @@ import {
 	EmptyArrayExpression,
 	ObjectExpression,
 	ObjectProperty,
+	ObjectAccessExpression,
 	ArrayExpression,
 	FunctionExpression,
 	BlockStatement,
@@ -122,6 +123,11 @@ const grammar = [
 		['{', '[ObjectProperty]', '}'],
 		(a, identifiers, b, c, expression) =>
 			new ObjectExpression(identifiers.values)
+	),
+	new Production(
+		['Expression', '.', 'IdentifierExpression'],
+		(expression, c, identifier) =>
+			new ObjectAccessExpression(expression, identifier.name)
 	),
 
 	// Operators

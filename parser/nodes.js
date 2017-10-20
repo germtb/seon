@@ -89,7 +89,7 @@ export class ObjectExpression extends Expression {
 	}
 }
 
-export class ObjectProperty extends Expression {
+export class ObjectProperty extends Node {
 	key: string
 	value: Expression
 
@@ -97,6 +97,17 @@ export class ObjectProperty extends Expression {
 		super('ObjectProperty')
 		this.key = key
 		this.value = value
+	}
+}
+
+export class ObjectAccessExpression extends Node {
+	callee: Expression
+	key: string
+
+	constructor(callee: Expression, key: string) {
+		super('ObjectAccessExpression')
+		this.callee = callee
+		this.key = key
 	}
 }
 

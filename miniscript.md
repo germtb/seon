@@ -99,7 +99,7 @@ Declaration:
     y: y,
     u: 100
   }
-ObjectAccess:
+ObjectAccessExpression:
   z.x == 0
   z.y == [0, 1, 0]
 ArrayAccess:
