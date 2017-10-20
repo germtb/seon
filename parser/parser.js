@@ -128,6 +128,13 @@ const grammar = [
 		peek => !operators.includes(peek)
 	),
 	new Production(
+		['IdentifierExpression', '=>', 'Expression'],
+		(identifier, b, expression) =>
+			new FunctionExpression([identifier.name], expression),
+		peek => !operators.includes(peek)
+	),
+
+	new Production(
 		['_', '=>', 'Expression'],
 		(a, b, expression) => new FunctionExpression([], expression),
 		peek => !operators.includes(peek)
@@ -137,7 +144,7 @@ const grammar = [
 	new Production(
 		['IdentifierExpression', '=', 'Expression'],
 		(identifier, b, expression) => new Declaration(identifier.name, expression),
-		peek => !operators.includes(peek)
+		peek => !operators.includes(peek) && peek !== '=>'
 	),
 
 	// FunctionCall

@@ -163,6 +163,21 @@ describe('parser', () => {
 		])
 	})
 
+	test('functions with one parameter do not need parenthesis', () => {
+		const tokens = tokenizer(`
+			f = n => 0
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					'f',
+					new FunctionExpression(['n'], new NumberExpression(0))
+				)
+			])
+		])
+	})
+
 	test('converts a function declaration', () => {
 		const tokens = tokenizer(`
 			f = (n) => 0
