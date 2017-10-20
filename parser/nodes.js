@@ -112,10 +112,10 @@ export class Parameter extends Node {
 }
 
 export class CallExpression extends Expression {
-	callee: IdentifierExpression
+	callee: Expression
 	parameters: Array<Parameter>
 
-	constructor(callee: IdentifierExpression, parameters: Array<Parameter>) {
+	constructor(callee: Expression, parameters: Array<Parameter>) {
 		super('CallExpression')
 		this.callee = callee
 		this.parameters = parameters

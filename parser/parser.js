@@ -167,9 +167,9 @@ const grammar = [
 			arrayOf('Parameter', [...parameters.values, parameter])
 	),
 	new Production(
-		['IdentifierExpression', '(', '[Parameter]', ')'],
+		['Expression', '(', '[Parameter]', ')'],
 		(identifier, a, parameters) =>
-			new CallExpression(identifier.name, parameters.values)
+			new CallExpression(identifier, parameters.values)
 	),
 
 	// PatternMatchingExpression

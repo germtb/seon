@@ -43,6 +43,7 @@ const matchTable = {
 	StringExpression: ['StringExpression', 'Expression', 'Node'],
 	EmptyArrayExpression: ['EmptyArrayExpression', 'Expression', 'Node'],
 	ArrayExpression: ['ArrayExpression', 'Expression', 'Node'],
+	ObjectExpression: ['ObjectExpression', 'Expression', 'Node'],
 	FunctionExpression: ['FunctionExpression', 'Expression', 'Node'],
 	CallExpression: ['CallExpression', 'Expression', 'Node'],
 	BinaryExpression: ['BinaryExpression', 'Expression', 'Node'],

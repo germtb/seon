@@ -78,7 +78,9 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new CallExpression('f', [new Parameter('x', new NumberExpression(10))])
+				new CallExpression(new IdentifierExpression('f'), [
+					new Parameter('x', new NumberExpression(10))
+				])
 			])
 		])
 	})
@@ -88,7 +90,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new CallExpression('f', [
+				new CallExpression(new IdentifierExpression('f'), [
 					new Parameter('x', new NumberExpression(10)),
 					new Parameter('y', new NumberExpression(50))
 				])
@@ -257,7 +259,7 @@ describe('parser', () => {
 
 	test('converts fibonacci', () => {
 		const tokens = tokenizer(`
-			fib = (n) =>
+			fib = n =>
 				| 1 -> 1
 				| 2 -> 1
 				| _ -> fib(n: n - 1) + fib(n: n - 2)
@@ -282,7 +284,7 @@ describe('parser', () => {
 							],
 							new PatternMatchingDefault(
 								new BinaryExpression(
-									new CallExpression('fib', [
+									new CallExpression(new IdentifierExpression('fib'), [
 										new Parameter(
 											'n',
 											new BinaryExpression(
@@ -292,7 +294,7 @@ describe('parser', () => {
 											)
 										)
 									]),
-									new CallExpression('fib', [
+									new CallExpression(new IdentifierExpression('fib'), [
 										new Parameter(
 											'n',
 											new BinaryExpression(
