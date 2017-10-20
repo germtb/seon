@@ -19,6 +19,7 @@ export class Production {
 }
 
 const matchTable = {
+	// Nodes
 	Node: ['Node'],
 	File: ['File', 'Node'],
 	Parameter: ['Parameter', 'Node'],
@@ -33,10 +34,23 @@ const matchTable = {
 		'Node'
 	],
 
+	// Patterns
+	Pattern: ['Pattern', 'Node'],
+	AnyPattern: ['AnyPattern', 'Pattern', 'Node'],
+	NumberPattern: ['NumberPattern', 'Pattern', 'Node'],
+	BooleanPattern: ['BooleanPattern', 'Pattern', 'Node'],
+	StringPattern: ['StringPattern', 'Pattern', 'Node'],
+	RestElement: ['RestElement', 'Pattern', 'Node'],
+	ArrayPattern: ['ArrayPattern', 'Pattern', 'Node'],
+	ObjectPattern: ['ObjectPattern', 'Pattern', 'Node'],
+	NoPattern: ['NoPattern', 'Pattern', 'Node'],
+
+	// Statements
 	Statement: ['Statement', 'Node'],
 	BlockStatement: ['BlockStatement', 'Statement', 'Node'],
 	Declaration: ['Declaration', 'Statement', 'Node'],
 
+	// Expressions
 	Expression: ['Expression', 'Node'],
 	IdentifierExpression: ['IdentifierExpression', 'Expression', 'Node'],
 	BooleanExpression: ['BooleanExpression', 'Expression', 'Node'],

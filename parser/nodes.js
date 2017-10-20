@@ -262,3 +262,78 @@ export class ArrayAccessExpression extends Expression {
 		this.property = property
 	}
 }
+
+export class Pattern extends Node {
+	constructor(type) {
+		super(type)
+	}
+}
+
+export class AnyPattern extends Pattern {
+	name: string
+
+	constructor(name: string) {
+		super('AnyPattern')
+		this.name = name
+	}
+}
+
+export class NumberPattern extends Pattern {
+	value: number
+
+	constructor(value: number) {
+		super('NumberPattern')
+		this.value = value
+	}
+}
+
+export class BooleanPattern extends Pattern {
+	value: boolean
+
+	constructor(value: boolean) {
+		super('BooleanPattern')
+		this.value = value
+	}
+}
+
+export class StringPattern extends Pattern {
+	value: string
+
+	constructor(value: string) {
+		super('StringPattern')
+		this.value = value
+	}
+}
+
+export class RestElement extends Node {
+	name: string
+
+	constructor(name: string) {
+		super('RestElement')
+		this.name = name
+	}
+}
+
+export class ArrayPattern extends Pattern {
+	values: Array<Identifier | RestElement>
+
+	constructor(values: Array<Identifier | RestElement>) {
+		super('ArrayPattern')
+		this.values = values
+	}
+}
+
+export class ObjectPattern extends Pattern {
+	values: Array<Identifier | RestElement>
+
+	constructor(values: Array<Identifier | RestElement>) {
+		super('ObjectPattern')
+		this.values = values
+	}
+}
+
+export class NoPattern extends Pattern {
+	constructor() {
+		super('NoPattern')
+	}
+}
