@@ -299,9 +299,9 @@ export class RestElement extends Node {
 }
 
 export class ArrayPattern extends Pattern {
-	values: Array<Identifier | RestElement>
+	values: Array<IdentifierExpression | RestElement>
 
-	constructor(values: Array<Identifier | RestElement>) {
+	constructor(values: Array<IdentifierExpression | RestElement>) {
 		super('ArrayPattern')
 		this.values = values
 	}

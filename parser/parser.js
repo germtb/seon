@@ -274,8 +274,9 @@ const grammar = [
 		peek => !operators.includes(peek)
 	),
 	new Production(
-		['...', 'IdentifierExpression'],
-		(a, identifier) => new RestElement(identifier.name)
+		['...', 'Expression'],
+		(a, identifier) => new RestElement(identifier.name),
+		peek => peek !== '.' && peek !== '[' && peek !== '('
 	),
 
 	// PatternMatchingExpression

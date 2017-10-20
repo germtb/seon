@@ -331,12 +331,30 @@ describe('parser', () => {
 		expect(nodes).toEqual([new File([new RestElement('x')])])
 	})
 
-	test('convets a arrayPattern', () => {
+	test('converts a arrayPattern', () => {
 		const tokens = tokenizer('| [x]')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			{ type: '|' },
 			new File([new ArrayPattern([new IdentifierExpression('x')])])
+		])
+	})
+
+	test('converts a destructured array pattern', () => {
+		const tokens = tokenizer('| [x, ...xs] -> x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternMatchingExpression([
+					new PatternMatchingCase(
+						new ArrayPattern([
+							new IdentifierExpression('x'),
+							new RestElement('xs')
+						]),
+						new IdentifierExpression('x')
+					)
+				])
+			])
 		])
 	})
 

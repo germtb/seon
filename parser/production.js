@@ -40,7 +40,7 @@ const matchTable = {
 	NumberPattern: ['NumberPattern', 'Pattern', 'Node'],
 	BooleanPattern: ['BooleanPattern', 'Pattern', 'Node'],
 	StringPattern: ['StringPattern', 'Pattern', 'Node'],
-	RestElement: ['RestElement', 'Pattern', 'Node'],
+	RestElement: ['RestElement', 'Expression', 'Node'],
 	ArrayPattern: ['ArrayPattern', 'Pattern', 'Node'],
 	ObjectPattern: ['ObjectPattern', 'Pattern', 'Node'],
 	NoPattern: ['NoPattern', 'Pattern', 'Node'],
