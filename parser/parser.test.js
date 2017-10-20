@@ -293,6 +293,12 @@ describe('parser', () => {
 		])
 	})
 
+	test('converts an empty array', () => {
+		const tokens = tokenizer('[]')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new ArrayExpression([])])])
+	})
+
 	test('converts fibonacci', () => {
 		const tokens = tokenizer(`
 			fib = n =>

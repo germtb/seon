@@ -145,6 +145,7 @@ const grammar = [
 		['[', '[Expression]', ']'],
 		(a, expressions, b) => new ArrayExpression(expressions.values)
 	),
+	new Production(['[', ']'], () => new ArrayExpression([])),
 
 	// Operators
 	new Production(
