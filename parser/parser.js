@@ -9,7 +9,6 @@ import {
 	BooleanExpression,
 	NumberExpression,
 	StringExpression,
-	EmptyArrayExpression,
 	ObjectExpression,
 	ObjectProperty,
 	ObjectAccessExpression,
@@ -128,6 +127,23 @@ const grammar = [
 		['Expression', '.', 'IdentifierExpression'],
 		(expression, c, identifier) =>
 			new ObjectAccessExpression(expression, identifier.name)
+	),
+
+	// Arrays
+	new Production(
+		['[', 'Expression'],
+		(a, expression) => [{ type: '[' }, arrayOf('Expression', [expression])],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['[Expression]', ',', 'Expression'],
+		(expressions, a, expression) =>
+			arrayOf('Expression', [...expressions.values, expression]),
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['[', '[Expression]', ']'],
+		(a, expressions, b) => new ArrayExpression(expressions.values)
 	),
 
 	// Operators

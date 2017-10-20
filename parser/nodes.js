@@ -65,12 +65,6 @@ export class StringExpression extends Expression {
 	}
 }
 
-export class EmptyArrayExpression extends Expression {
-	constructor() {
-		super('EmptyArrayExpression')
-	}
-}
-
 export class ArrayExpression extends Expression {
 	value: Array<Expression>
 

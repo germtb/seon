@@ -42,7 +42,6 @@ const matchTable = {
 	BooleanExpression: ['BooleanExpression', 'Expression', 'Node'],
 	NumberExpression: ['NumberExpression', 'Expression', 'Node'],
 	StringExpression: ['StringExpression', 'Expression', 'Node'],
-	EmptyArrayExpression: ['EmptyArrayExpression', 'Expression', 'Node'],
 	ArrayExpression: ['ArrayExpression', 'Expression', 'Node'],
 	ObjectExpression: ['ObjectExpression', 'Expression', 'Node'],
 	ObjectAccessExpression: ['ObjectAccessExpression', 'Expression', 'Node'],

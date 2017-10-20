@@ -5,6 +5,7 @@ import {
 	ObjectExpression,
 	ObjectProperty,
 	ObjectAccessExpression,
+	ArrayExpression,
 	UnaryOperator,
 	BooleanExpression,
 	UnaryExpression,
@@ -278,6 +279,16 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new ObjectAccessExpression(new IdentifierExpression('x'), 'hello')
+			])
+		])
+	})
+
+	test('converts an array expression', () => {
+		const tokens = tokenizer('[ 1, 2 ]')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ArrayExpression([new NumberExpression(1), new NumberExpression(2)])
 			])
 		])
 	})
