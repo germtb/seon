@@ -195,6 +195,51 @@ describe('parser', () => {
 		])
 	})
 
+	test('converts correct precedence', () => {
+		const tokens = tokenizer('1 * 2 + 3 * 4')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new BinaryExpression(
+					new BinaryExpression(
+						new NumberExpression(1),
+						new NumberExpression(2),
+						new BinaryOperator('*')
+					),
+					new BinaryExpression(
+						new NumberExpression(3),
+						new NumberExpression(4),
+						new BinaryOperator('*')
+					),
+					new BinaryOperator('+')
+				)
+			])
+		])
+	})
+
+	test('converts a file', () => {
+		const tokens = tokenizer(`
+			x = 10
+			y = 100
+			area = x * y
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration('x', new NumberExpression(10)),
+				new Declaration('y', new NumberExpression(100)),
+				new Declaration(
+					'area',
+					new BinaryExpression(
+						new IdentifierExpression('x'),
+						new IdentifierExpression('y'),
+						new BinaryOperator('*')
+					)
+				)
+			])
+		])
+	})
+
 	test('converts fibonacci', () => {
 		const tokens = tokenizer(`
 			fib = (n) =>

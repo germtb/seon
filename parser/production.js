@@ -1,28 +1,19 @@
-// @flow
-
 export class Production {
-	terminals: Array<string>
-	generator: any => any
-	onPeek: any => any
-
-	constructor(
-		terminals: Array<string>,
-		generator: any => any,
-		onPeek: any => any = () => true
-	) {
+	constructor(terminals, generator, onPeek = () => true) {
 		this.terminals = terminals
 		this.generator = generator
 		this.onPeek = onPeek
 	}
 
-	matches(nodes: Array<string>, peek: string) {
+	matches(nodes, peek) {
+		const nodeTypes = nodes.map(r => r.type)
 		return (
-			this.terminals.length === nodes.length &&
-			nodes.reduce(
+			this.terminals.length === nodeTypes.length &&
+			nodeTypes.reduce(
 				(acc, node, index) => acc && matches(node, this.terminals[index]),
 				true
 			) &&
-			this.onPeek(peek)
+			this.onPeek(peek, ...nodes)
 		)
 	}
 }
@@ -59,7 +50,7 @@ const matchTable = {
 	ArrayAccessExpression: ['ArrayAccessExpression', 'Expression', 'Node']
 }
 
-const matches = (node: string, type: string): boolean => {
+const matches = (node, type) => {
 	if (matchTable[node]) {
 		return matchTable[node].includes(type)
 	} else {
