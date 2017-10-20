@@ -1,5 +1,3 @@
-// @flow
-
 export class Node {
 	type: string
 
@@ -148,12 +146,12 @@ export class CallExpression extends Expression {
 }
 
 export class Declaration extends Statement {
-	name: string
+	pattern: Pattern
 	value: Expression
 
-	constructor(name: string, value: Expression) {
+	constructor(pattern: Pattern, value: Expression) {
 		super('Declaration')
-		this.name = name
+		this.pattern = pattern
 		this.value = value
 	}
 }

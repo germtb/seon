@@ -71,6 +71,9 @@ export default (code: string): Array<Token> => {
 			}
 		} else if (/\s/.test(character)) {
 			continue
+		} else if (character === '.' && peek === '.') {
+			tokens.push({ type: '...' })
+			i += 2
 		} else if (character === "'") {
 			currentToken = ''
 			inString = true

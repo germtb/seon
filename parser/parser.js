@@ -1,5 +1,3 @@
-// @flow
-
 import {
 	Node,
 	File,
@@ -25,7 +23,15 @@ import {
 	PatternMatchingCase,
 	PatternMatchingDefault,
 	PatternMatchingExpression,
-	ArrayAccessExpression
+	ArrayAccessExpression,
+	AnyPattern,
+	NumberPattern,
+	BooleanPattern,
+	StringPattern,
+	RestElement,
+	ArrayPattern,
+	ObjectPattern,
+	NoPattern
 } from './nodes'
 
 import { Production } from './Production'
@@ -124,6 +130,11 @@ const grammar = [
 			new ObjectExpression(identifiers.values)
 	),
 	new Production(
+		['{', '}'],
+		(a, identifiers, b, c, expression) => new ObjectExpression([])
+	),
+
+	new Production(
 		['Expression', '.', 'IdentifierExpression'],
 		(expression, c, identifier) =>
 			new ObjectAccessExpression(expression, identifier.name)
@@ -190,15 +201,15 @@ const grammar = [
 	),
 
 	new Production(
-		['_', '=>', 'Expression'],
+		['NoPattern', '=>', 'Expression'],
 		(a, b, expression) => new FunctionExpression([], expression),
 		peek => !operators.includes(peek)
 	),
 
 	// Declaration
 	new Production(
-		['IdentifierExpression', '=', 'Expression'],
-		(identifier, b, expression) => new Declaration(identifier.name, expression),
+		['Pattern', '=', 'Expression'],
+		(pattern, b, expression) => new Declaration(pattern, expression),
 		peek => !operators.includes(peek)
 	),
 
@@ -226,30 +237,72 @@ const grammar = [
 			new CallExpression(identifier, parameters.values)
 	),
 
+	// Patterns
+	new Production(['_'], () => new NoPattern()),
+	new Production(['|', '_'], () => new NoPattern()),
+	new Production(['IdentifierExpression', '='], identifier => [
+		new AnyPattern(identifier.name),
+		{ type: '=' }
+	]),
+	new Production(
+		['|', 'IdentifierExpression'],
+		(a, identifier) => [{ type: '|' }, new AnyPattern(identifier.name)],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['|', 'NumberExpression'],
+		(a, number) => [{ type: '|' }, new NumberPattern(number.value)],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['|', 'BooleanExpression'],
+		(a, boolean) => [{ type: '|' }, new BooleanPattern(boolean.value)],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['|', 'StringExpression'],
+		(a, string) => [{ type: '|' }, new StringPattern(string.value)],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['|', 'ArrayExpression'],
+		(a, array) => [{ type: '|' }, new ArrayPattern(array.value)],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['|', 'ObjectExpression'],
+		(a, object) => [{ type: '|' }, new ObjectPattern(object.properties)],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['...', 'IdentifierExpression'],
+		(a, identifier) => new RestElement(identifier.name)
+	),
+
 	// PatternMatchingExpression
-	new Production(
-		['|', '_', '->', 'Expression'],
-		(a, b, c, result) => new PatternMatchingDefault(result),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['|', 'Expression', '->', 'Expression'],
-		(a, pattern, b, result) => new PatternMatchingCase(pattern, result),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['PatternMatchingCase', 'PatternMatchingDefault'],
-		(casePattern, defaultPattern) =>
-			new PatternMatchingExpression([casePattern], defaultPattern)
-	),
-	new Production(
-		['PatternMatchingCase', 'PatternMatchingExpression'],
-		(patternMatchingCase, patternMatchingExpression) =>
-			new PatternMatchingExpression(
-				[patternMatchingCase, ...patternMatchingExpression.casePatterns],
-				patternMatchingExpression.defaultPattern
-			)
-	),
+	// new Production(
+	// 	['|', 'NoPattern', '->', 'Expression'],
+	// 	(a, b, c, result) => new PatternMatchingDefault(result),
+	// 	peek => !operators.includes(peek)
+	// ),
+	// new Production(
+	// 	['|', 'Expression', '->', 'Expression'],
+	// 	(a, pattern, b, result) => new PatternMatchingCase(pattern, result),
+	// 	peek => !operators.includes(peek)
+	// ),
+	// new Production(
+	// 	['PatternMatchingCase', 'PatternMatchingDefault'],
+	// 	(casePattern, defaultPattern) =>
+	// 		new PatternMatchingExpression([casePattern], defaultPattern)
+	// ),
+	// new Production(
+	// 	['PatternMatchingCase', 'PatternMatchingExpression'],
+	// 	(patternMatchingCase, patternMatchingExpression) =>
+	// 		new PatternMatchingExpression(
+	// 			[patternMatchingCase, ...patternMatchingExpression.casePatterns],
+	// 			patternMatchingExpression.defaultPattern
+	// 		)
+	// ),
 
 	// File
 	new Production(['Node', '$'], statement => new File([statement])),
