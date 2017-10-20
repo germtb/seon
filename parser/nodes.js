@@ -227,26 +227,12 @@ export class PatternMatchingCase extends Node {
 	}
 }
 
-export class PatternMatchingDefault extends Node {
-	result: Expression
-
-	constructor(result: Expression) {
-		super('PatternMatchingDefault')
-		this.result = result
-	}
-}
-
 export class PatternMatchingExpression extends Node {
-	casePatterns: Array<PatternMatchingCase>
-	defaultPattern: PatternMatchingDefault
+	cases: Array<PatternMatchingCase>
 
-	constructor(
-		casePatterns: Array<PatternMatchingCase>,
-		defaultPattern: PatternMatchingDefault
-	) {
+	constructor(cases: Array<PatternMatchingCase>) {
 		super('PatternMatchingExpression')
-		this.casePatterns = casePatterns
-		this.defaultPattern = defaultPattern
+		this.cases = cases
 	}
 }
 

@@ -21,7 +21,6 @@ import {
 	UnaryExpression,
 	UnaryOperator,
 	PatternMatchingCase,
-	PatternMatchingDefault,
 	PatternMatchingExpression,
 	ArrayAccessExpression,
 	AnyPattern,
@@ -36,7 +35,7 @@ import {
 
 import { Production } from './Production'
 
-const unaryOperators = ['!']
+const unaryOperators = ['!', 'type']
 
 const binaryOperators = [
 	'+',
@@ -280,29 +279,22 @@ const grammar = [
 	),
 
 	// PatternMatchingExpression
-	// new Production(
-	// 	['|', 'NoPattern', '->', 'Expression'],
-	// 	(a, b, c, result) => new PatternMatchingDefault(result),
-	// 	peek => !operators.includes(peek)
-	// ),
-	// new Production(
-	// 	['|', 'Expression', '->', 'Expression'],
-	// 	(a, pattern, b, result) => new PatternMatchingCase(pattern, result),
-	// 	peek => !operators.includes(peek)
-	// ),
-	// new Production(
-	// 	['PatternMatchingCase', 'PatternMatchingDefault'],
-	// 	(casePattern, defaultPattern) =>
-	// 		new PatternMatchingExpression([casePattern], defaultPattern)
-	// ),
-	// new Production(
-	// 	['PatternMatchingCase', 'PatternMatchingExpression'],
-	// 	(patternMatchingCase, patternMatchingExpression) =>
-	// 		new PatternMatchingExpression(
-	// 			[patternMatchingCase, ...patternMatchingExpression.casePatterns],
-	// 			patternMatchingExpression.defaultPattern
-	// 		)
-	// ),
+	new Production(
+		['|', 'Pattern', '->', 'Expression'],
+		(a, pattern, c, result) => new PatternMatchingCase(pattern, result),
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['PatternMatchingCase'],
+		pattern => new PatternMatchingExpression([pattern]),
+		peek => !operators.includes(peek) && peek !== '|'
+	),
+	new Production(
+		['PatternMatchingCase', 'PatternMatchingExpression'],
+		(patternCase, expression) =>
+			new PatternMatchingExpression([patternCase, ...expression.cases]),
+		peek => !operators.includes(peek) && peek !== '|'
+	),
 
 	// File
 	new Production(['Node', '$'], statement => new File([statement])),

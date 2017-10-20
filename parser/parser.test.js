@@ -134,48 +134,40 @@ describe('parser', () => {
 		])
 	})
 
-	// test('converts a pattern case', () => {
-	// 	const tokens = tokenizer('| 10 -> 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new PatternMatchingCase(
-	// 				new NumberExpression(10),
-	// 				new NumberExpression(10)
-	// 			)
-	// 		])
-	// 	])
-	// })
+	test('converts a pattern case', () => {
+		const tokens = tokenizer('| 10 -> 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternMatchingExpression([
+					new PatternMatchingCase(
+						new NumberPattern(10),
+						new NumberExpression(10)
+					)
+				])
+			])
+		])
+	})
 
-	// test('converts a default pattern case', () => {
-	// 	const tokens = tokenizer('| _ -> 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([new PatternMatchingDefault(new NumberExpression(10))])
-	// 	])
-	// })
-	//
-	// test('converts a pattern expression', () => {
-	// 	const tokens = tokenizer('| 5 -> 10 | 10 -> 10 | _ -> 3')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new PatternMatchingExpression(
-	// 				[
-	// 					new PatternMatchingCase(
-	// 						new NumberExpression(5),
-	// 						new NumberExpression(10)
-	// 					),
-	// 					new PatternMatchingCase(
-	// 						new NumberExpression(10),
-	// 						new NumberExpression(10)
-	// 					)
-	// 				],
-	// 				new PatternMatchingDefault(new NumberExpression(3))
-	// 			)
-	// 		])
-	// 	])
-	// })
+	test('converts a pattern expression', () => {
+		const tokens = tokenizer('| 5 -> 10 | 10 -> 10 | _ -> 3')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternMatchingExpression([
+					new PatternMatchingCase(
+						new NumberPattern(5),
+						new NumberExpression(10)
+					),
+					new PatternMatchingCase(
+						new NumberPattern(10),
+						new NumberExpression(10)
+					),
+					new PatternMatchingCase(new NoPattern(), new NumberExpression(3))
+				])
+			])
+		])
+	})
 
 	test('functions with one parameter do not need parenthesis', () => {
 		const tokens = tokenizer(`
@@ -360,60 +352,60 @@ describe('parser', () => {
 		expect(nodes).toEqual([new File([new NoPattern()])])
 	})
 
-	// test('converts fibonacci', () => {
-	// 	const tokens = tokenizer(`
-	// 		fib = n =>
-	// 			| 1 -> 1
-	// 			| 2 -> 1
-	// 			| _ -> fib(n: n - 1) + fib(n: n - 2)
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new Declaration(
-	// 				new AnyPattern('fib'),
-	// 				new FunctionExpression(
-	// 					['n'],
-	// 					new PatternMatchingExpression(
-	// 						[
-	// 							new PatternMatchingCase(
-	// 								new NumberExpression(1),
-	// 								new NumberExpression(1)
-	// 							),
-	// 							new PatternMatchingCase(
-	// 								new NumberExpression(2),
-	// 								new NumberExpression(1)
-	// 							)
-	// 						],
-	// 						new PatternMatchingDefault(
-	// 							new BinaryExpression(
-	// 								new CallExpression(new IdentifierExpression('fib'), [
-	// 									new Parameter(
-	// 										'n',
-	// 										new BinaryExpression(
-	// 											new IdentifierExpression('n'),
-	// 											new NumberExpression(1),
-	// 											new BinaryOperator('-')
-	// 										)
-	// 									)
-	// 								]),
-	// 								new CallExpression(new IdentifierExpression('fib'), [
-	// 									new Parameter(
-	// 										'n',
-	// 										new BinaryExpression(
-	// 											new IdentifierExpression('n'),
-	// 											new NumberExpression(2),
-	// 											new BinaryOperator('-')
-	// 										)
-	// 									)
-	// 								]),
-	// 								new BinaryOperator('+')
-	// 							)
-	// 						)
-	// 					)
-	// 				)
-	// 			)
-	// 		])
-	// 	])
-	// })
+	test('converts fibonacci', () => {
+		const tokens = tokenizer(`
+			fib = n =>
+				| 1 -> 1
+				| 2 -> 1
+				| _ -> fib(n: n - 1) + fib(n: n - 2)
+		`)
+		const nodes = parse(tokens)
+
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new AnyPattern('fib'),
+					new FunctionExpression(
+						['n'],
+						new PatternMatchingExpression([
+							new PatternMatchingCase(
+								new NumberPattern(1),
+								new NumberExpression(1)
+							),
+							new PatternMatchingCase(
+								new NumberPattern(2),
+								new NumberExpression(1)
+							),
+							new PatternMatchingCase(
+								new NoPattern(),
+								new BinaryExpression(
+									new CallExpression(new IdentifierExpression('fib'), [
+										new Parameter(
+											'n',
+											new BinaryExpression(
+												new IdentifierExpression('n'),
+												new NumberExpression(1),
+												new BinaryOperator('-')
+											)
+										)
+									]),
+									new CallExpression(new IdentifierExpression('fib'), [
+										new Parameter(
+											'n',
+											new BinaryExpression(
+												new IdentifierExpression('n'),
+												new NumberExpression(2),
+												new BinaryOperator('-')
+											)
+										)
+									]),
+									new BinaryOperator('+')
+								)
+							)
+						])
+					)
+				)
+			])
+		])
+	})
 })
