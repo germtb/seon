@@ -2,6 +2,8 @@ import tokenizer from '../tokenizer/tokenizer'
 import parse from './parser'
 import {
 	File,
+	ObjectExpression,
+	ObjectProperty,
 	UnaryOperator,
 	BooleanExpression,
 	UnaryExpression,
@@ -253,6 +255,18 @@ describe('parser', () => {
 						new BinaryOperator('*')
 					)
 				)
+			])
+		])
+	})
+
+	test('converts an object expression', () => {
+		const tokens = tokenizer('{ x: 100 }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty('x', new NumberExpression(100))
+				])
 			])
 		])
 	})

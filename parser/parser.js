@@ -10,6 +10,8 @@ import {
 	NumberExpression,
 	StringExpression,
 	EmptyArrayExpression,
+	ObjectExpression,
+	ObjectProperty,
 	ArrayExpression,
 	FunctionExpression,
 	BlockStatement,
@@ -47,7 +49,7 @@ const binaryOperators = [
 	'||'
 ]
 
-const operators = [...unaryOperators, ...binaryOperators, '.', '(']
+const operators = [...unaryOperators, ...binaryOperators, '.', '(', '=>']
 
 const precedence = {
 	'!': ['(', '.'],
@@ -96,6 +98,32 @@ const grammar = [
 		expression => new NumberExpression(expression.value)
 	),
 
+	// Objects
+	new Production(
+		['{', 'IdentifierExpression', ':', 'Expression'],
+		(a, identifier, b, expression) => [
+			{ type: '{' },
+			arrayOf('ObjectProperty', [
+				new ObjectProperty(identifier.name, expression)
+			])
+		],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['[ObjectProperty]', ',', 'IdentifierExpression', ':', 'Expression'],
+		(identifiers, a, identifier, b, expression) =>
+			arrayOf('ObjectProperty', [
+				...identifiers.values,
+				new ObjectProperty(identifier.name, expression)
+			]),
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['{', '[ObjectProperty]', '}'],
+		(a, identifiers, b, c, expression) =>
+			new ObjectExpression(identifiers.values)
+	),
+
 	// Operators
 	new Production(
 		['Expression', 'BinaryOperator', 'Expression'],
@@ -112,10 +140,14 @@ const grammar = [
 	),
 
 	// FunctionExpression
-	new Production(['(', 'IdentifierExpression'], (a, identifier) => [
-		{ type: '(' },
-		arrayOf('IdentifierExpression', [identifier])
-	]),
+	new Production(
+		['(', 'IdentifierExpression'],
+		(a, identifier) => [
+			{ type: '(' },
+			arrayOf('IdentifierExpression', [identifier])
+		],
+		peek => peek !== ':'
+	),
 	new Production(
 		['[IdentifierExpression]', ',', 'IdentifierExpression'],
 		(identifiers, a, identifier, b) =>
@@ -144,27 +176,26 @@ const grammar = [
 	new Production(
 		['IdentifierExpression', '=', 'Expression'],
 		(identifier, b, expression) => new Declaration(identifier.name, expression),
-		peek => !operators.includes(peek) && peek !== '=>'
+		peek => !operators.includes(peek)
 	),
 
 	// FunctionCall
 	new Production(
-		['[IdentifierExpression]', ':', 'Expression'],
-		(identifiers, a, expression) =>
+		['(', 'IdentifierExpression', ':', 'Expression'],
+		(a, identifier, b, expression) => [
+			{ type: '(' },
+			arrayOf('Parameter', [new Parameter(identifier.name, expression)])
+		],
+		peek => !operators.includes(peek)
+	),
+	new Production(
+		['[Parameter]', ',', 'IdentifierExpression', ':', 'Expression'],
+		(parameters, a, identifier, b, expression) =>
 			arrayOf('Parameter', [
-				new Parameter(identifiers.values[0].name, expression)
+				...parameters.values,
+				new Parameter(identifier.name, expression)
 			]),
 		peek => !operators.includes(peek)
-	),
-	new Production(
-		['IdentifierExpression', ':', 'Expression'],
-		(identifier, _, expression) => new Parameter(identifier.name, expression),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['[Parameter]', ',', 'Parameter'],
-		(parameters, a, parameter) =>
-			arrayOf('Parameter', [...parameters.values, parameter])
 	),
 	new Production(
 		['Expression', '(', '[Parameter]', ')'],

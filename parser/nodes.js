@@ -80,6 +80,26 @@ export class ArrayExpression extends Expression {
 	}
 }
 
+export class ObjectExpression extends Expression {
+	properties: Array<Expression>
+
+	constructor(properties: Array<Expression>) {
+		super('ObjectExpression')
+		this.properties = properties
+	}
+}
+
+export class ObjectProperty extends Expression {
+	key: string
+	value: Expression
+
+	constructor(key: string, value: Expression) {
+		super('ObjectProperty')
+		this.key = key
+		this.value = value
+	}
+}
+
 export class FunctionExpression extends Expression {
 	parameters: Array<string>
 	body: BlockStatement | Expression
