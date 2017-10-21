@@ -16,6 +16,7 @@
 		"babel-preset-flow": "^6.23.0",
 		"flow-bin": "^0.57.2",
 		"jest": "^21.2.1",
-		"jest-flow-transform": "^1.0.1"
+		"jest-flow-transform": "^1.0.1",
+		"typescript": "^2.5.3"
 	}
 }

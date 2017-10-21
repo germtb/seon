@@ -9,7 +9,7 @@ import {
 	StringExpression,
 	ObjectExpression,
 	ObjectProperty,
-	ObjectAccessExpression,
+	// ObjectAccessExpression,
 	ArrayExpression,
 	FunctionExpression,
 	BlockStatement,
@@ -22,7 +22,7 @@ import {
 	UnaryOperator,
 	PatternMatchingCase,
 	PatternMatchingExpression,
-	ArrayAccessExpression,
+	// ArrayAccessExpression,
 	AnyPattern,
 	NumberPattern,
 	BooleanPattern,
@@ -132,12 +132,11 @@ const grammar = [
 		['{', '}'],
 		(a, identifiers, b, c, expression) => new ObjectExpression([])
 	),
-
-	new Production(
-		['Expression', '.', 'IdentifierExpression'],
-		(expression, c, identifier) =>
-			new ObjectAccessExpression(expression, identifier.name)
-	),
+	// new Production(
+	// 	['Expression', '.', 'IdentifierExpression'],
+	// 	(expression, c, identifier) =>
+	// 		new ObjectAccessExpression(expression, identifier.name)
+	// ),
 
 	// Arrays
 	new Production(

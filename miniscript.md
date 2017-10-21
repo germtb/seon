@@ -1,4 +1,4 @@
-# Tokens
+# Nodes
 Node
 	type: string
 
@@ -9,8 +9,8 @@ Expression < Node
 
 Statement < Node
 
-Identifier < Node
-	name: string
+IdentifierExpression < Node
+	value: string
 
 BooleanExpression < Expression
 	value: boolean
@@ -24,23 +24,11 @@ StringExpression < Expression
 ArrayExpression < Expression
 	value: Array<Expression>
 
-FunctionExpression < Expression
-	parameters: Array<string>
-	body: BlockStatement | Expression
+ObjectExpression < Expression
+	value: Array<ObjectProperty>
 
-BlockStatement < Statement
-	statements: Array<Statement>
-
-Parameter < Node
-	id: string
-	value: Expression
-
-CallExpression < Expression
-	callee: Identifier
-	parameters: Array<Parameter>
-
-Declaration < Statement
-	name: string
+ObjectProperty < Node
+	key: string
 	value: Expression
 
 BinaryExpression < Expression
@@ -49,32 +37,20 @@ BinaryExpression < Expression
 	operator: BinaryOperator
 
 BinaryOperator < Node
+	operator: string
 
 UnaryExpression < Expression
-	expression: Expression
+	argument: Expression
 	operator: UnaryOperator
 
 UnaryOperator < Node
-	operator: UnaryOperatorType
+	operator: string
 
-PatternMatchingDefault < Node
-	result: Expression
-
-PatternMatchingCase < Node
-	pattern: Expression
-	result: Expression
-
-PatternMatchingExpression < Node
-	casePatterns: Array<PatternMatchingCase>
-	defaultPattern: PatternMatchingDefault
+Declaration < Statement
+	pattern: Pattern
+	value: expression
 
 
-ArrayAccessExpression < Expression
-	object: Expression
-	property: number
-
-BlockStatement < Node
-  body: [ Expression ]
 
 # Primitives
 BooleanExpression: true, false
@@ -92,58 +68,50 @@ type '' == 'String'
 
 # Variables
 Declaration:
-  x = 0
-  y = [0, 1, x]
-  z = {
-    x: x,
-    y: y,
-    u: 100
-  }
-ObjectAccessExpression:
-  z.x == 0
-  z.y == [0, 1, 0]
-ArrayAccess:
-  y[0]
+let x = 0
+let y = [0, 1, x]
+let z = {
+  x,
+  y: y,
+  u: 100
+}
 
 # Functions
-FunctionExpression
-f1 = x y => x + y
-f1 = x y => {
-  return x + y
+let f = (x, y) => x + y
+let f = x => x
+let f = x => {
+	let t = x * 2
+	then t
 }
-CallExpression:
-ParameterExpression:
-f1(x: 10)(y: 10) == 100
-f1(x: 10, y: 10) == 100
-f1(y: 10, x: 10) == 100
-f1(y: 10)(x: 10) == 100
+
+# CallExpression:
+f(x)
+f(x)(y)
+f(x, y)
+f(x: 10)(y: 10)
+f(x: 10, y: 10)
+f(y: 10, x: 10)
+f(y: 10)(x: 10)
+
+# ParameterExpression
+x
+x: 100
+
+# PatternMatchingExpression
+x | 0 -> 0 | _ -> x * x
 
 # Pattern matching
 
-cap = (x: string): string => x
+cap = x => x
   | [y, ...ys] -> y
   | [] -> 0
 
 fib = n => n
 	| 1 | 2 -> 1
-	| n -> fib(n: n - 1) + fib(n: n - 2)
+	| _ -> fib(n: n - 1) + fib(n: n - 2)
 
-if = foo =>
-  | true -> 0
-  | false -> 1
+map = f xs => f xs
+	| _ [] -> []
+	| f [x, ...xs] -> [f(x), ...xs]
 
-y = x | [y, ...ys] => y | _ => 0
-
-ternary = x => | true -> 1 | false -> 0
-
-cap = x => 0 = 10 | 10 < x < 100 = x | 100
-ternary = x => x == 10 = 10 | 100
-x = y == 10 = 10 | 100
-
-<!-- # Destructuring
-tail = xs => [ x, ...rest ] = rest | []
-find = xs => { x, ...rest } = x | false
-map = f xs => [ x, ...rest ] = [ f(x)] -->
-
-### Recursion
-first = xs condition = [ x, ... xs ] = condition(x) =
+let x = foo | true -> 1 | false -> 0

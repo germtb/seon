@@ -36,6 +36,7 @@ const matchTable = {
 
 	// Patterns
 	Pattern: ['Pattern', 'Node'],
+	MultiPattern: ['MultiPattern', 'Pattern', 'Node'],
 	AnyPattern: ['AnyPattern', 'Pattern', 'Node'],
 	NumberPattern: ['NumberPattern', 'Pattern', 'Node'],
 	BooleanPattern: ['BooleanPattern', 'Pattern', 'Node'],

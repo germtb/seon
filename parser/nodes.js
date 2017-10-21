@@ -299,7 +299,7 @@ export class RestElement extends Node {
 }
 
 export class ArrayPattern extends Pattern {
-	values: Array<IdentifierExpression | RestElement>
+	values: Array<IdentifierExpressioN | RestElement>
 
 	constructor(values: Array<IdentifierExpression | RestElement>) {
 		super('ArrayPattern')
@@ -313,6 +313,14 @@ export class ObjectPattern extends Pattern {
 	constructor(values: Array<Identifier | RestElement>) {
 		super('ObjectPattern')
 		this.values = values
+	}
+}
+
+export class MultiPattern extends Pattern {
+	patterns: Pattern
+
+	consctructor(patterns: Patterna) {
+		this.patterns = patterns
 	}
 }
 
