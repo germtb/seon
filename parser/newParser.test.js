@@ -17,8 +17,8 @@ import {
 	NamedParameter,
 	FunctionExpression,
 	CallExpression,
-	AnyPattern,
 	NumberPattern,
+	AnyPattern,
 	BooleanPattern,
 	StringPattern,
 	ArrayPattern,
@@ -383,6 +383,16 @@ describe('parser', () => {
 		])
 	})
 
+	test('converts an any-pattern pattern case', () => {
+		const tokens = tokenizer('| x -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new AnyPattern('x')], new NumberExpression(0))
+			])
+		])
+	})
+
 	test('converts a boolean pattern case', () => {
 		const tokens = tokenizer('| true -> 0')
 		const nodes = parse(tokens)
@@ -490,6 +500,50 @@ describe('parser', () => {
 				new PatternCase(
 					[new NumberPattern(0), new NumberPattern(10)],
 					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts multi-patterns #2', () => {
+		const tokens = tokenizer('| _, [] -> []')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new NoPattern(), new ArrayPattern(new ArrayExpression([]))],
+					new ArrayExpression([])
+				)
+			])
+		])
+	})
+
+	test('converts multi-patterns #3', () => {
+		const tokens = tokenizer('| f, { x, ...xs } -> { x: f(x), ...xs }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[
+						new AnyPattern('f'),
+						new ObjectPattern(
+							new ObjectExpression([
+								new ObjectProperty(new IdentifierExpression('x')),
+								new ObjectProperty(new RestElement('xs'))
+							])
+						)
+					],
+					new ObjectExpression([
+						new ObjectProperty(
+							new NamedParameter(
+								'x',
+								new CallExpression(new IdentifierExpression('f'), [
+									new IdentifierExpression('x')
+								])
+							)
+						),
+						new ObjectProperty(new RestElement('xs'))
+					])
 				)
 			])
 		])

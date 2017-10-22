@@ -180,6 +180,9 @@ const grammar = [
 	new Production(['|', '_', ',|->'], () =>
 		arrayOf('Pattern', [new NoPattern()])
 	),
+	new Production(['|', 'IdentifierExpression', ',|->'], (_, identifier) =>
+		arrayOf('Pattern', [new AnyPattern(identifier.name)])
+	),
 	new Production(['|', 'BooleanExpression', ',|->'], (_, boolean) =>
 		arrayOf('Pattern', [new BooleanPattern(boolean.value)])
 	),
@@ -199,6 +202,11 @@ const grammar = [
 	// Concatenate patterns
 	new Production(['[Pattern]', '_', ',|->'], (patterns, boolean) =>
 		arrayOf('Pattern', [...patterns.values, new BooleanPattern(boolean.value)])
+	),
+	new Production(
+		['[Pattern]', 'IdentifierExpression', ',|->'],
+		(patterns, identifier) =>
+			arrayOf('Pattern', [...patterns.values, new AnyPattern(identifier.name)])
 	),
 	new Production(
 		['[Pattern]', 'BooleanExpression', ',|->'],
