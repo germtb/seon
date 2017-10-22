@@ -81,6 +81,10 @@ describe('tokenizer', () => {
 		expect(tokenizer(')')).toEqual([{ type: ')' }])
 	})
 
+	test('produces a |> token', () => {
+		expect(tokenizer('|>')).toEqual([{ type: '|>' }])
+	})
+
 	test('produces an Identifier token', () => {
 		expect(tokenizer('hello')).toEqual([{ type: 'Identifier', value: 'hello' }])
 	})
