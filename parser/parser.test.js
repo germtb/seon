@@ -2,450 +2,570 @@ import tokenizer from '../tokenizer/tokenizer'
 import parse from './parser'
 import {
 	File,
+	UnaryOperator,
+	UnaryExpression,
+	BinaryOperator,
+	BinaryExpression,
+	IdentifierExpression,
+	BooleanExpression,
+	NumberExpression,
+	StringExpression,
+	ArrayExpression,
+	RestElement,
 	ObjectExpression,
 	ObjectProperty,
-	ObjectAccessExpression,
-	ArrayExpression,
-	UnaryOperator,
-	BooleanExpression,
-	UnaryExpression,
-	IdentifierExpression,
-	NumberExpression,
-	BinaryExpression,
-	BinaryOperator,
-	FunctionExpression,
 	NamedParameter,
+	FunctionExpression,
 	CallExpression,
-	Declaration,
-	PatternMatchingCase,
-	PatternMatchingDefault,
-	PatternMatchingExpression,
-	AnyPattern,
 	NumberPattern,
+	AnyPattern,
 	BooleanPattern,
 	StringPattern,
-	RestElement,
 	ArrayPattern,
 	ObjectPattern,
-	NoPattern
+	NoPattern,
+	PatternCase,
+	PatternExpression
 } from './nodes'
 
 describe('parser', () => {
-	test('', () => {})
-	// test('converts a number', () => {
-	// 	const tokens = tokenizer('1234')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([new File([new NumberExpression(1234)])])
-	// })
-	//
-	// test('converts a unary expression', () => {
-	// 	const tokens = tokenizer('!true')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new UnaryExpression(new UnaryOperator('!'), new BooleanExpression(true))
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a binary expression', () => {
-	// 	const tokens = tokenizer('1234 + 3')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new BinaryExpression(
-	// 				new NumberExpression(1234),
-	// 				new NumberExpression(3),
-	// 				new BinaryOperator('+')
-	// 			)
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a function without parameters', () => {
-	// 	const tokens = tokenizer('_ => 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([new FunctionExpression([], new NumberExpression(10))])
-	// 	])
-	// })
-	//
-	// test('converts a function with one parameter', () => {
-	// 	const tokens = tokenizer('x => 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([new FunctionExpression(['x'], new NumberExpression(10))])
-	// 	])
-	// })
-	//
-	// test('converts a function with two parameters', () => {
-	// 	const tokens = tokenizer('(x, y) => 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([new FunctionExpression(['x', 'y'], new NumberExpression(10))])
-	// 	])
-	// })
-	//
-	// test('converts a function call', () => {
-	// 	const tokens = tokenizer('f(x: 10)')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new CallExpression(new IdentifierExpression('f'), [
-	// 				new NamedParameter('x', new NumberExpression(10))
-	// 			])
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a function call with two parameters', () => {
-	// 	const tokens = tokenizer('f(x: 10, y: 50)')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new CallExpression(new IdentifierExpression('f'), [
-	// 				new NamedParameter('x', new NumberExpression(10)),
-	// 				new NamedParameter('y', new NumberExpression(50))
-	// 			])
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a declaration', () => {
-	// 	const tokens = tokenizer('x = 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([new Declaration(new AnyPattern('x'), new NumberExpression(10))])
-	// 	])
-	// })
-	//
-	// test('converts several declarations', () => {
-	// 	const tokens = tokenizer(`
-	// 		x = 10
-	// 		y = 20
-	// 		z = 30
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new Declaration(new AnyPattern('x'), new NumberExpression(10)),
-	// 			new Declaration(new AnyPattern('y'), new NumberExpression(20)),
-	// 			new Declaration(new AnyPattern('z'), new NumberExpression(30))
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a pattern case', () => {
-	// 	const tokens = tokenizer('| 10 -> 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new PatternMatchingExpression([
-	// 				new PatternMatchingCase(
-	// 					new NumberPattern(10),
-	// 					new NumberExpression(10)
-	// 				)
-	// 			])
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a pattern expression', () => {
-	// 	const tokens = tokenizer('| 5 -> 10 | 10 -> 10 | _ -> 3')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new PatternMatchingExpression([
-	// 				new PatternMatchingCase(
-	// 					new NumberPattern(5),
-	// 					new NumberExpression(10)
-	// 				),
-	// 				new PatternMatchingCase(
-	// 					new NumberPattern(10),
-	// 					new NumberExpression(10)
-	// 				),
-	// 				new PatternMatchingCase(new NoPattern(), new NumberExpression(3))
-	// 			])
-	// 		])
-	// 	])
-	// })
-	//
-	// test('functions with one parameter do not need parenthesis', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = n => 0
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new Declaration(
-	// 				new AnyPattern('f'),
-	// 				new FunctionExpression(['n'], new NumberExpression(0))
-	// 			)
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a function declaration', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = n => 0
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new Declaration(
-	// 				new AnyPattern('f'),
-	// 				new FunctionExpression(['n'], new NumberExpression(0))
-	// 			)
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a function with a body with expression of expressions', () => {
-	// 	const tokens = tokenizer('n => n + n')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new FunctionExpression(
-	// 				['n'],
-	// 				new BinaryExpression(
-	// 					new IdentifierExpression('n'),
-	// 					new IdentifierExpression('n'),
-	// 					new BinaryOperator('+')
-	// 				)
-	// 			)
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts correct precedence', () => {
-	// 	const tokens = tokenizer('1 * 2 + 3 * 4')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new BinaryExpression(
-	// 				new BinaryExpression(
-	// 					new NumberExpression(1),
-	// 					new NumberExpression(2),
-	// 					new BinaryOperator('*')
-	// 				),
-	// 				new BinaryExpression(
-	// 					new NumberExpression(3),
-	// 					new NumberExpression(4),
-	// 					new BinaryOperator('*')
-	// 				),
-	// 				new BinaryOperator('+')
-	// 			)
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts a file', () => {
-	// 	const tokens = tokenizer(`
-	// 		x = 10
-	// 		y = 100
-	// 		area = x * y
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new Declaration(new AnyPattern('x'), new NumberExpression(10)),
-	// 			new Declaration(new AnyPattern('y'), new NumberExpression(100)),
-	// 			new Declaration(
-	// 				new AnyPattern('area'),
-	// 				new BinaryExpression(
-	// 					new IdentifierExpression('x'),
-	// 					new IdentifierExpression('y'),
-	// 					new BinaryOperator('*')
-	// 				)
-	// 			)
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts an object expression', () => {
-	// 	const tokens = tokenizer('{ x: 100 }')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new ObjectExpression([
-	// 				new ObjectProperty('x', new NumberExpression(100))
-	// 			])
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts an object access expression', () => {
-	// 	const tokens = tokenizer('x.hello')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new ObjectAccessExpression(new IdentifierExpression('x'), 'hello')
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts an array expression', () => {
-	// 	const tokens = tokenizer('[ 1, 2 ]')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([
-	// 			new ArrayExpression([new NumberExpression(1), new NumberExpression(2)])
-	// 		])
-	// 	])
-	// })
-	//
-	// test('converts an empty array', () => {
-	// 	const tokens = tokenizer('[]')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([new File([new ArrayExpression([])])])
-	// })
-	//
-	// test('convets a anyPattern', () => {
-	// 	const tokens = tokenizer('x = 10')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		new File([new Declaration(new AnyPattern('x'), new NumberExpression(10))])
-	// 	])
-	// })
-	//
-	// test('convets a numberPattern', () => {
-	// 	const tokens = tokenizer('| n: 1')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([
-	// 		{ type: '|' },
-	// 		new File([new NumberPattern('n', 1)])
-	// 	])
-	// })
-	//
-	// // test('convets a booleanPattern', () => {
-	// // 	const tokens = tokenizer('| b: true')
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([{ type: '|' }, new File([new BooleanPattern(true)])])
-	// // })
-	//
-	// // test('convets a stringPattern', () => {
-	// // 	const tokens = tokenizer("| s: ''")
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([{ type: '|' }, new File([new StringPattern('')])])
-	// // })
-	//
-	// test('convets a restElement', () => {
-	// 	const tokens = tokenizer('...x')
-	// 	const nodes = parse(tokens)
-	// 	expect(nodes).toEqual([new File([new RestElement('x')])])
-	// })
-	//
-	// // test('converts a arrayPattern', () => {
-	// // 	const tokens = tokenizer('| xs: [x]')
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([
-	// // 		{ type: '|' },
-	// // 		new File([new ArrayPattern([new IdentifierExpression('x')])])
-	// // 	])
-	// // })
-	//
-	// // test('converts a destructured array pattern', () => {
-	// // 	const tokens = tokenizer('| [x, ...xs] -> x')
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([
-	// // 		new File([
-	// // 			new PatternMatchingExpression([
-	// // 				new PatternMatchingCase(
-	// // 					new ArrayPattern([
-	// // 						new IdentifierExpression('x'),
-	// // 						new RestElement('xs')
-	// // 					]),
-	// // 					new IdentifierExpression('x')
-	// // 				)
-	// // 			])
-	// // 		])
-	// // 	])
-	// // })
-	// //
-	// // test('convets a objectPattern', () => {
-	// // 	const tokens = tokenizer('| {}')
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([{ type: '|' }, new File([new ObjectPattern([])])])
-	// // })
-	// //
-	// // test('convets a noPattern', () => {
-	// // 	const tokens = tokenizer('_')
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([new File([new NoPattern()])])
-	// // })
-	// //
-	// // test('converts pattern with multiple arguments', () => {
-	// // 	const tokens = tokenizer('| (n: _, xs: []) -> 0')
-	// // 	const nodes = parse(tokens)
-	// // 	expect(nodes).toEqual([
-	// // 		new File([
-	// // 			new PatternMatchingExpression([
-	// // 				new PatternMatchingCase(
-	// // 					new MultiPattern([
-	// // 						new NoPattern('n'),
-	// // 						new AnyPattern('xs', new ArrayExpression('[]'))
-	// // 					]),
-	// // 					new IdentifierExpression('x')
-	// // 				)
-	// // 			])
-	// // 		])
-	// // 	])
-	// // })
-	// //
-	// // test('converts fibonacci', () => {
-	// // 	const tokens = tokenizer(`
-	// // 		fib = n =>
-	// // 			| 1 -> 1
-	// // 			| 2 -> 1
-	// // 			| _ -> fib(n: n - 1) + fib(n: n - 2)
-	// // 	`)
-	// // 	const nodes = parse(tokens)
-	// //
-	// // 	expect(nodes).toEqual([
-	// // 		new File([
-	// // 			new Declaration(
-	// // 				new AnyPattern('fib'),
-	// // 				new FunctionExpression(
-	// // 					['n'],
-	// // 					new PatternMatchingExpression([
-	// // 						new PatternMatchingCase(
-	// // 							new NumberPattern(1),
-	// // 							new NumberExpression(1)
-	// // 						),
-	// // 						new PatternMatchingCase(
-	// // 							new NumberPattern(2),
-	// // 							new NumberExpression(1)
-	// // 						),
-	// // 						new PatternMatchingCase(
-	// // 							new NoPattern(),
-	// // 							new BinaryExpression(
-	// // 								new CallExpression(new IdentifierExpression('fib'), [
-	// // 									new NamedParameter(
-	// // 										'n',
-	// // 										new BinaryExpression(
-	// // 											new IdentifierExpression('n'),
-	// // 											new NumberExpression(1),
-	// // 											new BinaryOperator('-')
-	// // 										)
-	// // 									)
-	// // 								]),
-	// // 								new CallExpression(new IdentifierExpression('fib'), [
-	// // 									new NamedParameter(
-	// // 										'n',
-	// // 										new BinaryExpression(
-	// // 											new IdentifierExpression('n'),
-	// // 											new NumberExpression(2),
-	// // 											new BinaryOperator('-')
-	// // 										)
-	// // 									)
-	// // 								]),
-	// // 								new BinaryOperator('+')
-	// // 							)
-	// // 						)
-	// // 					])
-	// // 				)
-	// // 			)
-	// // 		])
-	// // 	])
-	// // })
+	test('converts an identifier', () => {
+		const tokens = tokenizer('x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new IdentifierExpression('x')])])
+	})
+
+	test('converts a boolean', () => {
+		const tokens = tokenizer('true')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new BooleanExpression(true)])])
+	})
+
+	test('converts a number', () => {
+		const tokens = tokenizer('1234')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new NumberExpression(1234)])])
+	})
+
+	test('converts a string', () => {
+		const tokens = tokenizer("'1234'")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new StringExpression('1234')])])
+	})
+
+	test('converts a binary opertor', () => {
+		const tokens = tokenizer('+')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new BinaryOperator('+')])])
+	})
+
+	test('converts a unary opertor', () => {
+		const tokens = tokenizer('!')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new UnaryOperator('!')])])
+	})
+
+	test('converts a type opertor', () => {
+		const tokens = tokenizer('type')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new UnaryOperator('TypeOperator')])])
+	})
+
+	test('converts a binary expression', () => {
+		const tokens = tokenizer('10 - 5')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new BinaryExpression(
+					new NumberExpression(10),
+					new BinaryOperator('-'),
+					new NumberExpression(5)
+				)
+			])
+		])
+	})
+
+	test('converts a unary expression', () => {
+		const tokens = tokenizer('!5')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new UnaryExpression(new UnaryOperator('!'), new NumberExpression(5))
+			])
+		])
+	})
+
+	test('converts a type expression', () => {
+		const tokens = tokenizer('type 5')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new UnaryExpression(
+					new UnaryOperator('TypeOperator'),
+					new NumberExpression(5)
+				)
+			])
+		])
+	})
+
+	test('converts with the right precedence #1', () => {
+		const tokens = tokenizer('1 * 2 + 3 * 4')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new BinaryExpression(
+					new BinaryExpression(
+						new NumberExpression(1),
+						new BinaryOperator('*'),
+						new NumberExpression(2)
+					),
+					new BinaryOperator('+'),
+					new BinaryExpression(
+						new NumberExpression(3),
+						new BinaryOperator('*'),
+						new NumberExpression(4)
+					)
+				)
+			])
+		])
+	})
+
+	test('converts with the right precedence #2', () => {
+		const tokens = tokenizer('1 ** 2 * 3 ** 4')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new BinaryExpression(
+					new BinaryExpression(
+						new NumberExpression(1),
+						new BinaryOperator('**'),
+						new NumberExpression(2)
+					),
+					new BinaryOperator('*'),
+					new BinaryExpression(
+						new NumberExpression(3),
+						new BinaryOperator('**'),
+						new NumberExpression(4)
+					)
+				)
+			])
+		])
+	})
+
+	test('converts an empty array', () => {
+		const tokens = tokenizer('[]')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new ArrayExpression([])])])
+	})
+
+	test('converts a non-empty array #1', () => {
+		const tokens = tokenizer('[0]')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new ArrayExpression([new NumberExpression(0)])])
+		])
+	})
+
+	test('converts a non-empty array #2', () => {
+		const tokens = tokenizer("[0, x, 'hello']")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ArrayExpression([
+					new NumberExpression(0),
+					new IdentifierExpression('x'),
+					new StringExpression('hello')
+				])
+			])
+		])
+	})
+
+	test('converts a non-empty array #3', () => {
+		const tokens = tokenizer('[0, x, ...y]')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ArrayExpression([
+					new NumberExpression(0),
+					new IdentifierExpression('x'),
+					new RestElement('y')
+				])
+			])
+		])
+	})
+
+	test('converts a rest element', () => {
+		const tokens = tokenizer('...x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new RestElement('x')])])
+	})
+
+	test('converts a parameter #1', () => {
+		const tokens = tokenizer('x: 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new NamedParameter('x', new NumberExpression(10))])
+		])
+	})
+
+	test('converts a parameter #2', () => {
+		const tokens = tokenizer('x: 10 + 2')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new NamedParameter(
+					'x',
+					new BinaryExpression(
+						new NumberExpression(10),
+						new BinaryOperator('+'),
+						new NumberExpression(2)
+					)
+				)
+			])
+		])
+	})
+
+	test('converts an empty object', () => {
+		const tokens = tokenizer('{}')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new ObjectExpression([])])])
+	})
+
+	test('converts a non-empty object #1', () => {
+		const tokens = tokenizer('{ x }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new IdentifierExpression('x'))
+				])
+			])
+		])
+	})
+
+	test('converts a non-empty object #2', () => {
+		const tokens = tokenizer('{ x: 10 }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new NamedParameter('x', new NumberExpression(10)))
+				])
+			])
+		])
+	})
+
+	test('converts a non-empty object #3', () => {
+		const tokens = tokenizer('{ ...x }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([new ObjectProperty(new RestElement('x'))])
+			])
+		])
+	})
+
+	test('converts a non-empty object #4', () => {
+		const tokens = tokenizer('{ x, y: 100, ...z }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new IdentifierExpression('x')),
+					new ObjectProperty(
+						new NamedParameter('y', new NumberExpression(100))
+					),
+					new ObjectProperty(new RestElement('z'))
+				])
+			])
+		])
+	})
+
+	test('converts a function expression with no parameter', () => {
+		const tokens = tokenizer('() => x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new FunctionExpression([], new IdentifierExpression('x'))])
+		])
+	})
+
+	test('converts a function expression with one parameter #1', () => {
+		const tokens = tokenizer('x => x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new FunctionExpression(
+					[new IdentifierExpression('x')],
+					new IdentifierExpression('x')
+				)
+			])
+		])
+	})
+
+	test('converts a function expression several parameters #1', () => {
+		const tokens = tokenizer('(x, y) => x + y')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new FunctionExpression(
+					[new IdentifierExpression('x'), new IdentifierExpression('y')],
+					new BinaryExpression(
+						new IdentifierExpression('x'),
+						new BinaryOperator('+'),
+						new IdentifierExpression('y')
+					)
+				)
+			])
+		])
+	})
+
+	test('converts a function expression several parameters #2', () => {
+		const tokens = tokenizer('(x, z: 10, ...y) => x + y')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new FunctionExpression(
+					[
+						new IdentifierExpression('x'),
+						new NamedParameter('z', new NumberExpression(10)),
+						new RestElement('y')
+					],
+					new BinaryExpression(
+						new IdentifierExpression('x'),
+						new BinaryOperator('+'),
+						new IdentifierExpression('y')
+					)
+				)
+			])
+		])
+	})
+
+	test('converts a function call #1', () => {
+		const tokens = tokenizer('f(x)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new IdentifierExpression('x')
+				])
+			])
+		])
+	})
+
+	test('converts a function call #2', () => {
+		const tokens = tokenizer('f(x: 10)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new NamedParameter('x', new NumberExpression(10))
+				])
+			])
+		])
+	})
+
+	test('converts a function call #3', () => {
+		const tokens = tokenizer('f(...x)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new RestElement('x')
+				])
+			])
+		])
+	})
+
+	test('converts a no-pattern pattern case', () => {
+		const tokens = tokenizer('| _ -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new PatternCase([new NoPattern()], new NumberExpression(0))])
+		])
+	})
+
+	test('converts an any-pattern pattern case', () => {
+		const tokens = tokenizer('| x -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new AnyPattern('x')], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts a boolean pattern case', () => {
+		const tokens = tokenizer('| true -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new BooleanPattern(true)], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts a number pattern case', () => {
+		const tokens = tokenizer('| 0 -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new NumberPattern(0)], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts a string pattern case', () => {
+		const tokens = tokenizer("| 'hello' -> 0")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new StringPattern('hello')], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts an array pattern case #1', () => {
+		const tokens = tokenizer('| [] -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new ArrayPattern(new ArrayExpression([]))],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts an array pattern case #2', () => {
+		const tokens = tokenizer('| [x, ...y] -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[
+						new ArrayPattern(
+							new ArrayExpression([
+								new IdentifierExpression('x'),
+								new RestElement('y')
+							])
+						)
+					],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts an object pattern case #1', () => {
+		const tokens = tokenizer('| {} -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new ObjectPattern(new ObjectExpression([]))],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts an object pattern case #2', () => {
+		const tokens = tokenizer('| { x, y: 10, ...z } -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[
+						new ObjectPattern(
+							new ObjectExpression([
+								new ObjectProperty(new IdentifierExpression('x')),
+								new ObjectProperty(
+									new NamedParameter('y', new NumberExpression(10))
+								),
+								new ObjectProperty(new RestElement('z'))
+							])
+						)
+					],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts multi-patterns #1', () => {
+		const tokens = tokenizer('| 0, 10 -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new NumberPattern(0), new NumberPattern(10)],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts multi-patterns #2', () => {
+		const tokens = tokenizer('| _, [] -> []')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new NoPattern(), new ArrayPattern(new ArrayExpression([]))],
+					new ArrayExpression([])
+				)
+			])
+		])
+	})
+
+	test('converts multi-patterns #3', () => {
+		const tokens = tokenizer('| f, { x, ...xs } -> { x: f(x), ...xs }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[
+						new AnyPattern('f'),
+						new ObjectPattern(
+							new ObjectExpression([
+								new ObjectProperty(new IdentifierExpression('x')),
+								new ObjectProperty(new RestElement('xs'))
+							])
+						)
+					],
+					new ObjectExpression([
+						new ObjectProperty(
+							new NamedParameter(
+								'x',
+								new CallExpression(new IdentifierExpression('f'), [
+									new IdentifierExpression('x')
+								])
+							)
+						),
+						new ObjectProperty(new RestElement('xs'))
+					])
+				)
+			])
+		])
+	})
+
+	test('converts a pattern expression #1', () => {
+		const tokens = tokenizer('x | 0 -> false | _ -> true')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternExpression(
+					[new IdentifierExpression('x')],
+					[
+						new PatternCase(
+							[new NumberPattern(0)],
+							new BooleanExpression(false)
+						),
+						new PatternCase([new NoPattern()], new BooleanExpression(true))
+					]
+				)
+			])
+		])
+	})
 })

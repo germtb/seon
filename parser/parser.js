@@ -1,43 +1,35 @@
 import {
-	Node,
 	File,
-	Expression,
-	Statement,
+	UnaryOperator,
+	UnaryExpression,
+	BinaryOperator,
+	BinaryExpression,
 	IdentifierExpression,
 	BooleanExpression,
 	NumberExpression,
 	StringExpression,
+	ArrayExpression,
+	RestElement,
 	ObjectExpression,
 	ObjectProperty,
-	// ObjectAccessExpression,
-	ArrayExpression,
-	FunctionExpression,
-	BlockStatement,
 	NamedParameter,
+	FunctionExpression,
 	CallExpression,
-	Declaration,
-	BinaryExpression,
-	BinaryOperator,
-	UnaryExpression,
-	UnaryOperator,
-	PatternMatchingCase,
-	PatternMatchingExpression,
-	// ArrayAccessExpression,
 	AnyPattern,
 	NumberPattern,
 	BooleanPattern,
 	StringPattern,
-	RestElement,
 	ArrayPattern,
 	ObjectPattern,
-	NoPattern
+	NoPattern,
+	PatternCase,
+	PatternExpression
 } from './nodes'
-
 import { Production } from './Production'
 import { arrayOf } from './utils'
 
-const unaryOperators = ['!', 'type']
-
+const nonOperators = ['(', '.', '[', '{']
+const unaryOperators = ['!', 'TypeOperator']
 const binaryOperators = [
 	'+',
 	'*',
@@ -55,9 +47,13 @@ const binaryOperators = [
 	'||'
 ]
 
-const operators = [...unaryOperators, ...binaryOperators, '.', '(', '=>']
+const lowestPrecedence = peek =>
+	!nonOperators.includes(peek) &&
+	!unaryOperators.includes(peek) &&
+	!binaryOperators.includes(peek)
 
-const precedence = {
+const operatorPrecedence = {
+	TypeOperator: ['(', '.'],
 	'!': ['(', '.'],
 	'**': ['!', '(', '.'],
 	'*': ['!', '(', '.', '**'],
@@ -77,8 +73,8 @@ const precedence = {
 
 const grammar = [
 	// Terminals
-	...binaryOperators.map(o => new Production([o], () => new BinaryOperator(o))),
 	...unaryOperators.map(o => new Production([o], () => new UnaryOperator(o))),
+	...binaryOperators.map(o => new Production([o], () => new BinaryOperator(o))),
 	new Production(
 		['Identifier'],
 		identifier => new IdentifierExpression(identifier.value)
@@ -96,199 +92,214 @@ const grammar = [
 		expression => new NumberExpression(expression.value)
 	),
 
-	// Objects
-	new Production(
-		['{', 'IdentifierExpression', ':', 'Expression'],
-		(a, identifier, b, expression) => [
-			{ type: '{' },
-			arrayOf('ObjectProperty', [
-				new ObjectProperty(identifier.name, expression)
-			])
-		],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['[ObjectProperty]', ',', 'IdentifierExpression', ':', 'Expression'],
-		(identifiers, a, identifier, b, expression) =>
-			arrayOf('ObjectProperty', [
-				...identifiers.values,
-				new ObjectProperty(identifier.name, expression)
-			]),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['{', '[ObjectProperty]', '}'],
-		(a, identifiers, b, c, expression) =>
-			new ObjectExpression(identifiers.values)
-	),
-	new Production(
-		['{', '}'],
-		(a, identifiers, b, c, expression) => new ObjectExpression([])
-	),
-	// new Production(
-	// 	['Expression', '.', 'IdentifierExpression'],
-	// 	(expression, c, identifier) =>
-	// 		new ObjectAccessExpression(expression, identifier.name)
-	// ),
-
-	// Arrays
-	new Production(
-		['[', 'Expression'],
-		(a, expression) => [{ type: '[' }, arrayOf('Expression', [expression])],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['[Expression]', ',', 'Expression'],
-		(expressions, a, expression) =>
-			arrayOf('Expression', [...expressions.values, expression]),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['[', '[Expression]', ']'],
-		(a, expressions, b) => new ArrayExpression(expressions.values)
-	),
-	new Production(['[', ']'], () => new ArrayExpression([])),
-
 	// Operators
 	new Production(
 		['Expression', 'BinaryOperator', 'Expression'],
-		(left, binaryOperator, right) =>
-			new BinaryExpression(left, right, binaryOperator),
-		(peek, a, binaryOperator) =>
-			!precedence[binaryOperator.operator].includes(peek)
+		(left, op, right) => new BinaryExpression(left, op, right),
+		(peek, _, op) => !operatorPrecedence[op.operator].includes(peek)
 	),
 	new Production(
 		['UnaryOperator', 'Expression'],
-		(unaryOperator, expression) =>
-			new UnaryExpression(unaryOperator, expression),
-		(peek, unaryOperator) => !precedence[unaryOperator.operator].includes(peek)
+		(op, expression) => new UnaryExpression(op, expression),
+		(peek, op) => !operatorPrecedence[op.operator].includes(peek)
 	),
 
-	// FunctionExpression
+	// Arrays
+	new Production(['[', ']'], () => new ArrayExpression([])),
 	new Production(
-		['(', 'IdentifierExpression'],
-		(a, identifier) => [
-			{ type: '(' },
-			arrayOf('IdentifierExpression', [identifier])
+		['[', 'Expression|RestElement', ']'],
+		(_, expression) => new ArrayExpression([expression])
+	),
+	new Production(['[', 'Expression|RestElement', ','], (_, expression) =>
+		arrayOf('Expression', [expression])
+	),
+	new Production(
+		['[Expression]', 'Expression|RestElement', ','],
+		(expressions, expression) =>
+			arrayOf('Expression', [...expressions.values, expression])
+	),
+	new Production(
+		['[Expression]', 'Expression|RestElement', ']'],
+		(expressions, expression) =>
+			new ArrayExpression([...expressions.values, expression])
+	),
+
+	// Obejcts
+	new Production(['{', '}'], () => new ObjectExpression([])),
+	new Production(
+		['{', 'IdentifierExpression|NamedParameter|RestElement', '}'],
+		(_, identifier) => new ObjectExpression([new ObjectProperty(identifier)])
+	),
+	new Production(
+		['{', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		(_, expression) =>
+			arrayOf('ObjectProperty', [new ObjectProperty(expression)])
+	),
+	new Production(
+		[
+			'[ObjectProperty]',
+			'IdentifierExpression|NamedParameter|RestElement',
+			','
 		],
-		peek => peek !== ':'
-	),
-	new Production(
-		['[IdentifierExpression]', ',', 'IdentifierExpression'],
-		(identifiers, a, identifier, b) =>
-			arrayOf('IdentifierExpression', [...identifiers.values, identifier])
-	),
-	new Production(
-		['(', '[IdentifierExpression]', ')', '=>', 'Expression'],
-		(a, identifiers, b, c, expression) =>
-			new FunctionExpression(identifiers.values.map(x => x.name), expression),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['IdentifierExpression', '=>', 'Expression'],
-		(identifier, b, expression) =>
-			new FunctionExpression([identifier.name], expression),
-		peek => !operators.includes(peek)
-	),
-
-	new Production(
-		['NoPattern', '=>', 'Expression'],
-		(a, b, expression) => new FunctionExpression([], expression),
-		peek => !operators.includes(peek)
-	),
-
-	// Declaration
-	new Production(
-		['Pattern', '=', 'Expression'],
-		(pattern, b, expression) => new Declaration(pattern, expression),
-		peek => !operators.includes(peek)
-	),
-
-	// FunctionCall
-	new Production(
-		['(', 'IdentifierExpression', ':', 'Expression'],
-		(a, identifier, b, expression) => [
-			{ type: '(' },
-			arrayOf('NamedParameter', [
-				new NamedParameter(identifier.name, expression)
+		(expressions, expression) =>
+			arrayOf('ObjectProperty', [
+				...expressions.values,
+				new ObjectProperty(expression)
 			])
+	),
+	new Production(
+		[
+			'[ObjectProperty]',
+			'IdentifierExpression|NamedParameter|RestElement',
+			'}'
 		],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['[NamedParameter]', ',', 'IdentifierExpression', ':', 'Expression'],
-		(parameters, a, identifier, b, expression) =>
-			arrayOf('NamedParameter', [
-				...parameters.values,
-				new NamedParameter(identifier.name, expression)
-			]),
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['Expression', '(', '[NamedParameter]', ')'],
-		(identifier, a, parameters) =>
-			new CallExpression(identifier, parameters.values)
+		(expressions, expression) =>
+			new ObjectExpression([
+				...expressions.values,
+				new ObjectProperty(expression)
+			])
 	),
 
-	// Patterns
-	new Production(['_'], () => new NoPattern()),
-	new Production(['|', '_'], () => new NoPattern()),
-	new Production(['IdentifierExpression', '='], identifier => [
-		new AnyPattern(identifier.name),
-		{ type: '=' }
-	]),
+	// NamedParameters
 	new Production(
-		['|', 'IdentifierExpression'],
-		(a, identifier) => [{ type: '|' }, new AnyPattern(identifier.name)],
-		peek => !operators.includes(peek)
+		['IdentifierExpression', ':', 'Expression'],
+		(identifier, _, expression) =>
+			new NamedParameter(identifier.name, expression),
+		lowestPrecedence
 	),
-	new Production(
-		['|', 'NumberExpression'],
-		(a, number) => [{ type: '|' }, new NumberPattern(number.value)],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['|', 'BooleanExpression'],
-		(a, boolean) => [{ type: '|' }, new BooleanPattern(boolean.value)],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['|', 'StringExpression'],
-		(a, string) => [{ type: '|' }, new StringPattern(string.value)],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['|', 'ArrayExpression'],
-		(a, array) => [{ type: '|' }, new ArrayPattern(array.value)],
-		peek => !operators.includes(peek)
-	),
-	new Production(
-		['|', 'ObjectExpression'],
-		(a, object) => [{ type: '|' }, new ObjectPattern(object.properties)],
-		peek => !operators.includes(peek)
-	),
+
+	// RestElement
 	new Production(
 		['...', 'Expression'],
 		(a, identifier) => new RestElement(identifier.name),
-		peek => peek !== '.' && peek !== '[' && peek !== '('
+		lowestPrecedence
 	),
 
-	// PatternMatchingExpression
+	// PatternExpressions
 	new Production(
-		['|', 'Pattern', '->', 'Expression'],
-		(a, pattern, c, result) => new PatternMatchingCase(pattern, result),
-		peek => !operators.includes(peek)
+		['PatternExpression', 'PatternCase'],
+		(patternExpression, patternCase) =>
+			new PatternExpression(patternExpression.expressions, [
+				...patternExpression.patternCases,
+				patternCase
+			])
 	),
 	new Production(
-		['PatternMatchingCase'],
-		pattern => new PatternMatchingExpression([pattern]),
-		peek => !operators.includes(peek) && peek !== '|'
+		['Expression', 'PatternCase'],
+		(expression, patternCase) =>
+			new PatternExpression([expression], [patternCase])
+	),
+
+	// Begin pattern
+	new Production(['|', '_', ',|->'], () =>
+		arrayOf('Pattern', [new NoPattern()])
+	),
+	new Production(['|', 'IdentifierExpression', ',|->'], (_, identifier) =>
+		arrayOf('Pattern', [new AnyPattern(identifier.name)])
+	),
+	new Production(['|', 'BooleanExpression', ',|->'], (_, boolean) =>
+		arrayOf('Pattern', [new BooleanPattern(boolean.value)])
+	),
+	new Production(['|', 'NumberExpression', ',|->'], (_, number) =>
+		arrayOf('Pattern', [new NumberPattern(number.value)])
+	),
+	new Production(['|', 'StringExpression', ',|->'], (_, string) =>
+		arrayOf('Pattern', [new StringPattern(string.value)])
+	),
+	new Production(['|', 'ArrayExpression', ',|->'], (_, array) =>
+		arrayOf('Pattern', [new ArrayPattern(array)])
+	),
+	new Production(['|', 'ObjectExpression', ',|->'], (_, obj) =>
+		arrayOf('Pattern', [new ObjectPattern(obj)])
+	),
+
+	// Concatenate patterns
+	new Production(['[Pattern]', '_', ',|->'], (patterns, boolean) =>
+		arrayOf('Pattern', [...patterns.values, new BooleanPattern(boolean.value)])
 	),
 	new Production(
-		['PatternMatchingCase', 'PatternMatchingExpression'],
-		(patternCase, expression) =>
-			new PatternMatchingExpression([patternCase, ...expression.cases]),
-		peek => !operators.includes(peek) && peek !== '|'
+		['[Pattern]', 'IdentifierExpression', ',|->'],
+		(patterns, identifier) =>
+			arrayOf('Pattern', [...patterns.values, new AnyPattern(identifier.name)])
+	),
+	new Production(
+		['[Pattern]', 'BooleanExpression', ',|->'],
+		(patterns, boolean) =>
+			arrayOf('Pattern', [
+				...patterns.values,
+				new BooleanPattern(boolean.value)
+			])
+	),
+	new Production(
+		['[Pattern]', 'NumberExpression', ',|->'],
+		(patterns, number) =>
+			arrayOf('Pattern', [...patterns.values, new NumberPattern(number.value)])
+	),
+	new Production(
+		['[Pattern]', 'StringExpression', ',|->'],
+		(patterns, string) =>
+			arrayOf('Pattern', [...patterns.values, new StringPattern(string.value)])
+	),
+	new Production(['[Pattern]', 'ArrayExpression', ',|->'], (patterns, array) =>
+		arrayOf('Pattern', [...patterns.values, new ArrayPattern(array)])
+	),
+	new Production(['[Pattern]', 'ObjectExpression', ',|->'], (patterns, obj) =>
+		arrayOf('Pattern', [...patterns.values, new ObjectPattern(obj)])
+	),
+
+	new Production(
+		['[Pattern]', 'Expression'],
+		(patterns, expression) => new PatternCase(patterns.values, expression),
+		peek => lowestPrecedence(peek) && peek !== ',' && peek !== '->'
+	),
+
+	// Functions
+	new Production(
+		['IdentifierExpression', '=>', 'Expression'],
+		(identifier, _, body) => new FunctionExpression([identifier], body),
+		lowestPrecedence
+	),
+	new Production(
+		['(', ')', '=>', 'Expression'],
+		(_, __, ___, body) => new FunctionExpression([], body),
+		lowestPrecedence
+	),
+	new Production(
+		['(', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		(_, parameter) => arrayOf('Parameter', [parameter])
+	),
+	new Production(
+		['(', 'IdentifierExpression|NamedParameter|RestElement', ')'],
+		(_, parameter) => ({
+			type: 'ClosedParameters',
+			values: [parameter]
+		})
+	),
+
+	new Production(
+		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		(parameters, parameter) =>
+			arrayOf('Parameter', [...parameters.values, parameter])
+	),
+	new Production(
+		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ')'],
+		(parameters, parameter) => ({
+			type: 'ClosedParameters',
+			values: [...parameters.values, parameter]
+		})
+	),
+	new Production(
+		['ClosedParameters', '=>', 'Expression'],
+		(parameters, _, body) => new FunctionExpression(parameters.values, body),
+		lowestPrecedence
+	),
+
+	// FunctionCalls
+	new Production(
+		['Expression', 'ClosedParameters'],
+		(expression, parameters) =>
+			new CallExpression(expression, parameters.values),
+		lowestPrecedence
 	),
 
 	// File

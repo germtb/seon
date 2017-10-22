@@ -4,13 +4,6 @@ export class Node {
 	}
 }
 
-export class File extends Node {
-	constructor(nodes) {
-		super('File')
-		this.nodes = nodes
-	}
-}
-
 export class Expression extends Node {
 	constructor(type) {
 		super(type)
@@ -20,6 +13,13 @@ export class Expression extends Node {
 export class Statement extends Node {
 	constructor(type) {
 		super(type)
+	}
+}
+
+export class File extends Node {
+	constructor(nodes) {
+		super('File')
+		this.nodes = nodes
 	}
 }
 
@@ -66,18 +66,55 @@ export class ObjectExpression extends Expression {
 }
 
 export class ObjectProperty extends Node {
-	constructor(key, value) {
+	constructor(property) {
 		super('ObjectProperty')
-		this.key = key
+		this.property = property
+	}
+}
+
+export class BinaryOperator extends Node {
+	constructor(operator) {
+		super('BinaryOperator')
+		this.operator = operator
+	}
+}
+
+export class BinaryExpression extends Expression {
+	constructor(left, operator, right) {
+		super('BinaryExpression')
+		this.left = left
+		this.operator = operator
+		this.right = right
+	}
+}
+
+export class UnaryOperator extends Node {
+	constructor(operator) {
+		super('UnaryOperator')
+		this.operator = operator
+	}
+}
+
+export class UnaryExpression extends Expression {
+	constructor(operator, expression) {
+		super('UnaryExpression')
+		this.operator = operator
+		this.expression = expression
+	}
+}
+
+export class RestElement extends Node {
+	constructor(value) {
+		super('RestElement')
 		this.value = value
 	}
 }
 
-export class ObjectAccessExpression extends Node {
-	constructor(callee, key) {
-		super('ObjectAccessExpression')
-		this.callee = callee
-		this.key = key
+export class NamedParameter extends Node {
+	constructor(name, value) {
+		super('NamedParameter')
+		this.name = name
+		this.value = value
 	}
 }
 
@@ -89,17 +126,16 @@ export class FunctionExpression extends Expression {
 	}
 }
 
-export class BlockStatement extends Statement {
-	constructor(statements) {
-		super('BlockStatement')
-		this.statements = statements
+export class FunctionBody extends Node {
+	constructor(nodes) {
+		super('FunctionBody')
+		this.nodes = nodes
 	}
 }
 
-export class NamedParameter extends Node {
-	constructor(id, value) {
-		super('NamedParameter')
-		this.id = id
+export class ReturnStatement extends Node {
+	constructor(value) {
+		super('ReturnStatement')
 		this.value = value
 	}
 }
@@ -109,61 +145,6 @@ export class CallExpression extends Expression {
 		super('CallExpression')
 		this.callee = callee
 		this.parameters = parameters
-	}
-}
-
-export class Declaration extends Statement {
-	constructor(pattern, value) {
-		super('Declaration')
-		this.pattern = pattern
-		this.value = value
-	}
-}
-
-export class BinaryExpression extends Expression {
-	constructor(left, right, operator) {
-		super('BinaryExpression')
-		this.left = left
-		this.right = right
-		this.operator = operator
-	}
-}
-
-export class BinaryOperator extends Node {
-	constructor(operator) {
-		super('BinaryOperator')
-		this.operator = operator
-	}
-}
-
-export class UnaryExpression extends Expression {
-	constructor(expression, operator) {
-		super('UnaryExpression')
-		this.expression = expression
-		this.operator = operator
-	}
-}
-
-export class UnaryOperator extends Node {
-	constructor(operator) {
-		super('UnaryOperator')
-		this.operator = operator
-	}
-}
-
-export class PatternMatchingCase extends Node {
-	constructor(pattern, result) {
-		super('PatternMatchingCase')
-		this.pattern = pattern
-		this.result = result
-	}
-}
-
-export class PatternMatchingExpression extends Node {
-	constructor(parameters, cases) {
-		super('PatternMatchingExpression')
-		this.parameters = parameters
-		this.cases = cases
 	}
 }
 
@@ -201,30 +182,17 @@ export class StringPattern extends Pattern {
 	}
 }
 
-export class RestElement extends Node {
+export class ArrayPattern extends Pattern {
 	constructor(value) {
-		super('RestElement')
+		super('ArrayPattern')
 		this.value = value
 	}
 }
 
-/**
-* @param: {Array<Identifier | RestElement>} values
-*/
-export class ArrayPattern extends Pattern {
-	constructor(values) {
-		super('ArrayPattern')
-		this.values = values
-	}
-}
-
-/**
-* @param: {Array<Identifier | RestElement>} values
-*/
 export class ObjectPattern extends Pattern {
-	constructor(values) {
+	constructor(value) {
 		super('ObjectPattern')
-		this.values = values
+		this.value = value
 	}
 }
 
@@ -234,8 +202,18 @@ export class NoPattern extends Pattern {
 	}
 }
 
-export class MultiPattern extends Pattern {
-	consctructor(patterns) {
-		this.patterns = patterns
+export class PatternCase extends Node {
+	constructor(pattern, result) {
+		super('PatternCase')
+		this.pattern = pattern
+		this.result = result
+	}
+}
+
+export class PatternExpression extends Node {
+	constructor(expressions, patternCases) {
+		super('PatternExpression')
+		this.expressions = expressions
+		this.patternCases = patternCases
 	}
 }
