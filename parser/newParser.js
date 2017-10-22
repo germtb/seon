@@ -9,11 +9,15 @@ import {
 	NumberExpression,
 	StringExpression,
 	ArrayExpression,
-	RestElement
+	RestElement,
+	ObjectExpression,
+	ObjectProperty,
+	Parameter
 } from './newNodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
 
+const nonOperators = ['(', '.', '[', '{']
 const unaryOperators = ['!', 'TypeOperator']
 const binaryOperators = [
 	'+',
@@ -31,6 +35,11 @@ const binaryOperators = [
 	'&&',
 	'||'
 ]
+
+const lowestPrecedence = peek =>
+	!nonOperators.includes(peek) &&
+	!unaryOperators.includes(peek) &&
+	!binaryOperators.includes(peek)
 
 const operatorPrecedence = {
 	TypeOperator: ['(', '.'],
@@ -87,24 +96,57 @@ const grammar = [
 	// Arrays
 	new Production(['[', ']'], () => new ArrayExpression([])),
 	new Production(
-		['[', 'Expression', ']'],
+		['[', 'Expression|RestElement', ']'],
 		(_, expression) => new ArrayExpression([expression])
 	),
-	new Production(['[', 'Expression', ','], (a, expression) =>
+	new Production(['[', 'Expression|RestElement', ','], (_, expression) =>
 		arrayOf('Expression', [expression])
 	),
 	new Production(
-		['[Expression]', 'Expression', ','],
+		['[Expression]', 'Expression|RestElement', ','],
 		(expressions, expression) =>
 			arrayOf('Expression', [...expressions.values, expression])
 	),
 	new Production(
-		['[Expression]', 'Expression', ']'],
+		['[Expression]', 'Expression|RestElement', ']'],
 		(expressions, expression) =>
 			new ArrayExpression([...expressions.values, expression])
 	),
 
 	// Obejcts
+	new Production(['{', '}'], () => new ObjectExpression([])),
+	new Production(
+		['{', 'IdentifierExpression|Parameter|RestElement', '}'],
+		(_, identifier) => new ObjectExpression([new ObjectProperty(identifier)])
+	),
+	new Production(
+		['{', 'IdentifierExpression|Parameter|RestElement', ','],
+		(_, expression) =>
+			arrayOf('ObjectProperty', [new ObjectProperty(expression)])
+	),
+	new Production(
+		['[ObjectProperty]', 'IdentifierExpression|Parameter|RestElement', ','],
+		(expressions, expression) =>
+			arrayOf('ObjectProperty', [
+				...expressions.values,
+				new ObjectProperty(expression)
+			])
+	),
+	new Production(
+		['[ObjectProperty]', 'IdentifierExpression|Parameter|RestElement', '}'],
+		(expressions, expression) =>
+			new ObjectExpression([
+				...expressions.values,
+				new ObjectProperty(expression)
+			])
+	),
+
+	// Parameters
+	new Production(
+		['IdentifierExpression', ':', 'Expression'],
+		(identifier, _, expression) => new Parameter(identifier.name, expression),
+		lowestPrecedence
+	),
 
 	// RestElement
 	new Production(

@@ -11,7 +11,10 @@ import {
 	NumberExpression,
 	StringExpression,
 	ArrayExpression,
-	RestElement
+	RestElement,
+	ObjectExpression,
+	ObjectProperty,
+	Parameter
 } from './newNodes'
 
 describe('parser', () => {
@@ -184,5 +187,84 @@ describe('parser', () => {
 		const tokens = tokenizer('...x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new RestElement('x')])])
+	})
+
+	test('converts a parameter #1', () => {
+		const tokens = tokenizer('x: 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new Parameter('x', new NumberExpression(10))])
+		])
+	})
+
+	test('converts a parameter #2', () => {
+		const tokens = tokenizer('x: 10 + 2')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Parameter(
+					'x',
+					new BinaryExpression(
+						new NumberExpression(10),
+						new BinaryOperator('+'),
+						new NumberExpression(2)
+					)
+				)
+			])
+		])
+	})
+
+	test('converts an empty object', () => {
+		const tokens = tokenizer('{}')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new ObjectExpression([])])])
+	})
+
+	test('converts a non-empty object #1', () => {
+		const tokens = tokenizer('{ x }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new IdentifierExpression('x'))
+				])
+			])
+		])
+	})
+
+	test('converts a non-empty object #2', () => {
+		const tokens = tokenizer('{ x: 10 }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new Parameter('x', new NumberExpression(10)))
+				])
+			])
+		])
+	})
+
+	test('converts a non-empty object #3', () => {
+		const tokens = tokenizer('{ ...x }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([new ObjectProperty(new RestElement('x'))])
+			])
+		])
+	})
+
+	test('converts a non-empty object #4', () => {
+		const tokens = tokenizer('{ x, y: 100, ...z }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new IdentifierExpression('x')),
+					new ObjectProperty(new Parameter('y', new NumberExpression(100))),
+					new ObjectProperty(new RestElement('z'))
+				])
+			])
+		])
 	})
 })

@@ -33,6 +33,7 @@ const matchTable = {
 		'Expression',
 		'Node'
 	],
+	RestElement: ['RestElement', 'Node'],
 
 	// Patterns
 	Pattern: ['Pattern', 'Node'],
@@ -41,7 +42,6 @@ const matchTable = {
 	NumberPattern: ['NumberPattern', 'Pattern', 'Node'],
 	BooleanPattern: ['BooleanPattern', 'Pattern', 'Node'],
 	StringPattern: ['StringPattern', 'Pattern', 'Node'],
-	RestElement: ['RestElement', 'Expression', 'Node'],
 	ArrayPattern: ['ArrayPattern', 'Pattern', 'Node'],
 	ObjectPattern: ['ObjectPattern', 'Pattern', 'Node'],
 	NoPattern: ['NoPattern', 'Pattern', 'Node'],
@@ -68,9 +68,17 @@ const matchTable = {
 }
 
 const matches = (node, type) => {
-	if (matchTable[node]) {
-		return matchTable[node].includes(type)
-	} else {
-		return node === type
+	if (type === '||' && node === '||') {
+		return true
+	} else if (type === '|' && node === '|') {
+		return true
 	}
+
+	return type.split('|').some(type => {
+		if (matchTable[node]) {
+			return matchTable[node].includes(type)
+		} else {
+			return node === type
+		}
+	})
 }

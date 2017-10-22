@@ -66,10 +66,9 @@ export class ObjectExpression extends Expression {
 }
 
 export class ObjectProperty extends Node {
-	constructor(key, value) {
+	constructor(property) {
 		super('ObjectProperty')
-		this.key = key
-		this.value = value
+		this.property = property
 	}
 }
 
@@ -107,6 +106,14 @@ export class UnaryExpression extends Expression {
 export class RestElement extends Node {
 	constructor(value) {
 		super('RestElement')
+		this.value = value
+	}
+}
+
+export class Parameter extends Node {
+	constructor(name, value) {
+		super('Parameter')
+		this.name = name
 		this.value = value
 	}
 }
