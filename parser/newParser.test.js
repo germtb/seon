@@ -24,7 +24,8 @@ import {
 	ArrayPattern,
 	ObjectPattern,
 	NoPattern,
-	PatternCase
+	PatternCase,
+	PatternExpression
 } from './newNodes'
 
 describe('parser', () => {
@@ -544,6 +545,25 @@ describe('parser', () => {
 						),
 						new ObjectProperty(new RestElement('xs'))
 					])
+				)
+			])
+		])
+	})
+
+	test('converts a pattern expression #1', () => {
+		const tokens = tokenizer('x | 0 -> false | _ -> true')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternExpression(
+					[new IdentifierExpression('x')],
+					[
+						new PatternCase(
+							[new NumberPattern(0)],
+							new BooleanExpression(false)
+						),
+						new PatternCase([new NoPattern()], new BooleanExpression(true))
+					]
 				)
 			])
 		])

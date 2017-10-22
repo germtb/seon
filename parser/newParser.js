@@ -22,7 +22,8 @@ import {
 	ArrayPattern,
 	ObjectPattern,
 	NoPattern,
-	PatternCase
+	PatternCase,
+	PatternExpression
 } from './newNodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -175,6 +176,19 @@ const grammar = [
 	),
 
 	// PatternExpressions
+	new Production(
+		['PatternExpression', 'PatternCase'],
+		(patternExpression, patternCase) =>
+			new PatternExpression(patternExpression.expressions, [
+				...patternExpression.patternCases,
+				patternCase
+			])
+	),
+	new Production(
+		['Expression', 'PatternCase'],
+		(expression, patternCase) =>
+			new PatternExpression([expression], [patternCase])
+	),
 
 	// Begin pattern
 	new Production(['|', '_', ',|->'], () =>

@@ -26,17 +26,12 @@ const matchTable = {
 	BinaryOperator: ['BinaryOperator', 'Node'],
 	UnaryOperator: ['UnaryOperator', 'Node'],
 	PatternMatchingDefault: ['PatternMatchingDefault', 'Node'],
-	PatternMatchingCase: ['PatternMatchingCase', 'Node'],
-	PatternMatchingExpression: [
-		'PatternMatchingExpression',
-		'Expression',
-		'Node'
-	],
 	NamedParameter: ['NamedParameter', 'Node'],
 	RestElement: ['RestElement', 'Node'],
 
 	// Patterns
 	Pattern: ['Pattern', 'Node'],
+	PatternCase: ['PatternCase', 'Node'],
 
 	AnyPattern: ['AnyPattern', 'Pattern', 'Node'],
 	NumberPattern: ['NumberPattern', 'Pattern', 'Node'],
@@ -44,7 +39,6 @@ const matchTable = {
 	StringPattern: ['StringPattern', 'Pattern', 'Node'],
 	ArrayPattern: ['ArrayPattern', 'Pattern', 'Node'],
 	ObjectPattern: ['ObjectPattern', 'Pattern', 'Node'],
-	PatternCase: ['PatternCase', 'Pattern', 'Node'],
 	NoPattern: ['NoPattern', 'Pattern', 'Node'],
 
 	// Statements
@@ -62,7 +56,8 @@ const matchTable = {
 	FunctionExpression: ['FunctionExpression', 'Expression', 'Node'],
 	CallExpression: ['CallExpression', 'Expression', 'Node'],
 	BinaryExpression: ['BinaryExpression', 'Expression', 'Node'],
-	UnaryExpression: ['UnaryExpression', 'Expression', 'Node']
+	UnaryExpression: ['UnaryExpression', 'Expression', 'Node'],
+	PatternExpression: ['PatternExpression', 'Expression', 'Node']
 }
 
 const matches = (node, type) => {

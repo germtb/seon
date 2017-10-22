@@ -209,3 +209,11 @@ export class PatternCase extends Node {
 		this.result = result
 	}
 }
+
+export class PatternExpression extends Node {
+	constructor(expressions, patternCases) {
+		super('PatternExpression')
+		this.expressions = expressions
+		this.patternCases = patternCases
+	}
+}
