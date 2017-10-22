@@ -1,5 +1,5 @@
-import tokenizer from '../tokenizer/tokenizer'
-import parse from './parser'
+import tokenizer from '../tokenizer'
+import parse from './index'
 import {
 	File,
 	UnaryOperator,

@@ -1,4 +1,4 @@
-import tokenizer from './tokenizer'
+import tokenizer from './index'
 
 describe('tokenizer', () => {
 	test('produces a number token', () => {

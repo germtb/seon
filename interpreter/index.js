@@ -1,5 +1,5 @@
-import tokenizer from '../tokenizer/tokenizer'
-import parse from '../parser/parser'
+import tokenizer from '../tokenizer'
+import parse from '../parser'
 
 export const set = (name, value, scopes) => {
 	scopes[scopes.length - 1][name] = value
