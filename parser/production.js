@@ -48,7 +48,6 @@ const matchTable = {
 
 	// Statements
 	Statement: ['Statement', 'Node'],
-	ReturnStatement: ['ReturnStatement', 'Statement', 'Node'],
 	Declaration: ['Declaration', 'Statement', 'Node'],
 
 	// Expressions
@@ -59,12 +58,10 @@ const matchTable = {
 	StringExpression: ['StringExpression', 'Expression', 'Node'],
 	ArrayExpression: ['ArrayExpression', 'Expression', 'Node'],
 	ObjectExpression: ['ObjectExpression', 'Expression', 'Node'],
-	ObjectAccessExpression: ['ObjectAccessExpression', 'Expression', 'Node'],
 	FunctionExpression: ['FunctionExpression', 'Expression', 'Node'],
 	CallExpression: ['CallExpression', 'Expression', 'Node'],
 	BinaryExpression: ['BinaryExpression', 'Expression', 'Node'],
-	UnaryExpression: ['UnaryExpression', 'Expression', 'Node'],
-	ArrayAccessExpression: ['ArrayAccessExpression', 'Expression', 'Node']
+	UnaryExpression: ['UnaryExpression', 'Expression', 'Node']
 }
 
 const matches = (node, type) => {

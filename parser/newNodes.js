@@ -139,3 +139,11 @@ export class ReturnStatement extends Node {
 		this.value = value
 	}
 }
+
+export class CallExpression extends Expression {
+	constructor(callee, parameters) {
+		super('CallExpression')
+		this.callee = callee
+		this.parameters = parameters
+	}
+}

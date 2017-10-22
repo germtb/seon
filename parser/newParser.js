@@ -13,7 +13,8 @@ import {
 	ObjectExpression,
 	ObjectProperty,
 	NamedParameter,
-	FunctionExpression
+	FunctionExpression,
+	CallExpression
 } from './newNodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -162,7 +163,7 @@ const grammar = [
 	new Production(
 		['...', 'Expression'],
 		(a, identifier) => new RestElement(identifier.name),
-		peek => !nonOperators.includes(peek)
+		lowestPrecedence
 	),
 
 	// Patterns
@@ -185,6 +186,14 @@ const grammar = [
 		(_, parameter) => arrayOf('Parameter', [parameter])
 	),
 	new Production(
+		['(', 'IdentifierExpression|NamedParameter|RestElement', ')'],
+		(_, parameter) => ({
+			type: 'ClosedParameters',
+			values: [parameter]
+		})
+	),
+
+	new Production(
 		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ','],
 		(parameters, parameter) =>
 			arrayOf('Parameter', [...parameters.values, parameter])
@@ -203,6 +212,12 @@ const grammar = [
 	),
 
 	// FunctionCalls
+	new Production(
+		['Expression', 'ClosedParameters'],
+		(expression, parameters) =>
+			new CallExpression(expression, parameters.values),
+		lowestPrecedence
+	),
 
 	// File
 	new Production(['Node', '$'], statement => new File([statement])),

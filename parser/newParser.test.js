@@ -15,7 +15,8 @@ import {
 	ObjectExpression,
 	ObjectProperty,
 	NamedParameter,
-	FunctionExpression
+	FunctionExpression,
+	CallExpression
 } from './newNodes'
 
 describe('parser', () => {
@@ -292,7 +293,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function expression with two parameters', () => {
+	test('converts a function expression several parameters #1', () => {
 		const tokens = tokenizer('(x, y) => x + y')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -305,6 +306,63 @@ describe('parser', () => {
 						new IdentifierExpression('y')
 					)
 				)
+			])
+		])
+	})
+
+	test('converts a function expression several parameters #2', () => {
+		const tokens = tokenizer('(x, z: 10, ...y) => x + y')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new FunctionExpression(
+					[
+						new IdentifierExpression('x'),
+						new NamedParameter('z', new NumberExpression(10)),
+						new RestElement('y')
+					],
+					new BinaryExpression(
+						new IdentifierExpression('x'),
+						new BinaryOperator('+'),
+						new IdentifierExpression('y')
+					)
+				)
+			])
+		])
+	})
+
+	test('converts a function call #1', () => {
+		const tokens = tokenizer('f(x)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new IdentifierExpression('x')
+				])
+			])
+		])
+	})
+
+	test('converts a function call #2', () => {
+		const tokens = tokenizer('f(x: 10)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new NamedParameter('x', new NumberExpression(10))
+				])
+			])
+		])
+	})
+
+	test('converts a function call #3', () => {
+		const tokens = tokenizer('f(...x)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new RestElement('x')
+				])
 			])
 		])
 	})
