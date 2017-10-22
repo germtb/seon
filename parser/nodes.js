@@ -96,9 +96,9 @@ export class BlockStatement extends Statement {
 	}
 }
 
-export class Parameter extends Node {
+export class NamedParameter extends Node {
 	constructor(id, value) {
-		super('Parameter')
+		super('NamedParameter')
 		this.id = id
 		this.value = value
 	}

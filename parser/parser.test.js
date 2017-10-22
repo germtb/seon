@@ -14,7 +14,7 @@ import {
 	BinaryExpression,
 	BinaryOperator,
 	FunctionExpression,
-	Parameter,
+	NamedParameter,
 	CallExpression,
 	Declaration,
 	PatternMatchingCase,
@@ -92,7 +92,7 @@ describe('parser', () => {
 	// 	expect(nodes).toEqual([
 	// 		new File([
 	// 			new CallExpression(new IdentifierExpression('f'), [
-	// 				new Parameter('x', new NumberExpression(10))
+	// 				new NamedParameter('x', new NumberExpression(10))
 	// 			])
 	// 		])
 	// 	])
@@ -104,8 +104,8 @@ describe('parser', () => {
 	// 	expect(nodes).toEqual([
 	// 		new File([
 	// 			new CallExpression(new IdentifierExpression('f'), [
-	// 				new Parameter('x', new NumberExpression(10)),
-	// 				new Parameter('y', new NumberExpression(50))
+	// 				new NamedParameter('x', new NumberExpression(10)),
+	// 				new NamedParameter('y', new NumberExpression(50))
 	// 			])
 	// 		])
 	// 	])
@@ -420,7 +420,7 @@ describe('parser', () => {
 	// // 							new NoPattern(),
 	// // 							new BinaryExpression(
 	// // 								new CallExpression(new IdentifierExpression('fib'), [
-	// // 									new Parameter(
+	// // 									new NamedParameter(
 	// // 										'n',
 	// // 										new BinaryExpression(
 	// // 											new IdentifierExpression('n'),
@@ -430,7 +430,7 @@ describe('parser', () => {
 	// // 									)
 	// // 								]),
 	// // 								new CallExpression(new IdentifierExpression('fib'), [
-	// // 									new Parameter(
+	// // 									new NamedParameter(
 	// // 										'n',
 	// // 										new BinaryExpression(
 	// // 											new IdentifierExpression('n'),

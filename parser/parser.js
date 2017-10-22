@@ -13,7 +13,7 @@ import {
 	ArrayExpression,
 	FunctionExpression,
 	BlockStatement,
-	Parameter,
+	NamedParameter,
 	CallExpression,
 	Declaration,
 	BinaryExpression,
@@ -209,21 +209,23 @@ const grammar = [
 		['(', 'IdentifierExpression', ':', 'Expression'],
 		(a, identifier, b, expression) => [
 			{ type: '(' },
-			arrayOf('Parameter', [new Parameter(identifier.name, expression)])
+			arrayOf('NamedParameter', [
+				new NamedParameter(identifier.name, expression)
+			])
 		],
 		peek => !operators.includes(peek)
 	),
 	new Production(
-		['[Parameter]', ',', 'IdentifierExpression', ':', 'Expression'],
+		['[NamedParameter]', ',', 'IdentifierExpression', ':', 'Expression'],
 		(parameters, a, identifier, b, expression) =>
-			arrayOf('Parameter', [
+			arrayOf('NamedParameter', [
 				...parameters.values,
-				new Parameter(identifier.name, expression)
+				new NamedParameter(identifier.name, expression)
 			]),
 		peek => !operators.includes(peek)
 	),
 	new Production(
-		['Expression', '(', '[Parameter]', ')'],
+		['Expression', '(', '[NamedParameter]', ')'],
 		(identifier, a, parameters) =>
 			new CallExpression(identifier, parameters.values)
 	),

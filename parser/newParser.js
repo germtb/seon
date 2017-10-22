@@ -12,7 +12,8 @@ import {
 	RestElement,
 	ObjectExpression,
 	ObjectProperty,
-	Parameter
+	NamedParameter,
+	FunctionExpression
 } from './newNodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -116,16 +117,20 @@ const grammar = [
 	// Obejcts
 	new Production(['{', '}'], () => new ObjectExpression([])),
 	new Production(
-		['{', 'IdentifierExpression|Parameter|RestElement', '}'],
+		['{', 'IdentifierExpression|NamedParameter|RestElement', '}'],
 		(_, identifier) => new ObjectExpression([new ObjectProperty(identifier)])
 	),
 	new Production(
-		['{', 'IdentifierExpression|Parameter|RestElement', ','],
+		['{', 'IdentifierExpression|NamedParameter|RestElement', ','],
 		(_, expression) =>
 			arrayOf('ObjectProperty', [new ObjectProperty(expression)])
 	),
 	new Production(
-		['[ObjectProperty]', 'IdentifierExpression|Parameter|RestElement', ','],
+		[
+			'[ObjectProperty]',
+			'IdentifierExpression|NamedParameter|RestElement',
+			','
+		],
 		(expressions, expression) =>
 			arrayOf('ObjectProperty', [
 				...expressions.values,
@@ -133,7 +138,11 @@ const grammar = [
 			])
 	),
 	new Production(
-		['[ObjectProperty]', 'IdentifierExpression|Parameter|RestElement', '}'],
+		[
+			'[ObjectProperty]',
+			'IdentifierExpression|NamedParameter|RestElement',
+			'}'
+		],
 		(expressions, expression) =>
 			new ObjectExpression([
 				...expressions.values,
@@ -141,10 +150,11 @@ const grammar = [
 			])
 	),
 
-	// Parameters
+	// NamedParameters
 	new Production(
 		['IdentifierExpression', ':', 'Expression'],
-		(identifier, _, expression) => new Parameter(identifier.name, expression),
+		(identifier, _, expression) =>
+			new NamedParameter(identifier.name, expression),
 		lowestPrecedence
 	),
 
@@ -152,7 +162,7 @@ const grammar = [
 	new Production(
 		['...', 'Expression'],
 		(a, identifier) => new RestElement(identifier.name),
-		peek => peek !== '.' && peek !== '[' && peek !== '('
+		peek => !nonOperators.includes(peek)
 	),
 
 	// Patterns
@@ -160,6 +170,37 @@ const grammar = [
 	// PatternExpressions
 
 	// Functions
+	new Production(
+		['IdentifierExpression', '=>', 'Expression'],
+		(identifier, _, body) => new FunctionExpression([identifier], body),
+		lowestPrecedence
+	),
+	new Production(
+		['(', ')', '=>', 'Expression'],
+		(_, __, ___, body) => new FunctionExpression([], body),
+		lowestPrecedence
+	),
+	new Production(
+		['(', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		(_, parameter) => arrayOf('Parameter', [parameter])
+	),
+	new Production(
+		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		(parameters, parameter) =>
+			arrayOf('Parameter', [...parameters.values, parameter])
+	),
+	new Production(
+		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ')'],
+		(parameters, parameter) => ({
+			type: 'ClosedParameters',
+			values: [...parameters.values, parameter]
+		})
+	),
+	new Production(
+		['ClosedParameters', '=>', 'Expression'],
+		(parameters, _, body) => new FunctionExpression(parameters.values, body),
+		lowestPrecedence
+	),
 
 	// FunctionCalls
 

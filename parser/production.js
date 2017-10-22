@@ -22,7 +22,6 @@ const matchTable = {
 	// Nodes
 	Node: ['Node'],
 	File: ['File', 'Node'],
-	Parameter: ['Parameter', 'Node'],
 	ObjectProperty: ['ObjectProperty', 'Node'],
 	BinaryOperator: ['BinaryOperator', 'Node'],
 	UnaryOperator: ['UnaryOperator', 'Node'],
@@ -33,6 +32,7 @@ const matchTable = {
 		'Expression',
 		'Node'
 	],
+	NamedParameter: ['NamedParameter', 'Node'],
 	RestElement: ['RestElement', 'Node'],
 
 	// Patterns
@@ -48,7 +48,7 @@ const matchTable = {
 
 	// Statements
 	Statement: ['Statement', 'Node'],
-	BlockStatement: ['BlockStatement', 'Statement', 'Node'],
+	ReturnStatement: ['ReturnStatement', 'Statement', 'Node'],
 	Declaration: ['Declaration', 'Statement', 'Node'],
 
 	// Expressions

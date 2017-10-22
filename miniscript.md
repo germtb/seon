@@ -57,7 +57,7 @@ FunctionExpression < Expression
 FunctionBody < Node
 	nodes: Array<Node>
 
-ThenStatement < Statement
+ReturnStatement < Statement
 	value: Expression
 
 # Primitives
@@ -101,7 +101,7 @@ f(x: 10, y: 10)
 f(y: 10, x: 10)
 f(y: 10)(x: 10)
 
-# ParameterExpression
+# NamedParameterExpression
 x
 x: 100
 

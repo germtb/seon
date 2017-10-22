@@ -110,10 +110,32 @@ export class RestElement extends Node {
 	}
 }
 
-export class Parameter extends Node {
+export class NamedParameter extends Node {
 	constructor(name, value) {
-		super('Parameter')
+		super('NamedParameter')
 		this.name = name
+		this.value = value
+	}
+}
+
+export class FunctionExpression extends Expression {
+	constructor(parameters, body) {
+		super('FunctionExpression')
+		this.parameters = parameters
+		this.body = body
+	}
+}
+
+export class FunctionBody extends Node {
+	constructor(nodes) {
+		super('FunctionBody')
+		this.nodes = nodes
+	}
+}
+
+export class ReturnStatement extends Node {
+	constructor(value) {
+		super('ReturnStatement')
 		this.value = value
 	}
 }
