@@ -52,9 +52,9 @@ export class StringExpression extends Expression {
 }
 
 export class ArrayExpression extends Expression {
-	constructor(expressions) {
+	constructor(values) {
 		super('ArrayExpression')
-		this.value = expressions
+		this.values = values
 	}
 }
 
