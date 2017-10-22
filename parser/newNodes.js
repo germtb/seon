@@ -103,3 +103,10 @@ export class UnaryExpression extends Expression {
 		this.expression = expression
 	}
 }
+
+export class RestElement extends Node {
+	constructor(value) {
+		super('RestElement')
+		this.value = value
+	}
+}

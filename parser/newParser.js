@@ -8,7 +8,8 @@ import {
 	BooleanExpression,
 	NumberExpression,
 	StringExpression,
-	ArrayExpression
+	ArrayExpression,
+	RestElement
 } from './newNodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -104,6 +105,13 @@ const grammar = [
 	),
 
 	// Obejcts
+
+	// RestElement
+	new Production(
+		['...', 'Expression'],
+		(a, identifier) => new RestElement(identifier.name),
+		peek => peek !== '.' && peek !== '[' && peek !== '('
+	),
 
 	// Patterns
 

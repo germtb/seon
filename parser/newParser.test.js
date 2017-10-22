@@ -10,7 +10,8 @@ import {
 	BooleanExpression,
 	NumberExpression,
 	StringExpression,
-	ArrayExpression
+	ArrayExpression,
+	RestElement
 } from './newNodes'
 
 describe('parser', () => {
@@ -163,5 +164,25 @@ describe('parser', () => {
 				])
 			])
 		])
+	})
+
+	test('converts a non-empty array #3', () => {
+		const tokens = tokenizer('[0, x, ...y]')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ArrayExpression([
+					new NumberExpression(0),
+					new IdentifierExpression('x'),
+					new RestElement('y')
+				])
+			])
+		])
+	})
+
+	test('converts a rest element', () => {
+		const tokens = tokenizer('...x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([new File([new RestElement('x')])])
 	})
 })
