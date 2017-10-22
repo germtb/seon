@@ -13,10 +13,8 @@
 		"babel-cli": "^6.26.0",
 		"babel-plugin-transform-flow-strip-types": "^6.22.0",
 		"babel-preset-env": "^1.6.0",
-		"babel-preset-flow": "^6.23.0",
-		"flow-bin": "^0.57.2",
-		"jest": "^21.2.1",
-		"jest-flow-transform": "^1.0.1",
-		"typescript": "^2.5.3"
+		"eslint": "^4.9.0",
+		"eslint-plugin-jest": "^21.2.0",
+		"jest": "^21.2.1"
 	}
 }

@@ -1,6 +1,6 @@
 # Nodes
 Node
-	type: string
+	type: String
 
 File < Node
 	nodes: Array<Node>
@@ -10,16 +10,16 @@ Expression < Node
 Statement < Node
 
 IdentifierExpression < Node
-	value: string
+	value: String
 
 BooleanExpression < Expression
-	value: boolean
+	value: Boolean
 
 NumberExpression < Expression
-	value: number
+	value: Number
 
 StringExpression < Expression
-	value: string
+	value: String
 
 ArrayExpression < Expression
 	value: Array<Expression>
@@ -28,7 +28,7 @@ ObjectExpression < Expression
 	value: Array<ObjectProperty>
 
 ObjectProperty < Node
-	key: string
+	key: String
 	value: Expression
 
 BinaryExpression < Expression
@@ -37,20 +37,28 @@ BinaryExpression < Expression
 	operator: BinaryOperator
 
 BinaryOperator < Node
-	operator: string
+	operator: String
 
 UnaryExpression < Expression
 	argument: Expression
 	operator: UnaryOperator
 
 UnaryOperator < Node
-	operator: string
+	operator: String
 
 Declaration < Statement
 	pattern: Pattern
-	value: expression
+	value: Expression
 
+FunctionExpression < Expression
+	parameters: Array<Pattern>
+	body: Expression | FunctionBody
 
+FunctionBody < Node
+	nodes: Array<Node>
+
+ThenStatement < Statement
+	value: Expression
 
 # Primitives
 BooleanExpression: true, false

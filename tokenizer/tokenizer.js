@@ -1,10 +1,3 @@
-// @flow
-
-type Token = {
-	type: string,
-	value?: string | boolean | number
-}
-
 const simpleTokens = [
 	'**',
 	'&&',
@@ -52,10 +45,10 @@ const keywords = {
 	}
 }
 
-export default (code: string): Array<Token> => {
-	let inString: boolean = false
-	let currentToken: string = ''
-	const tokens: Array<Token> = []
+export default code => {
+	let inString = false
+	let currentToken = ''
+	const tokens = []
 
 	for (let i = 0; i < code.length; i++) {
 		const character = code[i]

@@ -34,6 +34,7 @@ import {
 } from './nodes'
 
 import { Production } from './Production'
+import { arrayOf } from './utils'
 
 const unaryOperators = ['!', 'type']
 
@@ -73,14 +74,6 @@ const precedence = {
 	'&&': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
 	'||': ['!', '(', '.', '**', '*', '%', '/', '+', '-']
 }
-
-const arrayOf = <T>(
-	type: string,
-	values: Array<T>
-): { type: string, values: Array<T> } => ({
-	type: `[${type}]`,
-	values
-})
 
 const grammar = [
 	// Terminals
@@ -304,14 +297,9 @@ const grammar = [
 	)
 ]
 
-type Terminal = { type: string }
-type Nonterminal = Node
-
-const parse = (
-	tokens: Array<Terminal | Nonterminal>
-): Array<Terminal | Nonterminal> => {
+const parse = tokens => {
 	tokens.push({ type: '$' })
-	const stack: Array<Terminal | Nonterminal> = []
+	const stack = []
 
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i]

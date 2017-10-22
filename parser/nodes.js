@@ -1,91 +1,72 @@
 export class Node {
-	type: string
-
-	constructor(type: string) {
+	constructor(type) {
 		this.type = type
 	}
 }
 
 export class File extends Node {
-	nodes: Array<Node>
-
-	constructor(nodes: Array<Node>) {
+	constructor(nodes) {
 		super('File')
 		this.nodes = nodes
 	}
 }
 
 export class Expression extends Node {
-	constructor(type: string) {
+	constructor(type) {
 		super(type)
 	}
 }
 
 export class Statement extends Node {
-	constructor(type: string) {
+	constructor(type) {
 		super(type)
 	}
 }
 
 export class IdentifierExpression extends Node {
-	name: string
-
-	constructor(name: string) {
+	constructor(name) {
 		super('IdentifierExpression')
 		this.name = name
 	}
 }
 
 export class BooleanExpression extends Expression {
-	value: boolean
-
-	constructor(value: boolean) {
+	constructor(value) {
 		super('BooleanExpression')
 		this.value = value
 	}
 }
 
 export class NumberExpression extends Expression {
-	value: number
-
-	constructor(value: number) {
+	constructor(value) {
 		super('NumberExpression')
 		this.value = value
 	}
 }
 
 export class StringExpression extends Expression {
-	value: string
-
-	constructor(value: string) {
+	constructor(value) {
 		super('StringExpression')
 		this.value = value
 	}
 }
 
 export class ArrayExpression extends Expression {
-	value: Array<Expression>
-
-	constructor(expressions: Array<Expression>) {
+	constructor(expressions) {
 		super('ArrayExpression')
 		this.value = expressions
 	}
 }
 
 export class ObjectExpression extends Expression {
-	properties: Array<Expression>
-
-	constructor(properties: Array<Expression>) {
+	constructor(properties) {
 		super('ObjectExpression')
 		this.properties = properties
 	}
 }
 
 export class ObjectProperty extends Node {
-	key: string
-	value: Expression
-
-	constructor(key: string, value: Expression) {
+	constructor(key, value) {
 		super('ObjectProperty')
 		this.key = key
 		this.value = value
@@ -93,10 +74,7 @@ export class ObjectProperty extends Node {
 }
 
 export class ObjectAccessExpression extends Node {
-	callee: Expression
-	key: string
-
-	constructor(callee: Expression, key: string) {
+	constructor(callee, key) {
 		super('ObjectAccessExpression')
 		this.callee = callee
 		this.key = key
@@ -104,10 +82,7 @@ export class ObjectAccessExpression extends Node {
 }
 
 export class FunctionExpression extends Expression {
-	parameters: Array<string>
-	body: BlockStatement | Expression
-
-	constructor(parameters: Array<string>, body: BlockStatement | Expression) {
+	constructor(parameters, body) {
 		super('FunctionExpression')
 		this.parameters = parameters
 		this.body = body
@@ -115,19 +90,14 @@ export class FunctionExpression extends Expression {
 }
 
 export class BlockStatement extends Statement {
-	statements: Array<Statement>
-
-	constructor(statements: Array<Statement>) {
+	constructor(statements) {
 		super('BlockStatement')
 		this.statements = statements
 	}
 }
 
 export class Parameter extends Node {
-	id: string
-	value: Expression
-
-	constructor(id: string, value: Expression) {
+	constructor(id, value) {
 		super('Parameter')
 		this.id = id
 		this.value = value
@@ -135,10 +105,7 @@ export class Parameter extends Node {
 }
 
 export class CallExpression extends Expression {
-	callee: Expression
-	parameters: Array<Parameter>
-
-	constructor(callee: Expression, parameters: Array<Parameter>) {
+	constructor(callee, parameters) {
 		super('CallExpression')
 		this.callee = callee
 		this.parameters = parameters
@@ -146,10 +113,7 @@ export class CallExpression extends Expression {
 }
 
 export class Declaration extends Statement {
-	pattern: Pattern
-	value: Expression
-
-	constructor(pattern: Pattern, value: Expression) {
+	constructor(pattern, value) {
 		super('Declaration')
 		this.pattern = pattern
 		this.value = value
@@ -157,11 +121,7 @@ export class Declaration extends Statement {
 }
 
 export class BinaryExpression extends Expression {
-	left: Expression
-	right: Expression
-	operator: BinaryOperator
-
-	constructor(left: Expression, right: Expression, operator: BinaryOperator) {
+	constructor(left, right, operator) {
 		super('BinaryExpression')
 		this.left = left
 		this.right = right
@@ -169,58 +129,30 @@ export class BinaryExpression extends Expression {
 	}
 }
 
-type BinaryOperatorType =
-	| '+'
-	| '-'
-	| '*'
-	| '/'
-	| '**'
-	| '%'
-	| '&&'
-	| '||'
-	| 'type'
-	| '=='
-	| '!='
-	| '<'
-	| '<='
-	| '>'
-	| '>='
-
 export class BinaryOperator extends Node {
-	operator: BinaryOperatorType
-	constructor(operator: BinaryOperatorType) {
+	constructor(operator) {
 		super('BinaryOperator')
 		this.operator = operator
 	}
 }
 
 export class UnaryExpression extends Expression {
-	expression: Expression
-	operator: UnaryOperator
-
-	constructor(expression: Expression, operator: UnaryOperator) {
+	constructor(expression, operator) {
 		super('UnaryExpression')
 		this.expression = expression
 		this.operator = operator
 	}
 }
 
-type UnaryOperatorType = '-' | '!'
-
 export class UnaryOperator extends Node {
-	operator: UnaryOperatorType
-
-	constructor(operator: UnaryOperatorType) {
+	constructor(operator) {
 		super('UnaryOperator')
 		this.operator = operator
 	}
 }
 
 export class PatternMatchingCase extends Node {
-	pattern: Expression
-	result: Expression
-
-	constructor(pattern: Expression, result: Expression) {
+	constructor(pattern, result) {
 		super('PatternMatchingCase')
 		this.pattern = pattern
 		this.result = result
@@ -228,22 +160,10 @@ export class PatternMatchingCase extends Node {
 }
 
 export class PatternMatchingExpression extends Node {
-	cases: Array<PatternMatchingCase>
-
-	constructor(cases: Array<PatternMatchingCase>) {
+	constructor(parameters, cases) {
 		super('PatternMatchingExpression')
+		this.parameters = parameters
 		this.cases = cases
-	}
-}
-
-export class ArrayAccessExpression extends Expression {
-	object: Expression
-	property: number
-
-	constructor(object: Expression, property: number) {
-		super('ArrayAccessExpression')
-		this.object = object
-		this.property = property
 	}
 }
 
@@ -254,78 +174,68 @@ export class Pattern extends Node {
 }
 
 export class AnyPattern extends Pattern {
-	name: string
-
-	constructor(name: string) {
+	constructor(value) {
 		super('AnyPattern')
-		this.name = name
+		this.value = value
 	}
 }
 
 export class NumberPattern extends Pattern {
-	value: number
-
-	constructor(value: number) {
+	constructor(value) {
 		super('NumberPattern')
 		this.value = value
 	}
 }
 
 export class BooleanPattern extends Pattern {
-	value: boolean
-
-	constructor(value: boolean) {
+	constructor(value) {
 		super('BooleanPattern')
 		this.value = value
 	}
 }
 
 export class StringPattern extends Pattern {
-	value: string
-
-	constructor(value: string) {
+	constructor(value) {
 		super('StringPattern')
 		this.value = value
 	}
 }
 
 export class RestElement extends Node {
-	name: string
-
-	constructor(name: string) {
+	constructor(value) {
 		super('RestElement')
-		this.name = name
+		this.value = value
 	}
 }
 
+/**
+* @param: {Array<Identifier | RestElement>} values
+*/
 export class ArrayPattern extends Pattern {
-	values: Array<IdentifierExpressioN | RestElement>
-
-	constructor(values: Array<IdentifierExpression | RestElement>) {
+	constructor(values) {
 		super('ArrayPattern')
 		this.values = values
 	}
 }
 
+/**
+* @param: {Array<Identifier | RestElement>} values
+*/
 export class ObjectPattern extends Pattern {
-	values: Array<Identifier | RestElement>
-
-	constructor(values: Array<Identifier | RestElement>) {
+	constructor(values) {
 		super('ObjectPattern')
 		this.values = values
-	}
-}
-
-export class MultiPattern extends Pattern {
-	patterns: Pattern
-
-	consctructor(patterns: Patterna) {
-		this.patterns = patterns
 	}
 }
 
 export class NoPattern extends Pattern {
 	constructor() {
 		super('NoPattern')
+	}
+}
+
+export class MultiPattern extends Pattern {
+	consctructor(patterns) {
+		this.patterns = patterns
 	}
 }
