@@ -14,7 +14,15 @@ import {
 	ObjectProperty,
 	NamedParameter,
 	FunctionExpression,
-	CallExpression
+	CallExpression,
+	AnyPattern,
+	NumberPattern,
+	BooleanPattern,
+	StringPattern,
+	ArrayPattern,
+	ObjectPattern,
+	NoPattern,
+	PatternCase
 } from './newNodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -166,9 +174,62 @@ const grammar = [
 		lowestPrecedence
 	),
 
-	// Patterns
-
 	// PatternExpressions
+
+	// Begin pattern
+	new Production(['|', '_', ',|->'], () =>
+		arrayOf('Pattern', [new NoPattern()])
+	),
+	new Production(['|', 'BooleanExpression', ',|->'], (_, boolean) =>
+		arrayOf('Pattern', [new BooleanPattern(boolean.value)])
+	),
+	new Production(['|', 'NumberExpression', ',|->'], (_, number) =>
+		arrayOf('Pattern', [new NumberPattern(number.value)])
+	),
+	new Production(['|', 'StringExpression', ',|->'], (_, string) =>
+		arrayOf('Pattern', [new StringPattern(string.value)])
+	),
+	new Production(['|', 'ArrayExpression', ',|->'], (_, array) =>
+		arrayOf('Pattern', [new ArrayPattern(array)])
+	),
+	new Production(['|', 'ObjectExpression', ',|->'], (_, obj) =>
+		arrayOf('Pattern', [new ObjectPattern(obj)])
+	),
+
+	// Concatenate patterns
+	new Production(['[Pattern]', '_', ',|->'], (patterns, boolean) =>
+		arrayOf('Pattern', [...patterns.values, new BooleanPattern(boolean.value)])
+	),
+	new Production(
+		['[Pattern]', 'BooleanExpression', ',|->'],
+		(patterns, boolean) =>
+			arrayOf('Pattern', [
+				...patterns.values,
+				new BooleanPattern(boolean.value)
+			])
+	),
+	new Production(
+		['[Pattern]', 'NumberExpression', ',|->'],
+		(patterns, number) =>
+			arrayOf('Pattern', [...patterns.values, new NumberPattern(number.value)])
+	),
+	new Production(
+		['[Pattern]', 'StringExpression', ',|->'],
+		(patterns, string) =>
+			arrayOf('Pattern', [...patterns.values, new StringPattern(string.value)])
+	),
+	new Production(['[Pattern]', 'ArrayExpression', ',|->'], (patterns, array) =>
+		arrayOf('Pattern', [...patterns.values, new ArrayPattern(array)])
+	),
+	new Production(['[Pattern]', 'ObjectExpression', ',|->'], (patterns, obj) =>
+		arrayOf('Pattern', [...patterns.values, new ObjectPattern(obj)])
+	),
+
+	new Production(
+		['[Pattern]', 'Expression'],
+		(patterns, expression) => new PatternCase(patterns.values, expression),
+		peek => lowestPrecedence(peek) && peek !== ',' && peek !== '->'
+	),
 
 	// Functions
 	new Production(

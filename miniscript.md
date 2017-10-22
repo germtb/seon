@@ -118,8 +118,8 @@ fib = n => n
 	| 1 | 2 -> 1
 	| _ -> fib(n: n - 1) + fib(n: n - 2)
 
-map = f xs => f xs
+map = (f, xs) => f, xs
 	| _ [] -> []
-	| f [x, ...xs] -> [f(x), ...xs]
+	| f, [x, ...xs] -> [f(x), ...xs]
 
 let x = foo | true -> 1 | false -> 0

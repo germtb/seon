@@ -147,3 +147,65 @@ export class CallExpression extends Expression {
 		this.parameters = parameters
 	}
 }
+
+export class Pattern extends Node {
+	constructor(type) {
+		super(type)
+	}
+}
+
+export class AnyPattern extends Pattern {
+	constructor(value) {
+		super('AnyPattern')
+		this.value = value
+	}
+}
+
+export class NumberPattern extends Pattern {
+	constructor(value) {
+		super('NumberPattern')
+		this.value = value
+	}
+}
+
+export class BooleanPattern extends Pattern {
+	constructor(value) {
+		super('BooleanPattern')
+		this.value = value
+	}
+}
+
+export class StringPattern extends Pattern {
+	constructor(value) {
+		super('StringPattern')
+		this.value = value
+	}
+}
+
+export class ArrayPattern extends Pattern {
+	constructor(value) {
+		super('ArrayPattern')
+		this.value = value
+	}
+}
+
+export class ObjectPattern extends Pattern {
+	constructor(value) {
+		super('ObjectPattern')
+		this.value = value
+	}
+}
+
+export class NoPattern extends Pattern {
+	constructor() {
+		super('NoPattern')
+	}
+}
+
+export class PatternCase extends Node {
+	constructor(pattern, result) {
+		super('PatternCase')
+		this.pattern = pattern
+		this.result = result
+	}
+}

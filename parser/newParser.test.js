@@ -16,7 +16,15 @@ import {
 	ObjectProperty,
 	NamedParameter,
 	FunctionExpression,
-	CallExpression
+	CallExpression,
+	AnyPattern,
+	NumberPattern,
+	BooleanPattern,
+	StringPattern,
+	ArrayPattern,
+	ObjectPattern,
+	NoPattern,
+	PatternCase
 } from './newNodes'
 
 describe('parser', () => {
@@ -363,6 +371,126 @@ describe('parser', () => {
 				new CallExpression(new IdentifierExpression('f'), [
 					new RestElement('x')
 				])
+			])
+		])
+	})
+
+	test('converts a no-pattern pattern case', () => {
+		const tokens = tokenizer('| _ -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new PatternCase([new NoPattern()], new NumberExpression(0))])
+		])
+	})
+
+	test('converts a boolean pattern case', () => {
+		const tokens = tokenizer('| true -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new BooleanPattern(true)], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts a number pattern case', () => {
+		const tokens = tokenizer('| 0 -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new NumberPattern(0)], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts a string pattern case', () => {
+		const tokens = tokenizer("| 'hello' -> 0")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase([new StringPattern('hello')], new NumberExpression(0))
+			])
+		])
+	})
+
+	test('converts an array pattern case #1', () => {
+		const tokens = tokenizer('| [] -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new ArrayPattern(new ArrayExpression([]))],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts an array pattern case #2', () => {
+		const tokens = tokenizer('| [x, ...y] -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[
+						new ArrayPattern(
+							new ArrayExpression([
+								new IdentifierExpression('x'),
+								new RestElement('y')
+							])
+						)
+					],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts an object pattern case #1', () => {
+		const tokens = tokenizer('| {} -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new ObjectPattern(new ObjectExpression([]))],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts an object pattern case #2', () => {
+		const tokens = tokenizer('| { x, y: 10, ...z } -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[
+						new ObjectPattern(
+							new ObjectExpression([
+								new ObjectProperty(new IdentifierExpression('x')),
+								new ObjectProperty(
+									new NamedParameter('y', new NumberExpression(10))
+								),
+								new ObjectProperty(new RestElement('z'))
+							])
+						)
+					],
+					new NumberExpression(0)
+				)
+			])
+		])
+	})
+
+	test('converts multi-patterns #1', () => {
+		const tokens = tokenizer('| 0, 10 -> 0')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new NumberPattern(0), new NumberPattern(10)],
+					new NumberExpression(0)
+				)
 			])
 		])
 	})

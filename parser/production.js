@@ -37,13 +37,14 @@ const matchTable = {
 
 	// Patterns
 	Pattern: ['Pattern', 'Node'],
-	MultiPattern: ['MultiPattern', 'Pattern', 'Node'],
+
 	AnyPattern: ['AnyPattern', 'Pattern', 'Node'],
 	NumberPattern: ['NumberPattern', 'Pattern', 'Node'],
 	BooleanPattern: ['BooleanPattern', 'Pattern', 'Node'],
 	StringPattern: ['StringPattern', 'Pattern', 'Node'],
 	ArrayPattern: ['ArrayPattern', 'Pattern', 'Node'],
 	ObjectPattern: ['ObjectPattern', 'Pattern', 'Node'],
+	PatternCase: ['PatternCase', 'Pattern', 'Node'],
 	NoPattern: ['NoPattern', 'Pattern', 'Node'],
 
 	// Statements
