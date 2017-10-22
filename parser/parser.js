@@ -23,7 +23,8 @@ import {
 	ObjectPattern,
 	NoPattern,
 	PatternCase,
-	PatternExpression
+	PatternExpression,
+	Declaration
 } from './nodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -299,6 +300,24 @@ const grammar = [
 		['Expression', 'ClosedParameters'],
 		(expression, parameters) =>
 			new CallExpression(expression, parameters.values),
+		lowestPrecedence
+	),
+
+	// Declarations
+	new Production(
+		['ArrayExpression', '=', 'Expression'],
+		(array, _, expression) =>
+			new Declaration(new ArrayPattern(array), expression),
+		lowestPrecedence
+	),
+	new Production(
+		['ObjectExpression', '=', 'Expression'],
+		(obj, _, expression) => new Declaration(new ObjectPattern(obj), expression),
+		lowestPrecedence
+	),
+	new Production(
+		['IdentifierExpression', '=', 'Expression'],
+		(identifier, _, expression) => new Declaration(identifier, expression),
 		lowestPrecedence
 	),
 

@@ -217,3 +217,11 @@ export class PatternExpression extends Node {
 		this.patternCases = patternCases
 	}
 }
+
+export class Declaration extends Statement {
+	constructor(declarator, value) {
+		super('Declaration')
+		this.declarator = declarator
+		this.value = value
+	}
+}

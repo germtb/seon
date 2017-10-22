@@ -25,7 +25,8 @@ import {
 	ObjectPattern,
 	NoPattern,
 	PatternCase,
-	PatternExpression
+	PatternExpression,
+	Declaration
 } from './nodes'
 
 describe('parser', () => {
@@ -564,6 +565,52 @@ describe('parser', () => {
 						),
 						new PatternCase([new NoPattern()], new BooleanExpression(true))
 					]
+				)
+			])
+		])
+	})
+
+	test('converts a declaration #1', () => {
+		const tokens = tokenizer('x = 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(new IdentifierExpression('x'), new NumberExpression(10))
+			])
+		])
+	})
+
+	test('converts a declaration #2', () => {
+		const tokens = tokenizer('[x, ...xs] = 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new ArrayPattern(
+						new ArrayExpression([
+							new IdentifierExpression('x'),
+							new RestElement('xs')
+						])
+					),
+					new NumberExpression(10)
+				)
+			])
+		])
+	})
+
+	test('converts a declaration #3', () => {
+		const tokens = tokenizer('{ x, ...xs } = 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new ObjectPattern(
+						new ObjectExpression([
+							new ObjectProperty(new IdentifierExpression('x')),
+							new ObjectProperty(new RestElement('xs'))
+						])
+					),
+					new NumberExpression(10)
 				)
 			])
 		])
