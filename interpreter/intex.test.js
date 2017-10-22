@@ -23,4 +23,18 @@ describe('interpreter', () => {
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual('1234')
 	})
+
+	test('converts a binary expression', () => {
+		const tokens = tokenizer('10 + 5')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual(15)
+	})
+
+	test('converts a unary expression', () => {
+		const tokens = tokenizer('!true')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual(false)
+	})
 })

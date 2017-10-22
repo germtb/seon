@@ -46,17 +46,54 @@ const visitorsFactory = ({ aval }) => ({
 	ObjectProperty: (node, scopes) => {
 		console.log('ObjectProperty not implemented yet')
 	},
-	BinaryOperator: (node, scopes) => {
-		console.log('BinaryOperator not implemented yet')
-	},
 	BinaryExpression: (node, scopes) => {
-		console.log('BinaryExpression not implemented yet')
-	},
-	UnaryOperator: (node, scopes) => {
-		console.log('UnaryOperator not implemented yet')
+		const left = aval(node.left, scopes)
+		const right = aval(node.right, scopes)
+		const op = node.operator.operator
+
+		if (op === '+') {
+			return left + right
+		} else if (op === '*') {
+			return left * right
+		} else if (op === '/') {
+			return left / right
+		} else if (op === '-') {
+			return left - right
+		} else if (op === '%') {
+			return left % right
+		} else if (op === '**') {
+			return Math.pow(left, right)
+		} else if (op === '<') {
+			return left < right
+		} else if (op === '>') {
+			return left > right
+		} else if (op === '>=') {
+			return left >= right
+		} else if (op === '<=') {
+			return left <= right
+		} else if (op === '==') {
+			return left == right
+		} else if (op === '!=') {
+			return left != right
+		} else if (op === '&&') {
+			return left && right
+		} else if (op === '||') {
+			return left || right
+		} else if (op === '|>') {
+			return right(left)
+		}
+
+		console.log(`BinaryExpression ${op} not implemented yet`)
 	},
 	UnaryExpression: (node, scopes) => {
-		console.log('UnaryExpression not implemented yet')
+		const expression = aval(node.expression, scopes)
+		const op = node.operator.operator
+
+		if (op === '!') {
+			return !expression
+		}
+
+		console.log(`UnaryExpression ${op} not implemented yet`)
 	},
 	RestElement: (node, scopes) => {
 		console.log('RestElement not implemented yet')
