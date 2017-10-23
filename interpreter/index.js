@@ -144,8 +144,12 @@ const visitorsFactory = ({ aval }) => ({
 	FunctionExpression: (node, scopes) => {
 		const definitions = node.parameters
 		return {
-			call: params => {
-				const hydatedParams = definitions.reduce((acc, definition) => {
+			call: (params, scopes) => {
+				const hydatedParams = definitions.reduce((acc, definition, index) => {
+					if (definition.type === 'IdentifierExpression') {
+						acc[definition.name] = aval(params[index], scopes)
+					}
+
 					return acc
 				}, {})
 
@@ -161,7 +165,9 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('ReturnStatement not implemented yet')
 	},
 	CallExpression: (node, scopes) => {
-		console.log('CallExpression not implemented yet')
+		const { callee, parameters } = node
+		const func = aval(node.callee, scopes)
+		return func.call(parameters, scopes)
 	},
 	Pattern: (node, scopes) => {
 		console.log('Pattern not implemented yet')
