@@ -643,4 +643,17 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('bug #2', () => {
+		const tokens = tokenizer('f(y: 1, 1)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new NamedParameter('y', new NumberExpression(1)),
+					new NumberExpression(1)
+				])
+			])
+		])
+	})
 })

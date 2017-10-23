@@ -280,12 +280,12 @@ const grammar = [
 	),
 
 	new Production(
-		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		['[Parameter]', 'Expression|NamedParameter|RestElement', ','],
 		(parameters, parameter) =>
 			arrayOf('Parameter', [...parameters.values, parameter])
 	),
 	new Production(
-		['[Parameter]', 'IdentifierExpression|NamedParameter|RestElement', ')'],
+		['[Parameter]', 'Expression|NamedParameter|RestElement', ')'],
 		(parameters, parameter) => ({
 			type: 'ClosedParameters',
 			values: [...parameters.values, parameter]

@@ -142,8 +142,9 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('NamedParameter not implemented yet')
 	},
 	FunctionExpression: (node, scopes) => {
+		console.log('node: ', node)
 		const parameterDefinitions = node.parameters
-		const functionExpression = {
+		return {
 			call: parameters => {
 				if (parameters.length >= parameterDefinitions.length) {
 					let hydratedParams = []
@@ -151,6 +152,7 @@ const visitorsFactory = ({ aval }) => ({
 
 					for (let i = 0; i < parameters.length; i++) {
 						const param = parameters[i]
+
 						if (/Expression/.test(param.type)) {
 							const definition = remainingParameterDefinitions.pop()
 							hydratedParams[definition.name] = aval(param, scopes)
@@ -168,11 +170,17 @@ const visitorsFactory = ({ aval }) => ({
 
 					return aval(node.body, [...scopes, hydratedParams])
 				}
+
+				// let remainingParameters = []
+				// return {
+				// 	call: parameters => {
+				//
+				// 	},
+				// 	__type: 'Function'
+				// }
 			},
 			__type: 'Function'
 		}
-
-		return functionExpression
 	},
 	FunctionBody: (node, scopes) => {
 		console.log('FunctionBody not implemented yet')

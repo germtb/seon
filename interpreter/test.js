@@ -195,7 +195,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #2', () => {
+	test('converts a function #2 ', () => {
 		const tokens = tokenizer(`
 		f = x => x
 		x = f(x: 10)
@@ -207,4 +207,61 @@ describe('interpreter', () => {
 			__type: 'Number'
 		})
 	})
+
+	test('converts a function #3 ', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x + y
+			x = f(x: 10, y: 20)
+		`)
+
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 30,
+			__type: 'Number'
+		})
+	})
+
+	test('converts a function #4 ', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x / y
+			x = f(y: 2, x: 4)
+		`)
+
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 2,
+			__type: 'Number'
+		})
+	})
+
+	// test('converts a function #5', () => {
+	// 	const tokens = tokenizer(`
+	// 		f = (x, y) => x / y
+	// 		x = f(y: 2, 4)
+	// 	`)
+	//
+	// 	const nodes = parse(tokens)
+	// 	aval(nodes[0], scopes)
+	// 	expect(scopes[0].x).toEqual({
+	// 		value: 2,
+	// 		__type: 'Number'
+	// 	})
+	// })
+
+	// test('Auto currying #1', () => {
+	// 	const tokens = tokenizer(`
+	// 		f = (x, y, z) => x + y + z
+	// 		a = f(y: 10)
+	// 		b = f(z: 100)
+	// 		c = f(1)
+	// 	`)
+	// 	const nodes = parse(tokens)
+	// 	aval(nodes[0], scopes)
+	// 	expect(scopes[0].c).toEqual({
+	// 		value: 111,
+	// 		__type: 'Number'
+	// 	})
+	// })
 })
