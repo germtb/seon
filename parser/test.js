@@ -631,4 +631,16 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('bug #1', () => {
+		const tokens = tokenizer('f(10)')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new CallExpression(new IdentifierExpression('f'), [
+					new NumberExpression(10)
+				])
+			])
+		])
+	})
 })

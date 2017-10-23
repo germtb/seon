@@ -268,11 +268,11 @@ const grammar = [
 		lowestPrecedence
 	),
 	new Production(
-		['(', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		['(', 'Expression|NamedParameter|RestElement', ','],
 		(_, parameter) => arrayOf('Parameter', [parameter])
 	),
 	new Production(
-		['(', 'IdentifierExpression|NamedParameter|RestElement', ')'],
+		['(', 'Expression|NamedParameter|RestElement', ')'],
 		(_, parameter) => ({
 			type: 'ClosedParameters',
 			values: [parameter]
@@ -342,7 +342,6 @@ const parse = tokens => {
 
 		for (let j = 1; j <= Math.min(5, stack.length); j++) {
 			const nodes = stack.slice(stack.length - j)
-
 			const production = grammar.find(r => r.matches(nodes, peek.type))
 
 			if (production) {
