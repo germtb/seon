@@ -1,6 +1,38 @@
 import tokenizer from '../tokenizer'
 import parse from '../parser'
 
+const createFunction = (definitions, body, scopes) => ({
+	call: params => {
+		let hydratedParams = []
+		let leftDefinitions = [...definitions]
+
+		for (let i = 0; i < params.length; i++) {
+			const param = params[i]
+
+			if (/Expression/.test(param.type)) {
+				const definition = leftDefinitions.shift()
+				hydratedParams[definition.name] = aval(param, scopes)
+			} else if (param.type === 'NamedParameter') {
+				const definition = leftDefinitions.find(
+					definition => definition.name === param.name
+				)
+				leftDefinitions = leftDefinitions.filter(
+					definition => definition.name !== param.name
+				)
+
+				hydratedParams[definition.name] = aval(param.value, scopes)
+			}
+		}
+
+		if (leftDefinitions.length > 0) {
+			return createFunction(leftDefinitions, body, [...scopes, hydratedParams])
+		}
+
+		return aval(body, [...scopes, hydratedParams])
+	},
+	__type: 'Function'
+})
+
 export const set = (name, value, scopes) => {
 	if (name in scopes[scopes.length - 1]) {
 		console.error(`${name} has already been assigned.`)
@@ -142,36 +174,7 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('NamedParameter not implemented yet')
 	},
 	FunctionExpression: (node, scopes) => {
-		const functionExpression = {
-			paramters: node.parameters,
-			call: parameters => {
-				let hydratedParams = []
-				let leftDefinitions = [...functionExpression.paramters]
-
-				for (let i = 0; i < parameters.length; i++) {
-					const param = parameters[i]
-
-					if (/Expression/.test(param.type)) {
-						const definition = leftDefinitions.shift()
-						hydratedParams[definition.name] = aval(param, scopes)
-					} else if (param.type === 'NamedParameter') {
-						const definition = leftDefinitions.find(
-							definition => definition.name === param.name
-						)
-						leftDefinitions = leftDefinitions.filter(
-							definition => definition.name !== param.name
-						)
-
-						hydratedParams[definition.name] = aval(param.value, scopes)
-					}
-				}
-
-				return aval(node.body, [...scopes, hydratedParams])
-			},
-			__type: 'Function'
-		}
-
-		return functionExpression
+		return createFunction(node.parameters, node.body, scopes)
 	},
 	FunctionBody: (node, scopes) => {
 		console.log('FunctionBody not implemented yet')

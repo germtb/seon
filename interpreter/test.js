@@ -264,18 +264,18 @@ describe('interpreter', () => {
 		})
 	})
 
-	// test('Auto currying #1', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y, z) => x + y + z
-	// 		a = f(y: 10)
-	// 		b = f(z: 100)
-	// 		c = f(1)
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	aval(nodes[0], scopes)
-	// 	expect(scopes[0].c).toEqual({
-	// 		value: 111,
-	// 		__type: 'Number'
-	// 	})
-	// })
+	test('Auto currying #1', () => {
+		const tokens = tokenizer(`
+			f = (x, y, z) => x + y + z
+			a = f(y: 10)
+			b = a(z: 100)
+			c = b(1)
+		`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].c).toEqual({
+			value: 111,
+			__type: 'Number'
+		})
+	})
 })
