@@ -156,22 +156,29 @@ describe('interpreter', () => {
 		})
 	})
 
-	// test('converts an object expression #5', () => {
-	// 	const tokens = tokenizer(`
-	// 		x = 'hello'
-	// 		y = { y1: 10, y2: 20 }
-	// 		z = { x, ...y, z: [ 0, 1, 2 ] }
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	aval(nodes[0], scopes)
-	// 	expect(scopes[0].y).toEqual({
-	// 		value: {
-	// 			x: { value: 'hello', __type: 'String' },
-	// 			y1: { value: 10, __type: 'Number' },
-	// 			y2: { value: 20, __type: 'Number' },
-	// 			z: { value: [0, 1, 2], __type: 'Array' }
-	// 		},
-	// 		__type: 'Object'
-	// 	})
-	// })
+	test('converts an object expression #5', () => {
+		const tokens = tokenizer(`
+			x = 'hello'
+			y = { y1: 10, y2: 20 }
+			z = { x, ...y, z: [ 0, 1, 2 ] }
+		`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].z).toEqual({
+			value: {
+				x: { value: 'hello', __type: 'String' },
+				y1: { value: 10, __type: 'Number' },
+				y2: { value: 20, __type: 'Number' },
+				z: {
+					value: [
+						{ value: 0, __type: 'Number' },
+						{ value: 1, __type: 'Number' },
+						{ value: 2, __type: 'Number' }
+					],
+					__type: 'Array'
+				}
+			},
+			__type: 'Object'
+		})
+	})
 })
