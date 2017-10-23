@@ -236,19 +236,33 @@ describe('interpreter', () => {
 		})
 	})
 
-	// test('converts a function #5', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y) => x / y
-	// 		x = f(y: 2, 4)
-	// 	`)
-	//
-	// 	const nodes = parse(tokens)
-	// 	aval(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 2,
-	// 		__type: 'Number'
-	// 	})
-	// })
+	test('converts a function #5', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x / y
+			x = f(y: 2, 4)
+		`)
+
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 2,
+			__type: 'Number'
+		})
+	})
+
+	test('converts a function #6', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x / y
+			x = f(4, y: 2)
+		`)
+
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 2,
+			__type: 'Number'
+		})
+	})
 
 	// test('Auto currying #1', () => {
 	// 	const tokens = tokenizer(`
