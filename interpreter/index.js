@@ -2,6 +2,9 @@ import tokenizer from '../tokenizer'
 import parse from '../parser'
 
 export const set = (name, value, scopes) => {
+	if (name in scopes[scopes.length - 1]) {
+		throw new Error(`${name} has already been assigned.`)
+	}
 	scopes[scopes.length - 1][name] = value
 }
 
@@ -17,6 +20,45 @@ export const get = (name, scopes) => {
 	)
 }
 
+const sameTypeCheck = (left, right) => {
+	if (left.__type !== right.__type) {
+		throw new Error(
+			`Cannot sum two nodes of types ${left.__type} and ${right.__type}`
+		)
+	}
+}
+
+const operations = {
+	'+': (left, right) => {
+		sameTypeCheck(left, right)
+		return { value: left.value + right.value, __type: left.__type }
+	},
+	'-': (left, right) => {
+		sameTypeCheck(left, right)
+		return { value: left.value - right.value, __type: left.__type }
+	},
+	'*': (left, right) => {
+		sameTypeCheck(left, right)
+		return { value: left.value * right.value, __type: left.__type }
+	},
+	'/': (left, right) => {
+		sameTypeCheck(left, right)
+		return { value: left.value / right.value, __type: left.__type }
+	},
+	'%': (left, right) => {
+		sameTypeCheck(left, right)
+		return { value: left.value % right.value, __type: left.__type }
+	},
+	'|>': (left, right) => {
+		if (left.__type !== 'Function') {
+			throw new Error(
+				`Node of type ${left.__type} is not a function and cannot be called`
+			)
+		}
+		return left.call(right)
+	}
+}
+
 const visitorsFactory = ({ aval }) => ({
 	File: (node, scopes) => {
 		node.nodes.forEach(node => {
@@ -27,18 +69,25 @@ const visitorsFactory = ({ aval }) => ({
 		return get(node.name, scopes)
 	},
 	BooleanExpression: node => {
-		return node.value
+		return { value: node.value, __type: 'Boolean' }
 	},
 	NumberExpression: node => {
-		return node.value
+		return { value: node.value, __type: 'Number' }
 	},
 	StringExpression: node => {
-		return node.value
+		return { value: node.value, __type: 'String' }
 	},
 	ArrayExpression: (node, scopes) => {
-		return node.values.reduce((acc, value) => {
-			acc.push([].concat(aval(value, scopes)))
+		const value = node.values.reduce((acc, value) => {
+			if (value.type === 'RestElement') {
+				const restValue = get(value.value, scopes).value
+				acc.push(...restValue)
+			} else {
+				acc.push(aval(value, scopes))
+			}
+			return acc
 		}, [])
+		return { value, __type: 'Array' }
 	},
 	ObjectExpression: (node, scopes) => {
 		console.log('ObjectExpression not implemented yet')
@@ -49,41 +98,14 @@ const visitorsFactory = ({ aval }) => ({
 	BinaryExpression: (node, scopes) => {
 		const left = aval(node.left, scopes)
 		const right = aval(node.right, scopes)
-		const op = node.operator.operator
+		const operator = node.operator.operator
+		const operation = operations[operator]
 
-		if (op === '+') {
-			return left + right
-		} else if (op === '*') {
-			return left * right
-		} else if (op === '/') {
-			return left / right
-		} else if (op === '-') {
-			return left - right
-		} else if (op === '%') {
-			return left % right
-		} else if (op === '**') {
-			return Math.pow(left, right)
-		} else if (op === '<') {
-			return left < right
-		} else if (op === '>') {
-			return left > right
-		} else if (op === '>=') {
-			return left >= right
-		} else if (op === '<=') {
-			return left <= right
-		} else if (op === '==') {
-			return left == right
-		} else if (op === '!=') {
-			return left != right
-		} else if (op === '&&') {
-			return left && right
-		} else if (op === '||') {
-			return left || right
-		} else if (op === '|>') {
-			return right(left)
+		if (operation) {
+			return operation(left, right)
+		} else {
+			throw new Error(`BinaryExpression ${operator} not implemented yet`)
 		}
-
-		console.log(`BinaryExpression ${op} not implemented yet`)
 	},
 	UnaryExpression: (node, scopes) => {
 		const expression = aval(node.expression, scopes)
@@ -91,9 +113,11 @@ const visitorsFactory = ({ aval }) => ({
 
 		if (op === '!') {
 			return !expression
+		} else if (op === 'type') {
+			return expression.__type
+		} else {
+			console.log(`UnaryExpression ${op} not implemented yet`)
 		}
-
-		console.log(`UnaryExpression ${op} not implemented yet`)
 	},
 	RestElement: (node, scopes) => {
 		console.log('RestElement not implemented yet')
@@ -144,7 +168,15 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('PatternExpression not implemented yet')
 	},
 	Declaration: (node, scopes) => {
-		console.log('Declaration not implemented yet')
+		const { declarator, value } = node
+
+		if (declarator.type === 'IdentifierExpression') {
+			set(declarator.name, aval(value, scopes), scopes)
+		} else {
+			console.error(
+				`Declaration of type ${declarator.type} not implemented yet`
+			)
+		}
 	}
 })
 
