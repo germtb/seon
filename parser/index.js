@@ -29,7 +29,7 @@ import {
 import { Production } from './Production'
 import { arrayOf } from './utils'
 
-const nonOperators = ['(', '.', '[', '{']
+const nonOperators = ['(', '.', '[', '{', '=>']
 const unaryOperators = ['!', 'TypeOperator']
 const binaryOperators = [
 	'+',

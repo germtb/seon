@@ -142,6 +142,7 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('NamedParameter not implemented yet')
 	},
 	FunctionExpression: (node, scopes) => {
+		console.log('node: ', node)
 		console.log('FunctionExpression not implemented yet')
 	},
 	FunctionBody: (node, scopes) => {

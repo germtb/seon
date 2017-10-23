@@ -615,4 +615,20 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('converts a function declaration', () => {
+		const tokens = tokenizer('f = x => x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new IdentifierExpression('f'),
+					new FunctionExpression(
+						[new IdentifierExpression('x')],
+						new IdentifierExpression('x')
+					)
+				)
+			])
+		])
+	})
 })

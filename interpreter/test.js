@@ -181,4 +181,18 @@ describe('interpreter', () => {
 			__type: 'Object'
 		})
 	})
+
+	// test('converts a function #1', () => {
+	// 	const tokens = tokenizer(`
+	// 		f = x => x
+	// 		x = f(10)
+	// 	`)
+	// 	const nodes = parse(tokens)
+	// 	console.log('nodes: ', JSON.stringify(nodes, null, 2))
+	// 	aval(nodes[0], scopes)
+	// 	expect(scopes[0].x).toEqual({
+	// 		value: 10,
+	// 		__type: 'Number'
+	// 	})
+	// })
 })
