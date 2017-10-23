@@ -3,7 +3,7 @@ import parse from '../parser'
 
 export const set = (name, value, scopes) => {
 	if (name in scopes[scopes.length - 1]) {
-		throw new Error(`${name} has already been assigned.`)
+		console.error(`${name} has already been assigned.`)
 	}
 	scopes[scopes.length - 1][name] = value
 }
@@ -15,14 +15,14 @@ export const get = (name, scopes) => {
 		}
 	}
 
-	throw new Error(
+	console.error(
 		`${name} not found in scopes: ${JSON.stringify(scopes, null, 2)}`
 	)
 }
 
 const sameTypeCheck = (left, right) => {
 	if (left.__type !== right.__type) {
-		throw new Error(
+		console.error(
 			`Cannot sum two nodes of types ${left.__type} and ${right.__type}`
 		)
 	}
@@ -51,7 +51,7 @@ const operations = {
 	},
 	'|>': (left, right) => {
 		if (left.__type !== 'Function') {
-			throw new Error(
+			console.error(
 				`Node of type ${left.__type} is not a function and cannot be called`
 			)
 		}
@@ -90,10 +90,26 @@ const visitorsFactory = ({ aval }) => ({
 		return { value, __type: 'Array' }
 	},
 	ObjectExpression: (node, scopes) => {
-		console.log('ObjectExpression not implemented yet')
+		const value = node.properties.reduce((acc, value) => {
+			const keyValues = aval(value, scopes)
+			Object.keys(keyValues).forEach(key => {
+				acc[key] = keyValues[key]
+			})
+			return acc
+		}, {})
+		return { value, __type: 'Object' }
 	},
 	ObjectProperty: (node, scopes) => {
-		console.log('ObjectProperty not implemented yet')
+		const { property } = node
+		if (property.type === 'NamedParameter') {
+			return { [property.name]: aval(property.value, scopes) }
+		} else if (property.type === 'IdentifierExpression') {
+			return { [property.name]: get(property.name, scopes) }
+		} else if (property.type === 'RestElement') {
+			return get(property.value, scopes).value
+		}
+
+		console.error(`ObjectProperty type ${property.type} not implemented`)
 	},
 	BinaryExpression: (node, scopes) => {
 		const left = aval(node.left, scopes)
@@ -104,7 +120,7 @@ const visitorsFactory = ({ aval }) => ({
 		if (operation) {
 			return operation(left, right)
 		} else {
-			throw new Error(`BinaryExpression ${operator} not implemented yet`)
+			console.error(`BinaryExpression ${operator} not implemented yet`)
 		}
 	},
 	UnaryExpression: (node, scopes) => {
@@ -116,7 +132,7 @@ const visitorsFactory = ({ aval }) => ({
 		} else if (op === 'type') {
 			return expression.__type
 		} else {
-			console.log(`UnaryExpression ${op} not implemented yet`)
+			console.error(`UnaryExpression ${op} not implemented yet`)
 		}
 	},
 	RestElement: (node, scopes) => {
@@ -186,7 +202,9 @@ const createEval = () => {
 		const visitor = visitors[type]
 
 		if (!visitor) {
-			throw `${type} is not a visitor`
+			const error = `${type} is not a visitor`
+			console.error(error)
+			throw new Error(error)
 		}
 
 		try {

@@ -13,6 +13,7 @@ module.exports = {
 		indent: ['error', 'tab'],
 		'linebreak-style': ['error', 'unix'],
 		quotes: ['error', 'single', { avoidEscape: true }],
-		semi: ['error', 'never']
+		semi: ['error', 'never'],
+		'no-console': ['error', { allow: ['error'] }]
 	}
 }

@@ -97,7 +97,7 @@ describe('tokenizer', () => {
 		])
 	})
 
-	test('produces open and close SquareBrackets', () => {
+	test('produces open and close CurlyBrackets', () => {
 		expect(tokenizer('{1}')).toEqual([
 			{ type: '{' },
 			{ type: 'Number', value: 1 },
@@ -108,6 +108,19 @@ describe('tokenizer', () => {
 	test('produces strings that contain character that seem tokens', () => {
 		expect(tokenizer("'{} this [] hello 1234'")).toEqual([
 			{ type: 'String', value: '{} this [] hello 1234' }
+		])
+	})
+
+	test('produces identifiers with letters and numbers', () => {
+		expect(tokenizer('x1')).toEqual([{ type: 'Identifier', value: 'x1' }])
+	})
+
+	test('bug #1', () => {
+		expect(tokenizer('f , { x')).toEqual([
+			{ type: 'Identifier', value: 'f' },
+			{ type: ',' },
+			{ type: '{' },
+			{ type: 'Identifier', value: 'x' }
 		])
 	})
 })

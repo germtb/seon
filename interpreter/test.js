@@ -78,6 +78,16 @@ describe('interpreter', () => {
 		})
 	})
 
+	test('converts a declaration #3', () => {
+		const tokens = tokenizer("x = 'Hello'")
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 'Hello',
+			__type: 'String'
+		})
+	})
+
 	test('can spread arrays in arrays', () => {
 		const tokens = tokenizer(`
 			x = [1, 2, 3]
@@ -85,14 +95,6 @@ describe('interpreter', () => {
 		`)
 		const nodes = parse(tokens)
 		aval(nodes[0], scopes)
-		expect(scopes[0].x).toEqual({
-			value: [
-				{ value: 1, __type: 'Number' },
-				{ value: 2, __type: 'Number' },
-				{ value: 3, __type: 'Number' }
-			],
-			__type: 'Array'
-		})
 		expect(scopes[0].y).toEqual({
 			value: [
 				{ value: 0, __type: 'Number' },
@@ -103,4 +105,73 @@ describe('interpreter', () => {
 			__type: 'Array'
 		})
 	})
+
+	test('converts an object expression #1', () => {
+		const tokens = tokenizer('{}')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: {}, __type: 'Object' })
+	})
+
+	test('converts an object expression #2', () => {
+		const tokens = tokenizer('{ x: 10 }')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: {
+				x: { value: 10, __type: 'Number' }
+			},
+			__type: 'Object'
+		})
+	})
+
+	test('converts an object expression #3', () => {
+		const tokens = tokenizer(`
+			x = 10
+			y = { x }
+		`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].y).toEqual({
+			value: {
+				x: { value: 10, __type: 'Number' }
+			},
+			__type: 'Object'
+		})
+	})
+
+	test('converts an object expression #4', () => {
+		const tokens = tokenizer(`
+			x = { x: 10, y: 20 }
+			y = { ...x }
+		`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].y).toEqual({
+			value: {
+				x: { value: 10, __type: 'Number' },
+				y: { value: 20, __type: 'Number' }
+			},
+			__type: 'Object'
+		})
+	})
+
+	// test('converts an object expression #5', () => {
+	// 	const tokens = tokenizer(`
+	// 		x = 'hello'
+	// 		y = { y1: 10, y2: 20 }
+	// 		z = { x, ...y, z: [ 0, 1, 2 ] }
+	// 	`)
+	// 	const nodes = parse(tokens)
+	// 	aval(nodes[0], scopes)
+	// 	expect(scopes[0].y).toEqual({
+	// 		value: {
+	// 			x: { value: 'hello', __type: 'String' },
+	// 			y1: { value: 10, __type: 'Number' },
+	// 			y2: { value: 20, __type: 'Number' },
+	// 			z: { value: [0, 1, 2], __type: 'Array' }
+	// 		},
+	// 		__type: 'Object'
+	// 	})
+	// })
 })
