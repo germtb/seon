@@ -278,4 +278,18 @@ describe('interpreter', () => {
 			__type: 'Number'
 		})
 	})
+
+	test('Pattern matching booleans #1', () => {
+		const tokens = tokenizer('true | true -> 1 | false -> 0')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 1, __type: 'Number' })
+	})
+
+	test('Pattern matching booleans #1', () => {
+		const tokens = tokenizer('false | true -> 1 | false -> 0')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 0, __type: 'Number' })
+	})
 })

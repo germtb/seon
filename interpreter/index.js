@@ -33,6 +33,32 @@ const createFunction = (definitions, body, scopes) => ({
 	__type: 'Function'
 })
 
+const match = (pattern, expression, scopes) => {
+	if (pattern.type !== expression.__type + 'Pattern') {
+		return false
+	}
+
+	if (pattern.type === 'BooleanPattern') {
+		return pattern.value === expression.value
+	}
+
+	console.error(`Pattern of type ${pattern.type} not implemented yet`)
+	return false
+}
+
+const multiMatch = (pattern, expressions) => {
+	if (pattern.pattern.length !== expressions.length) {
+		return false
+	}
+
+	for (let i = 0; i < pattern.pattern.length; i++) {
+		if (!match(pattern.pattern[i], expressions[i])) {
+			return false
+		}
+	}
+	return true
+}
+
 export const set = (name, value, scopes) => {
 	if (name in scopes[scopes.length - 1]) {
 		console.error(`${name} has already been assigned.`)
@@ -215,7 +241,16 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('PatternCase not implemented yet')
 	},
 	PatternExpression: (node, scopes) => {
-		console.log('PatternExpression not implemented yet')
+		const expressions = node.expressions.map(e => aval(e, scopes))
+		for (let i = 0; i < node.patternCases.length; i++) {
+			const pattern = node.patternCases[i]
+
+			if (multiMatch(pattern, expressions, scopes)) {
+				return aval(pattern.result, scopes)
+			}
+		}
+
+		console.error('PatternExpression did not match')
 	},
 	Declaration: (node, scopes) => {
 		const { declarator, value } = node
