@@ -142,21 +142,37 @@ const visitorsFactory = ({ aval }) => ({
 		console.log('NamedParameter not implemented yet')
 	},
 	FunctionExpression: (node, scopes) => {
-		const definitions = node.parameters
-		return {
-			call: (params, scopes) => {
-				const hydatedParams = definitions.reduce((acc, definition, index) => {
-					if (definition.type === 'IdentifierExpression') {
-						acc[definition.name] = aval(params[index], scopes)
+		const parameterDefinitions = node.parameters
+		const functionExpression = {
+			call: parameters => {
+				if (parameters.length >= parameterDefinitions.length) {
+					let hydratedParams = []
+					let remainingParameterDefinitions = [...parameterDefinitions]
+
+					for (let i = 0; i < parameters.length; i++) {
+						const param = parameters[i]
+						if (/Expression/.test(param.type)) {
+							const definition = remainingParameterDefinitions.pop()
+							hydratedParams[definition.name] = aval(param, scopes)
+						} else if (param.type === 'NamedParameter') {
+							const definition = remainingParameterDefinitions.find(
+								definition => definition.name === param.name
+							)
+							remainingParameterDefinitions = remainingParameterDefinitions.filter(
+								definition => definition.anem !== param.name
+							)
+
+							hydratedParams[definition.name] = aval(param.value, scopes)
+						}
 					}
 
-					return acc
-				}, {})
-
-				return aval(node.body, [...scopes, hydatedParams])
+					return aval(node.body, [...scopes, hydratedParams])
+				}
 			},
 			__type: 'Function'
 		}
+
+		return functionExpression
 	},
 	FunctionBody: (node, scopes) => {
 		console.log('FunctionBody not implemented yet')
@@ -166,8 +182,8 @@ const visitorsFactory = ({ aval }) => ({
 	},
 	CallExpression: (node, scopes) => {
 		const { callee, parameters } = node
-		const func = aval(node.callee, scopes)
-		return func.call(parameters, scopes)
+		const func = aval(callee, scopes)
+		return func.call(parameters)
 	},
 	Pattern: (node, scopes) => {
 		console.log('Pattern not implemented yet')

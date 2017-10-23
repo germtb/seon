@@ -194,4 +194,17 @@ describe('interpreter', () => {
 			__type: 'Number'
 		})
 	})
+
+	test('converts a function #2', () => {
+		const tokens = tokenizer(`
+		f = x => x
+		x = f(x: 10)
+	`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 10,
+			__type: 'Number'
+		})
+	})
 })
