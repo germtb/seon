@@ -125,3 +125,11 @@ map = (f, xs) => f, xs
 
 let x = foo | true -> 1 | false -> 0
 ```
+
+# TODO
+- float numbers
+- negative numbers
+- auto caching
+- function equality
+- transpile to something (js)
+- rewrite in itself

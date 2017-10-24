@@ -30,7 +30,7 @@ const createFunction = (definitions, body, scopes) => ({
 
 		return aval(body, [...scopes, hydratedParams])
 	},
-	__type: 'Function'
+	type: 'Function'
 })
 
 const match = (pattern, expression, addToScope) => {
@@ -43,6 +43,23 @@ const match = (pattern, expression, addToScope) => {
 	} else if (pattern.type === 'AnyPattern') {
 		addToScope(pattern.value, expression)
 		return true
+	} else if (pattern.type === 'ArrayPattern') {
+		const definition = pattern.value.values
+		// console.log('definition: ', definition)
+		// console.log('expression: ', expression.value)
+		if (definition.length === 0 && expression.value.length === 0) {
+			return true
+		}
+
+		const matchedVariables = {}
+
+		// definition.every(d => {
+		// 	match(d)
+		// })
+
+		console.log('definition: ', definition)
+
+		return false
 	}
 
 	console.error(`Pattern of type ${pattern.type} not implemented yet`)
@@ -82,9 +99,9 @@ export const get = (name, scopes) => {
 }
 
 const sameTypeCheck = (left, right) => {
-	if (left.__type !== right.__type) {
+	if (left.type !== right.type) {
 		console.error(
-			`Cannot sum two nodes of types ${left.__type} and ${right.__type}`
+			`Cannot sum two nodes of types ${left.type} and ${right.type}`
 		)
 	}
 }
@@ -92,28 +109,28 @@ const sameTypeCheck = (left, right) => {
 const operations = {
 	'+': (left, right) => {
 		sameTypeCheck(left, right)
-		return { value: left.value + right.value, __type: left.__type }
+		return { value: left.value + right.value, type: left.type }
 	},
 	'-': (left, right) => {
 		sameTypeCheck(left, right)
-		return { value: left.value - right.value, __type: left.__type }
+		return { value: left.value - right.value, type: left.type }
 	},
 	'*': (left, right) => {
 		sameTypeCheck(left, right)
-		return { value: left.value * right.value, __type: left.__type }
+		return { value: left.value * right.value, type: left.type }
 	},
 	'/': (left, right) => {
 		sameTypeCheck(left, right)
-		return { value: left.value / right.value, __type: left.__type }
+		return { value: left.value / right.value, type: left.type }
 	},
 	'%': (left, right) => {
 		sameTypeCheck(left, right)
-		return { value: left.value % right.value, __type: left.__type }
+		return { value: left.value % right.value, type: left.type }
 	},
 	'|>': (left, right) => {
-		if (left.__type !== 'Function') {
+		if (left.type !== 'Function') {
 			console.error(
-				`Node of type ${left.__type} is not a function and cannot be called`
+				`Node of type ${left.type} is not a function and cannot be called`
 			)
 		}
 		return left.call(right)
@@ -130,13 +147,13 @@ const visitorsFactory = ({ aval }) => ({
 		return get(node.name, scopes)
 	},
 	BooleanExpression: node => {
-		return { value: node.value, __type: 'Boolean' }
+		return { value: node.value, type: 'Boolean' }
 	},
 	NumberExpression: node => {
-		return { value: node.value, __type: 'Number' }
+		return { value: node.value, type: 'Number' }
 	},
 	StringExpression: node => {
-		return { value: node.value, __type: 'String' }
+		return { value: node.value, type: 'String' }
 	},
 	ArrayExpression: (node, scopes) => {
 		const value = node.values.reduce((acc, value) => {
@@ -148,7 +165,7 @@ const visitorsFactory = ({ aval }) => ({
 			}
 			return acc
 		}, [])
-		return { value, __type: 'Array' }
+		return { value, type: 'Array' }
 	},
 	ObjectExpression: (node, scopes) => {
 		const value = node.properties.reduce((acc, value) => {
@@ -158,7 +175,7 @@ const visitorsFactory = ({ aval }) => ({
 			})
 			return acc
 		}, {})
-		return { value, __type: 'Object' }
+		return { value, type: 'Object' }
 	},
 	ObjectProperty: (node, scopes) => {
 		const { property } = node
@@ -191,57 +208,57 @@ const visitorsFactory = ({ aval }) => ({
 		if (op === '!') {
 			return !expression
 		} else if (op === 'type') {
-			return expression.__type
+			return expression.type
 		} else {
 			console.error(`UnaryExpression ${op} not implemented yet`)
 		}
 	},
-	RestElement: (node, scopes) => {
-		console.log('RestElement not implemented yet')
+	RestElement: () => {
+		console.info('RestElement not implemented yet')
 	},
-	NamedParameter: (node, scopes) => {
-		console.log('NamedParameter not implemented yet')
+	NamedParameter: () => {
+		console.info('NamedParameter not implemented yet')
 	},
 	FunctionExpression: (node, scopes) => {
 		return createFunction(node.parameters, node.body, scopes)
 	},
-	FunctionBody: (node, scopes) => {
-		console.log('FunctionBody not implemented yet')
+	FunctionBody: () => {
+		console.info('FunctionBody not implemented yet')
 	},
-	ReturnStatement: (node, scopes) => {
-		console.log('ReturnStatement not implemented yet')
+	ReturnStatement: () => {
+		console.info('ReturnStatement not implemented yet')
 	},
 	CallExpression: (node, scopes) => {
 		const { callee, parameters } = node
 		const func = aval(callee, scopes)
 		return func.call(parameters)
 	},
-	Pattern: (node, scopes) => {
-		console.log('Pattern not implemented yet')
+	Pattern: () => {
+		console.info('Pattern not implemented yet')
 	},
-	AnyPattern: (node, scopes) => {
-		console.log('AnyPattern not implemented yet')
+	AnyPattern: () => {
+		console.info('AnyPattern not implemented yet')
 	},
-	NumberPattern: (node, scopes) => {
-		console.log('NumberPattern not implemented yet')
+	NumberPattern: () => {
+		console.info('NumberPattern not implemented yet')
 	},
-	BooleanPattern: (node, scopes) => {
-		console.log('BooleanPattern not implemented yet')
+	BooleanPattern: () => {
+		console.info('BooleanPattern not implemented yet')
 	},
-	StringPattern: (node, scopes) => {
-		console.log('StringPattern not implemented yet')
+	StringPattern: () => {
+		console.info('StringPattern not implemented yet')
 	},
-	ArrayPattern: (node, scopes) => {
-		console.log('ArrayPattern not implemented yet')
+	ArrayPattern: () => {
+		console.info('ArrayPattern not implemented yet')
 	},
-	ObjectPattern: (node, scopes) => {
-		console.log('ObjectPattern not implemented yet')
+	ObjectPattern: () => {
+		console.info('ObjectPattern not implemented yet')
 	},
-	NoPattern: (node, scopes) => {
-		console.log('NoPattern not implemented yet')
+	NoPattern: () => {
+		console.info('NoPattern not implemented yet')
 	},
-	PatternCase: (node, scopes) => {
-		console.log('PatternCase not implemented yet')
+	PatternCase: () => {
+		console.info('PatternCase not implemented yet')
 	},
 	PatternExpression: (node, scopes) => {
 		const expressions = node.expressions.map(e => aval(e, scopes))

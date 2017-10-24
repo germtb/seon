@@ -12,21 +12,21 @@ describe('interpreter', () => {
 		const tokens = tokenizer('true')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: true, __type: 'Boolean' })
+		expect(result).toEqual({ value: true, type: 'Boolean' })
 	})
 
 	test('converts a number', () => {
 		const tokens = tokenizer('1234')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 1234, __type: 'Number' })
+		expect(result).toEqual({ value: 1234, type: 'Number' })
 	})
 
 	test('converts a string', () => {
 		const tokens = tokenizer("'1234'")
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: '1234', __type: 'String' })
+		expect(result).toEqual({ value: '1234', type: 'String' })
 	})
 
 	test('converts an array', () => {
@@ -35,11 +35,11 @@ describe('interpreter', () => {
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({
 			value: [
-				{ value: 0, __type: 'Number' },
-				{ value: 1, __type: 'Number' },
-				{ value: 2, __type: 'Number' }
+				{ value: 0, type: 'Number' },
+				{ value: 1, type: 'Number' },
+				{ value: 2, type: 'Number' }
 			],
-			__type: 'Array'
+			type: 'Array'
 		})
 	})
 
@@ -47,7 +47,7 @@ describe('interpreter', () => {
 		const tokens = tokenizer('10 + 5')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 15, __type: 'Number' })
+		expect(result).toEqual({ value: 15, type: 'Number' })
 	})
 
 	test('converts a unary expression', () => {
@@ -61,7 +61,7 @@ describe('interpreter', () => {
 		const tokens = tokenizer('x = 10')
 		const nodes = parse(tokens)
 		aval(nodes[0], scopes)
-		expect(scopes[0].x).toEqual({ value: 10, __type: 'Number' })
+		expect(scopes[0].x).toEqual({ value: 10, type: 'Number' })
 	})
 
 	test('converts a declaration #2', () => {
@@ -70,11 +70,11 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: [
-				{ value: 1, __type: 'Number' },
-				{ value: 2, __type: 'Number' },
-				{ value: 3, __type: 'Number' }
+				{ value: 1, type: 'Number' },
+				{ value: 2, type: 'Number' },
+				{ value: 3, type: 'Number' }
 			],
-			__type: 'Array'
+			type: 'Array'
 		})
 	})
 
@@ -84,7 +84,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 'Hello',
-			__type: 'String'
+			type: 'String'
 		})
 	})
 
@@ -97,12 +97,12 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].y).toEqual({
 			value: [
-				{ value: 0, __type: 'Number' },
-				{ value: 1, __type: 'Number' },
-				{ value: 2, __type: 'Number' },
-				{ value: 3, __type: 'Number' }
+				{ value: 0, type: 'Number' },
+				{ value: 1, type: 'Number' },
+				{ value: 2, type: 'Number' },
+				{ value: 3, type: 'Number' }
 			],
-			__type: 'Array'
+			type: 'Array'
 		})
 	})
 
@@ -110,7 +110,7 @@ describe('interpreter', () => {
 		const tokens = tokenizer('{}')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: {}, __type: 'Object' })
+		expect(result).toEqual({ value: {}, type: 'Object' })
 	})
 
 	test('converts an object expression #2', () => {
@@ -119,9 +119,9 @@ describe('interpreter', () => {
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({
 			value: {
-				x: { value: 10, __type: 'Number' }
+				x: { value: 10, type: 'Number' }
 			},
-			__type: 'Object'
+			type: 'Object'
 		})
 	})
 
@@ -134,9 +134,9 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].y).toEqual({
 			value: {
-				x: { value: 10, __type: 'Number' }
+				x: { value: 10, type: 'Number' }
 			},
-			__type: 'Object'
+			type: 'Object'
 		})
 	})
 
@@ -149,10 +149,10 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].y).toEqual({
 			value: {
-				x: { value: 10, __type: 'Number' },
-				y: { value: 20, __type: 'Number' }
+				x: { value: 10, type: 'Number' },
+				y: { value: 20, type: 'Number' }
 			},
-			__type: 'Object'
+			type: 'Object'
 		})
 	})
 
@@ -166,19 +166,19 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].z).toEqual({
 			value: {
-				x: { value: 'hello', __type: 'String' },
-				y1: { value: 10, __type: 'Number' },
-				y2: { value: 20, __type: 'Number' },
+				x: { value: 'hello', type: 'String' },
+				y1: { value: 10, type: 'Number' },
+				y2: { value: 20, type: 'Number' },
 				z: {
 					value: [
-						{ value: 0, __type: 'Number' },
-						{ value: 1, __type: 'Number' },
-						{ value: 2, __type: 'Number' }
+						{ value: 0, type: 'Number' },
+						{ value: 1, type: 'Number' },
+						{ value: 2, type: 'Number' }
 					],
-					__type: 'Array'
+					type: 'Array'
 				}
 			},
-			__type: 'Object'
+			type: 'Object'
 		})
 	})
 
@@ -191,7 +191,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 10,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -204,7 +204,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 10,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -218,7 +218,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 30,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -232,7 +232,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 2,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -246,7 +246,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 2,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -260,7 +260,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({
 			value: 2,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -275,7 +275,7 @@ describe('interpreter', () => {
 		aval(nodes[0], scopes)
 		expect(scopes[0].c).toEqual({
 			value: 111,
-			__type: 'Number'
+			type: 'Number'
 		})
 	})
 
@@ -283,34 +283,48 @@ describe('interpreter', () => {
 		const tokens = tokenizer('true | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 1, __type: 'Number' })
+		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching booleans #2', () => {
 		const tokens = tokenizer('false | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 0, __type: 'Number' })
+		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching no pattern #1', () => {
 		const tokens = tokenizer('false | true -> 1 | _ -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 0, __type: 'Number' })
+		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching number pattern #1', () => {
 		const tokens = tokenizer('1 | 0 -> 1 | 1 -> 2 | _ -> 3')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 2, __type: 'Number' })
+		expect(result).toEqual({ value: 2, type: 'Number' })
 	})
 
-	test('Pattern matching number any pattern #1', () => {
+	test('Pattern matching any pattern #1', () => {
 		const tokens = tokenizer('1 | 0 -> 1 | n -> n')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
-		expect(result).toEqual({ value: 1, __type: 'Number' })
+		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
+
+	test('Pattern matching array pattern #1', () => {
+		const tokens = tokenizer('[] | [] -> 0 | [x, ...xs] -> x')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 0, type: 'Number' })
+	})
+
+	// test('Pattern matching array pattern #1', () => {
+	// 	const tokens = tokenizer('[ 1 ] | [] -> 0 | [x, ...xs] -> x')
+	// 	const nodes = parse(tokens)
+	// 	const result = aval(nodes[0].nodes[0])
+	// 	expect(result).toEqual({ value: 1, type: 'Number' })
+	// })
 })
