@@ -15,12 +15,6 @@ import {
 	NamedParameter,
 	FunctionExpression,
 	CallExpression,
-	AnyPattern,
-	NumberPattern,
-	BooleanPattern,
-	StringPattern,
-	ArrayPattern,
-	ObjectPattern,
 	NoPattern,
 	PatternCase,
 	PatternExpression,
@@ -197,57 +191,27 @@ const grammar = [
 	new Production(['|', '_', ',|->'], () =>
 		arrayOf('Pattern', [new NoPattern()])
 	),
-	new Production(['|', 'IdentifierExpression', ',|->'], (_, identifier) =>
-		arrayOf('Pattern', [new AnyPattern(identifier.name)])
-	),
-	new Production(['|', 'BooleanExpression', ',|->'], (_, boolean) =>
-		arrayOf('Pattern', [new BooleanPattern(boolean.value)])
-	),
-	new Production(['|', 'NumberExpression', ',|->'], (_, number) =>
-		arrayOf('Pattern', [new NumberPattern(number.value)])
-	),
-	new Production(['|', 'StringExpression', ',|->'], (_, string) =>
-		arrayOf('Pattern', [new StringPattern(string.value)])
-	),
-	new Production(['|', 'ArrayExpression', ',|->'], (_, array) =>
-		arrayOf('Pattern', [new ArrayPattern(array)])
-	),
-	new Production(['|', 'ObjectExpression', ',|->'], (_, obj) =>
-		arrayOf('Pattern', [new ObjectPattern(obj)])
+	new Production(
+		[
+			'|',
+			'IdentifierExpression|BooleanExpression|NumberExpression|StringExpression|ArrayExpression|ObjectExpression',
+			',|->'
+		],
+		(_, identifier) => arrayOf('Pattern', [identifier])
 	),
 
 	// Concatenate patterns
-	new Production(['[Pattern]', '_', ',|->'], (patterns, boolean) =>
-		arrayOf('Pattern', [...patterns.values, new BooleanPattern(boolean.value)])
+	new Production(['[Pattern]', '_', ',|->'], patterns =>
+		arrayOf('Pattern', [...patterns.values, new NoPattern()])
 	),
 	new Production(
-		['[Pattern]', 'IdentifierExpression', ',|->'],
-		(patterns, identifier) =>
-			arrayOf('Pattern', [...patterns.values, new AnyPattern(identifier.name)])
-	),
-	new Production(
-		['[Pattern]', 'BooleanExpression', ',|->'],
-		(patterns, boolean) =>
-			arrayOf('Pattern', [
-				...patterns.values,
-				new BooleanPattern(boolean.value)
-			])
-	),
-	new Production(
-		['[Pattern]', 'NumberExpression', ',|->'],
-		(patterns, number) =>
-			arrayOf('Pattern', [...patterns.values, new NumberPattern(number.value)])
-	),
-	new Production(
-		['[Pattern]', 'StringExpression', ',|->'],
-		(patterns, string) =>
-			arrayOf('Pattern', [...patterns.values, new StringPattern(string.value)])
-	),
-	new Production(['[Pattern]', 'ArrayExpression', ',|->'], (patterns, array) =>
-		arrayOf('Pattern', [...patterns.values, new ArrayPattern(array)])
-	),
-	new Production(['[Pattern]', 'ObjectExpression', ',|->'], (patterns, obj) =>
-		arrayOf('Pattern', [...patterns.values, new ObjectPattern(obj)])
+		[
+			'[Pattern]',
+			'IdentifierExpression|BooleanExpression|NumberExpression|StringExpression|ArrayExpression|ObjectExpression',
+			',|->'
+		],
+		(patterns, expression) =>
+			arrayOf('Pattern', [...patterns.values, expression])
 	),
 
 	new Production(
@@ -308,13 +272,12 @@ const grammar = [
 	// Declarations
 	new Production(
 		['ArrayExpression', '=', 'Expression'],
-		(array, _, expression) =>
-			new Declaration(new ArrayPattern(array), expression),
+		(array, _, expression) => new Declaration(array, expression),
 		lowestPrecedence
 	),
 	new Production(
 		['ObjectExpression', '=', 'Expression'],
-		(obj, _, expression) => new Declaration(new ObjectPattern(obj), expression),
+		(obj, _, expression) => new Declaration(obj, expression),
 		lowestPrecedence
 	),
 	new Production(

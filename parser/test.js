@@ -17,12 +17,6 @@ import {
 	NamedParameter,
 	FunctionExpression,
 	CallExpression,
-	NumberPattern,
-	AnyPattern,
-	BooleanPattern,
-	StringPattern,
-	ArrayPattern,
-	ObjectPattern,
 	NoPattern,
 	PatternCase,
 	PatternExpression,
@@ -390,7 +384,10 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new AnyPattern('x')], new NumberExpression(0))
+				new PatternCase(
+					[new IdentifierExpression('x')],
+					new NumberExpression(0)
+				)
 			])
 		])
 	})
@@ -400,7 +397,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new BooleanPattern(true)], new NumberExpression(0))
+				new PatternCase([new BooleanExpression(true)], new NumberExpression(0))
 			])
 		])
 	})
@@ -410,7 +407,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new NumberPattern(0)], new NumberExpression(0))
+				new PatternCase([new NumberExpression(0)], new NumberExpression(0))
 			])
 		])
 	})
@@ -420,7 +417,10 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new StringPattern('hello')], new NumberExpression(0))
+				new PatternCase(
+					[new StringExpression('hello')],
+					new NumberExpression(0)
+				)
 			])
 		])
 	})
@@ -430,10 +430,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase(
-					[new ArrayPattern(new ArrayExpression([]))],
-					new NumberExpression(0)
-				)
+				new PatternCase([new ArrayExpression([])], new NumberExpression(0))
 			])
 		])
 	})
@@ -445,12 +442,10 @@ describe('parser', () => {
 			new File([
 				new PatternCase(
 					[
-						new ArrayPattern(
-							new ArrayExpression([
-								new IdentifierExpression('x'),
-								new RestElement('y')
-							])
-						)
+						new ArrayExpression([
+							new IdentifierExpression('x'),
+							new RestElement('y')
+						])
 					],
 					new NumberExpression(0)
 				)
@@ -463,10 +458,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase(
-					[new ObjectPattern(new ObjectExpression([]))],
-					new NumberExpression(0)
-				)
+				new PatternCase([new ObjectExpression([])], new NumberExpression(0))
 			])
 		])
 	})
@@ -478,15 +470,13 @@ describe('parser', () => {
 			new File([
 				new PatternCase(
 					[
-						new ObjectPattern(
-							new ObjectExpression([
-								new ObjectProperty(new IdentifierExpression('x')),
-								new ObjectProperty(
-									new NamedParameter('y', new NumberExpression(10))
-								),
-								new ObjectProperty(new RestElement('z'))
-							])
-						)
+						new ObjectExpression([
+							new ObjectProperty(new IdentifierExpression('x')),
+							new ObjectProperty(
+								new NamedParameter('y', new NumberExpression(10))
+							),
+							new ObjectProperty(new RestElement('z'))
+						])
 					],
 					new NumberExpression(0)
 				)
@@ -500,7 +490,7 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new PatternCase(
-					[new NumberPattern(0), new NumberPattern(10)],
+					[new NumberExpression(0), new NumberExpression(10)],
 					new NumberExpression(0)
 				)
 			])
@@ -513,7 +503,7 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new PatternCase(
-					[new NoPattern(), new ArrayPattern(new ArrayExpression([]))],
+					[new NoPattern(), new ArrayExpression([])],
 					new ArrayExpression([])
 				)
 			])
@@ -527,13 +517,11 @@ describe('parser', () => {
 			new File([
 				new PatternCase(
 					[
-						new AnyPattern('f'),
-						new ObjectPattern(
-							new ObjectExpression([
-								new ObjectProperty(new IdentifierExpression('x')),
-								new ObjectProperty(new RestElement('xs'))
-							])
-						)
+						new IdentifierExpression('f'),
+						new ObjectExpression([
+							new ObjectProperty(new IdentifierExpression('x')),
+							new ObjectProperty(new RestElement('xs'))
+						])
 					],
 					new ObjectExpression([
 						new ObjectProperty(
@@ -560,7 +548,7 @@ describe('parser', () => {
 					[new IdentifierExpression('x')],
 					[
 						new PatternCase(
-							[new NumberPattern(0)],
+							[new NumberExpression(0)],
 							new BooleanExpression(false)
 						),
 						new PatternCase([new NoPattern()], new BooleanExpression(true))
@@ -586,12 +574,10 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new Declaration(
-					new ArrayPattern(
-						new ArrayExpression([
-							new IdentifierExpression('x'),
-							new RestElement('xs')
-						])
-					),
+					new ArrayExpression([
+						new IdentifierExpression('x'),
+						new RestElement('xs')
+					]),
 					new NumberExpression(10)
 				)
 			])
@@ -604,12 +590,10 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new Declaration(
-					new ObjectPattern(
-						new ObjectExpression([
-							new ObjectProperty(new IdentifierExpression('x')),
-							new ObjectProperty(new RestElement('xs'))
-						])
-					),
+					new ObjectExpression([
+						new ObjectProperty(new IdentifierExpression('x')),
+						new ObjectProperty(new RestElement('xs'))
+					]),
 					new NumberExpression(10)
 				)
 			])
