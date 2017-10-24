@@ -36,22 +36,22 @@ const createFunction = (definitions, body, scopes) => ({
 const match = (pattern, expression, addToScope) => {
 	if (pattern.type === 'NoPattern') {
 		return true
-	} else if (pattern.type === 'BooleanPattern') {
+	} else if (pattern.type === 'BooleanExpression') {
 		return pattern.value === expression.value
-	} else if (pattern.type === 'NumberPattern') {
+	} else if (pattern.type === 'NumberExpression') {
 		return pattern.value === expression.value
-	} else if (pattern.type === 'AnyPattern') {
-		addToScope(pattern.value, expression)
+	} else if (pattern.type === 'IdentifierExpression') {
+		addToScope(pattern.name, expression)
 		return true
-	} else if (pattern.type === 'ArrayPattern') {
-		const definition = pattern.value.values
+	} else if (pattern.type === 'ArrayExpression') {
+		const definition = pattern.values
 		// console.log('definition: ', definition)
 		// console.log('expression: ', expression.value)
 		if (definition.length === 0 && expression.value.length === 0) {
 			return true
 		}
 
-		const matchedVariables = {}
+		// const matchedVariables = {}
 
 		// definition.every(d => {
 		// 	match(d)
@@ -232,27 +232,6 @@ const visitorsFactory = ({ aval }) => ({
 		const { callee, parameters } = node
 		const func = aval(callee, scopes)
 		return func.call(parameters)
-	},
-	Pattern: () => {
-		console.info('Pattern not implemented yet')
-	},
-	AnyPattern: () => {
-		console.info('AnyPattern not implemented yet')
-	},
-	NumberPattern: () => {
-		console.info('NumberPattern not implemented yet')
-	},
-	BooleanPattern: () => {
-		console.info('BooleanPattern not implemented yet')
-	},
-	StringPattern: () => {
-		console.info('StringPattern not implemented yet')
-	},
-	ArrayPattern: () => {
-		console.info('ArrayPattern not implemented yet')
-	},
-	ObjectPattern: () => {
-		console.info('ObjectPattern not implemented yet')
 	},
 	NoPattern: () => {
 		console.info('NoPattern not implemented yet')
