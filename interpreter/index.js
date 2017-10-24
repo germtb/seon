@@ -33,26 +33,29 @@ const createFunction = (definitions, body, scopes) => ({
 	__type: 'Function'
 })
 
-const match = (pattern, expression, scopes) => {
+const match = (pattern, expression, addToScope) => {
 	if (pattern.type === 'NoPattern') {
 		return true
 	} else if (pattern.type === 'BooleanPattern') {
 		return pattern.value === expression.value
 	} else if (pattern.type === 'NumberPattern') {
 		return pattern.value === expression.value
+	} else if (pattern.type === 'AnyPattern') {
+		addToScope(pattern.value, expression)
+		return true
 	}
 
 	console.error(`Pattern of type ${pattern.type} not implemented yet`)
 	return false
 }
 
-const multiMatch = (pattern, expressions) => {
+const multiMatch = (pattern, expressions, add) => {
 	if (pattern.pattern.length !== expressions.length) {
 		return false
 	}
 
 	for (let i = 0; i < pattern.pattern.length; i++) {
-		if (!match(pattern.pattern[i], expressions[i])) {
+		if (!match(pattern.pattern[i], expressions[i], add)) {
 			return false
 		}
 	}
@@ -242,10 +245,12 @@ const visitorsFactory = ({ aval }) => ({
 	},
 	PatternExpression: (node, scopes) => {
 		const expressions = node.expressions.map(e => aval(e, scopes))
+		const addToScope = (name, value) => set(name, value, scopes)
+
 		for (let i = 0; i < node.patternCases.length; i++) {
 			const pattern = node.patternCases[i]
 
-			if (multiMatch(pattern, expressions, scopes)) {
+			if (multiMatch(pattern, expressions, addToScope)) {
 				return aval(pattern.result, scopes)
 			}
 		}

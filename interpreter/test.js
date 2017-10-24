@@ -306,4 +306,11 @@ describe('interpreter', () => {
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 2, __type: 'Number' })
 	})
+
+	test('Pattern matching number any pattern #1', () => {
+		const tokens = tokenizer('1 | 0 -> 1 | n -> n')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 1, __type: 'Number' })
+	})
 })
