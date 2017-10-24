@@ -33,7 +33,7 @@ const createFunction = (definitions, body, scopes) => ({
 	type: 'Function'
 })
 
-const match = (pattern, expression, addToScope) => {
+const match = (pattern, expression, matchScope) => {
 	if (pattern.type === 'NoPattern') {
 		return true
 	} else if (pattern.type === 'BooleanExpression') {
@@ -41,42 +41,32 @@ const match = (pattern, expression, addToScope) => {
 	} else if (pattern.type === 'NumberExpression') {
 		return pattern.value === expression.value
 	} else if (pattern.type === 'IdentifierExpression') {
-		addToScope(pattern.name, expression)
+		matchScope[pattern.name] = expression
 		return true
 	} else if (pattern.type === 'ArrayExpression') {
 		const definition = pattern.values
-		// console.log('definition: ', definition)
-		// console.log('expression: ', expression.value)
-		if (definition.length === 0 && expression.value.length === 0) {
-			return true
+
+		if (definition.length !== expression.value.length) {
+			return false
 		}
 
-		// const matchedVariables = {}
-
-		// definition.every(d => {
-		// 	match(d)
-		// })
-
-		console.log('definition: ', definition)
-
-		return false
+		return definition.every((d, index) => {
+			return match(d, expression.value[index], matchScope)
+		})
 	}
 
 	console.error(`Pattern of type ${pattern.type} not implemented yet`)
 	return false
 }
 
-const multiMatch = (pattern, expressions, add) => {
-	if (pattern.pattern.length !== expressions.length) {
+const multiMatch = (multiPattern, expressions, matchedScope) => {
+	if (multiPattern.pattern.length !== expressions.length) {
 		return false
 	}
 
-	for (let i = 0; i < pattern.pattern.length; i++) {
-		if (!match(pattern.pattern[i], expressions[i], add)) {
-			return false
-		}
-	}
-	return true
+	return multiPattern.pattern.every((p, i) => {
+		return match(p, expressions[i], matchedScope)
+	})
 }
 
 export const set = (name, value, scopes) => {
@@ -241,13 +231,13 @@ const visitorsFactory = ({ aval }) => ({
 	},
 	PatternExpression: (node, scopes) => {
 		const expressions = node.expressions.map(e => aval(e, scopes))
-		const addToScope = (name, value) => set(name, value, scopes)
 
 		for (let i = 0; i < node.patternCases.length; i++) {
 			const pattern = node.patternCases[i]
+			const matchedScope = {}
 
-			if (multiMatch(pattern, expressions, addToScope)) {
-				return aval(pattern.result, scopes)
+			if (multiMatch(pattern, expressions, matchedScope)) {
+				return aval(pattern.result, [...scopes, matchedScope])
 			}
 		}
 

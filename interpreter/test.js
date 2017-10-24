@@ -321,10 +321,24 @@ describe('interpreter', () => {
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
-	// test('Pattern matching array pattern #1', () => {
-	// 	const tokens = tokenizer('[ 1 ] | [] -> 0 | [x, ...xs] -> x')
-	// 	const nodes = parse(tokens)
-	// 	const result = aval(nodes[0].nodes[0])
-	// 	expect(result).toEqual({ value: 1, type: 'Number' })
-	// })
+	test('Pattern matching array pattern #2', () => {
+		const tokens = tokenizer('[ 1 ] | [] -> 0 | [ x ] -> x')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 1, type: 'Number' })
+	})
+
+	test('Pattern matching array pattern #3', () => {
+		const tokens = tokenizer('[ 1, 2 ] | [] -> 0 | [ x, y ] -> x + y')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 3, type: 'Number' })
+	})
+
+	test('Pattern matching array pattern #4', () => {
+		const tokens = tokenizer('[ 1, 2, 3 ] | [ x, y ] -> x + y | _ -> 10')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 10, type: 'Number' })
+	})
 })
