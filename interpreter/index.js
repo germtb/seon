@@ -34,11 +34,11 @@ const createFunction = (definitions, body, scopes) => ({
 })
 
 const match = (pattern, expression, scopes) => {
-	if (pattern.type !== expression.__type + 'Pattern') {
-		return false
-	}
-
-	if (pattern.type === 'BooleanPattern') {
+	if (pattern.type === 'NoPattern') {
+		return true
+	} else if (pattern.type === 'BooleanPattern') {
+		return pattern.value === expression.value
+	} else if (pattern.type === 'NumberPattern') {
 		return pattern.value === expression.value
 	}
 

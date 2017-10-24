@@ -286,10 +286,24 @@ describe('interpreter', () => {
 		expect(result).toEqual({ value: 1, __type: 'Number' })
 	})
 
-	test('Pattern matching booleans #1', () => {
+	test('Pattern matching booleans #2', () => {
 		const tokens = tokenizer('false | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 0, __type: 'Number' })
+	})
+
+	test('Pattern matching no pattern #1', () => {
+		const tokens = tokenizer('false | true -> 1 | _ -> 0')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 0, __type: 'Number' })
+	})
+
+	test('Pattern matching number pattern #1', () => {
+		const tokens = tokenizer('1 | 0 -> 1 | 1 -> 2 | _ -> 3')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 2, __type: 'Number' })
 	})
 })
