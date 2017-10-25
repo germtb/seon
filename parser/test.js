@@ -702,4 +702,9 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('throws an exception when the parsing is not correct', () => {
+		const tokens = tokenizer('=>')
+		expect(() => parse(tokens)).toThrow('Parsing error')
+	})
 })

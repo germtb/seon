@@ -336,6 +336,10 @@ const parse = tokens => {
 		}
 	}
 
+	if (stack.length > 1) {
+		throw new Error(`Parsing error with stack ${stack}`)
+	}
+
 	return stack
 }
 
