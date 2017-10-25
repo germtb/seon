@@ -2,11 +2,25 @@ import tokenizer from './index'
 
 describe('tokenizer', () => {
 	test('produces a number token', () => {
-		expect(tokenizer('1')).toEqual([{ type: 'Number', value: 1 }])
+		expect(tokenizer('1')).toEqual([
+			{
+				type: 'Number',
+				value: 1
+			}
+		])
 	})
 
 	test('produces a string token', () => {
-		expect(tokenizer("'1'")).toEqual([{ type: 'String', value: '1' }])
+		expect(tokenizer("'1'")).toEqual([
+			{
+				type: 'String',
+				value: '1',
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 2 }
+				}
+			}
+		])
 	})
 
 	test('produces a true boolean token', () => {
@@ -18,109 +32,317 @@ describe('tokenizer', () => {
 	})
 
 	test('produces a == token', () => {
-		expect(tokenizer('==')).toEqual([{ type: '==' }])
+		expect(tokenizer('==')).toEqual([
+			{
+				type: '==',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 2, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a = token', () => {
-		expect(tokenizer('=')).toEqual([{ type: '=' }])
+		expect(tokenizer('=')).toEqual([
+			{
+				type: '=',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a + token', () => {
-		expect(tokenizer('+')).toEqual([{ type: '+' }])
+		expect(tokenizer('+')).toEqual([
+			{
+				type: '+',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a - token', () => {
-		expect(tokenizer('-')).toEqual([{ type: '-' }])
+		expect(tokenizer('-')).toEqual([
+			{
+				type: '-',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a * token', () => {
-		expect(tokenizer('*')).toEqual([{ type: '*' }])
+		expect(tokenizer('*')).toEqual([
+			{
+				type: '*',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a ** token', () => {
-		expect(tokenizer('**')).toEqual([{ type: '**' }])
+		expect(tokenizer('**')).toEqual([
+			{
+				type: '**',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 2, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a / token', () => {
-		expect(tokenizer('/')).toEqual([{ type: '/' }])
+		expect(tokenizer('/')).toEqual([
+			{
+				type: '/',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a % token', () => {
-		expect(tokenizer('%')).toEqual([{ type: '%' }])
+		expect(tokenizer('%')).toEqual([
+			{
+				type: '%',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a , token', () => {
-		expect(tokenizer(',')).toEqual([{ type: ',' }])
+		expect(tokenizer(',')).toEqual([
+			{
+				type: ',',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a : token', () => {
-		expect(tokenizer(':')).toEqual([{ type: ':' }])
+		expect(tokenizer(':')).toEqual([
+			{
+				type: ':',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a && token', () => {
-		expect(tokenizer('&&')).toEqual([{ type: '&&' }])
+		expect(tokenizer('&&')).toEqual([
+			{
+				type: '&&',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 2, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a || token', () => {
-		expect(tokenizer('||')).toEqual([{ type: '||' }])
+		expect(tokenizer('||')).toEqual([
+			{
+				type: '||',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 2, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a | token', () => {
-		expect(tokenizer('|')).toEqual([{ type: '|' }])
+		expect(tokenizer('|')).toEqual([
+			{
+				type: '|',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a . token', () => {
-		expect(tokenizer('.')).toEqual([{ type: '.' }])
+		expect(tokenizer('.')).toEqual([
+			{
+				type: '.',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a ( token', () => {
-		expect(tokenizer('(')).toEqual([{ type: '(' }])
+		expect(tokenizer('(')).toEqual([
+			{
+				type: '(',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a ) token', () => {
-		expect(tokenizer(')')).toEqual([{ type: ')' }])
+		expect(tokenizer(')')).toEqual([
+			{
+				type: ')',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces a |> token', () => {
-		expect(tokenizer('|>')).toEqual([{ type: '|>' }])
+		expect(tokenizer('|>')).toEqual([
+			{
+				type: '|>',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 2, line: 0 }
+				}
+			}
+		])
 	})
 
 	test('produces an Identifier token', () => {
 		expect(tokenizer('hello')).toEqual([{ type: 'Identifier', value: 'hello' }])
 	})
 
+	test('produces a let token', () => {
+		expect(tokenizer('let')).toEqual([{ type: 'let' }])
+	})
+
+	test('produces an in token', () => {
+		expect(tokenizer('in')).toEqual([
+			{
+				type: 'in'
+			}
+		])
+	})
+
 	test('produces open and close SquareBrackets', () => {
 		expect(tokenizer('[1]')).toEqual([
-			{ type: '[' },
-			{ type: 'Number', value: 1 },
-			{ type: ']' }
+			{
+				type: '[',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			},
+			{
+				type: 'Number',
+				value: 1
+			},
+			{
+				type: ']',
+				loc: {
+					start: { column: 2, line: 0 },
+					end: { column: 3, line: 0 }
+				}
+			}
 		])
 	})
 
 	test('produces open and close CurlyBrackets', () => {
 		expect(tokenizer('{1}')).toEqual([
-			{ type: '{' },
-			{ type: 'Number', value: 1 },
-			{ type: '}' }
+			{
+				type: '{',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			},
+			{
+				type: 'Number',
+				value: 1
+			},
+			{
+				type: '}',
+				loc: {
+					start: { column: 2, line: 0 },
+					end: { column: 3, line: 0 }
+				}
+			}
 		])
 	})
 
 	test('produces strings that contain character that seem tokens', () => {
 		expect(tokenizer("'{} this [] hello 1234'")).toEqual([
-			{ type: 'String', value: '{} this [] hello 1234' }
+			{
+				type: 'String',
+				value: '{} this [] hello 1234',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 22, line: 0 }
+				}
+			}
 		])
 	})
 
 	test('produces identifiers with letters and numbers', () => {
-		expect(tokenizer('x1')).toEqual([{ type: 'Identifier', value: 'x1' }])
+		expect(tokenizer('x1')).toEqual([
+			{
+				type: 'Identifier',
+				value: 'x1'
+			}
+		])
 	})
 
 	test('bug #1', () => {
 		expect(tokenizer('f , { x')).toEqual([
-			{ type: 'Identifier', value: 'f' },
-			{ type: ',' },
-			{ type: '{' },
-			{ type: 'Identifier', value: 'x' }
+			{
+				type: 'Identifier',
+				value: 'f'
+			},
+			{
+				type: ',',
+				loc: {
+					start: { column: 2, line: 0 },
+					end: { column: 3, line: 0 }
+				}
+			},
+			{
+				type: '{',
+				loc: {
+					start: { column: 4, line: 0 },
+					end: { column: 5, line: 0 }
+				}
+			},
+			{
+				type: 'Identifier',
+				value: 'x'
+			}
 		])
 	})
 })
