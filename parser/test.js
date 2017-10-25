@@ -707,4 +707,57 @@ describe('parser', () => {
 		const tokens = tokenizer('=>')
 		expect(() => parse(tokens)).toThrow('Parsing error')
 	})
+
+	test('spec #1 - fibonacci', () => {
+		const tokens = tokenizer(`
+			fib = n => n
+				| 1 -> 1
+				| 2 -> 1
+				| _ -> fib(n - 1) + fib(n - 2)
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new IdentifierExpression('fib'),
+					new FunctionExpression(
+						[new IdentifierExpression('n')],
+						new PatternExpression(
+							[new IdentifierExpression('n')],
+							[
+								new PatternCase(
+									[new NumberExpression(1)],
+									new NumberExpression(1)
+								),
+								new PatternCase(
+									[new NumberExpression(2)],
+									new NumberExpression(1)
+								),
+								new PatternCase(
+									[new NoPattern()],
+									new BinaryExpression(
+										new CallExpression(new IdentifierExpression('fib'), [
+											new BinaryExpression(
+												new IdentifierExpression('n'),
+												new BinaryOperator('-'),
+												new NumberExpression(1)
+											)
+										]),
+										new BinaryOperator('+'),
+										new CallExpression(new IdentifierExpression('fib'), [
+											new BinaryExpression(
+												new IdentifierExpression('n'),
+												new BinaryOperator('-'),
+												new NumberExpression(2)
+											)
+										])
+									)
+								)
+							]
+						)
+					)
+				)
+			])
+		])
+	})
 })
