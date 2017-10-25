@@ -355,4 +355,14 @@ describe('interpreter', () => {
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
+
+	test('Pattern matching array pattern with a rest element #3', () => {
+		const tokens = tokenizer('[ 1, 2, 3 ] | [ x, ...xs ] -> xs')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: [{ value: 2, type: 'Number' }, { value: 3, type: 'Number' }],
+			type: 'Array'
+		})
+	})
 })

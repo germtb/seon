@@ -43,7 +43,6 @@ const match = (pattern, expression, matchScope) => {
 	} else if (pattern.type === 'IdentifierExpression') {
 		matchScope[pattern.name] = expression
 		return true
-		// } else if (pattern.type === 'RestElement') {
 	} else if (pattern.type === 'ArrayExpression') {
 		let patternIndex = 0
 		let expressionIndex = 0
@@ -57,8 +56,11 @@ const match = (pattern, expression, matchScope) => {
 			const e = expression.value[expressionIndex]
 
 			if (p.type === 'RestElement') {
-				matchScope[p.value] = matchScope[p.value] || []
-				matchScope[p.value].push(e)
+				matchScope[p.value] = matchScope[p.value] || {
+					value: [],
+					type: 'Array'
+				}
+				matchScope[p.value].value.push(e)
 				restElement = 1
 				expressionIndex++
 			} else {
