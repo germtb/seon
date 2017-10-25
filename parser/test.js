@@ -623,7 +623,12 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new LetExpression(
-					[ new Declaration(new IdentifierExpression('x'), new NumberExpression(0))],
+					[
+						new Declaration(
+							new IdentifierExpression('x'),
+							new NumberExpression(0)
+						)
+					],
 					new IdentifierExpression('x')
 				)
 			])
@@ -651,6 +656,27 @@ describe('parser', () => {
 					new NamedParameter('y', new NumberExpression(1)),
 					new NumberExpression(1)
 				])
+			])
+		])
+	})
+
+	test('bug #3', () => {
+		const tokens = tokenizer(`
+			| _ -> f(0) + 1
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternCase(
+					[new NoPattern()],
+					new BinaryExpression(
+						new CallExpression(new IdentifierExpression('f'), [
+							new NumberExpression(0)
+						]),
+						new BinaryOperator('+'),
+						new NumberExpression(1)
+					)
+				)
 			])
 		])
 	})

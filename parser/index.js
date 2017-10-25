@@ -227,11 +227,10 @@ const grammar = [
 		(identifier, _, body) => new FunctionExpression([identifier], body),
 		lowestPrecedence
 	),
-	new Production(
-		['(', ')', '=>', 'Expression'],
-		(_, __, ___, body) => new FunctionExpression([], body),
-		lowestPrecedence
-	),
+	new Production(['(', ')'], () => ({
+		type: 'ClosedParameters',
+		values: []
+	})),
 	new Production(
 		['(', 'Expression|NamedParameter|RestElement', ','],
 		(_, parameter) => arrayOf('Parameter', [parameter])
@@ -266,8 +265,7 @@ const grammar = [
 	new Production(
 		['Expression', 'ClosedParameters'],
 		(expression, parameters) =>
-			new CallExpression(expression, parameters.values),
-		lowestPrecedence
+			new CallExpression(expression, parameters.values)
 	),
 
 	// Declarations
@@ -322,7 +320,7 @@ const parse = tokens => {
 		const peek = i < tokens.length - 1 ? tokens[i + 1] : {}
 		stack.push(token)
 
-		for (let j = 1; j <= Math.min(5, stack.length); j++) {
+		for (let j = 1; j <= Math.min(3, stack.length); j++) {
 			const nodes = stack.slice(stack.length - j)
 			const production = grammar.find(r => r.matches(nodes, peek.type))
 
