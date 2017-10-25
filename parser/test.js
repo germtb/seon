@@ -184,7 +184,7 @@ describe('parser', () => {
 				new ArrayExpression([
 					new NumberExpression(0),
 					new IdentifierExpression('x'),
-					new RestElement('y')
+					new RestElement(new IdentifierExpression('y'))
 				])
 			])
 		])
@@ -193,7 +193,9 @@ describe('parser', () => {
 	test('converts a rest element', () => {
 		const tokens = tokenizer('...x')
 		const nodes = parse(tokens)
-		expect(nodes).toEqual([new File([new RestElement('x')])])
+		expect(nodes).toEqual([
+			new File([new RestElement(new IdentifierExpression('x'))])
+		])
 	})
 
 	test('converts a parameter #1', () => {
@@ -256,7 +258,9 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new ObjectExpression([new ObjectProperty(new RestElement('x'))])
+				new ObjectExpression([
+					new ObjectProperty(new RestElement(new IdentifierExpression('x')))
+				])
 			])
 		])
 	})
@@ -271,7 +275,7 @@ describe('parser', () => {
 					new ObjectProperty(
 						new NamedParameter('y', new NumberExpression(100))
 					),
-					new ObjectProperty(new RestElement('z'))
+					new ObjectProperty(new RestElement(new IdentifierExpression('z')))
 				])
 			])
 		])
@@ -324,7 +328,7 @@ describe('parser', () => {
 					[
 						new IdentifierExpression('x'),
 						new NamedParameter('z', new NumberExpression(10)),
-						new RestElement('y')
+						new RestElement(new IdentifierExpression('y'))
 					],
 					new BinaryExpression(
 						new IdentifierExpression('x'),
@@ -366,7 +370,7 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new CallExpression(new IdentifierExpression('f'), [
-					new RestElement('x')
+					new RestElement(new IdentifierExpression('x'))
 				])
 			])
 		])
@@ -445,7 +449,7 @@ describe('parser', () => {
 					[
 						new ArrayExpression([
 							new IdentifierExpression('x'),
-							new RestElement('y')
+							new RestElement(new IdentifierExpression('y'))
 						])
 					],
 					new NumberExpression(0)
@@ -476,7 +480,7 @@ describe('parser', () => {
 							new ObjectProperty(
 								new NamedParameter('y', new NumberExpression(10))
 							),
-							new ObjectProperty(new RestElement('z'))
+							new ObjectProperty(new RestElement(new IdentifierExpression('z')))
 						])
 					],
 					new NumberExpression(0)
@@ -521,7 +525,9 @@ describe('parser', () => {
 						new IdentifierExpression('f'),
 						new ObjectExpression([
 							new ObjectProperty(new IdentifierExpression('x')),
-							new ObjectProperty(new RestElement('xs'))
+							new ObjectProperty(
+								new RestElement(new IdentifierExpression('xs'))
+							)
 						])
 					],
 					new ObjectExpression([
@@ -533,7 +539,7 @@ describe('parser', () => {
 								])
 							)
 						),
-						new ObjectProperty(new RestElement('xs'))
+						new ObjectProperty(new RestElement(new IdentifierExpression('xs')))
 					])
 				)
 			])
@@ -577,7 +583,7 @@ describe('parser', () => {
 				new Declaration(
 					new ArrayExpression([
 						new IdentifierExpression('x'),
-						new RestElement('xs')
+						new RestElement(new IdentifierExpression('xs'))
 					]),
 					new NumberExpression(10)
 				)
@@ -593,7 +599,7 @@ describe('parser', () => {
 				new Declaration(
 					new ObjectExpression([
 						new ObjectProperty(new IdentifierExpression('x')),
-						new ObjectProperty(new RestElement('xs'))
+						new ObjectProperty(new RestElement(new IdentifierExpression('xs')))
 					]),
 					new NumberExpression(10)
 				)
@@ -752,6 +758,53 @@ describe('parser', () => {
 											)
 										])
 									)
+								)
+							]
+						)
+					)
+				)
+			])
+		])
+	})
+
+	test('spec #2 - map', () => {
+		const tokens = tokenizer(`
+			map = (f, x) => x
+				| [] -> []
+				| [x, ...xs] -> [f(x), ...map(f, xs)]
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new IdentifierExpression('map'),
+					new FunctionExpression(
+						[new IdentifierExpression('f'), new IdentifierExpression('x')],
+						new PatternExpression(
+							[new IdentifierExpression('x')],
+							[
+								new PatternCase(
+									[new ArrayExpression([])],
+									new ArrayExpression([])
+								),
+								new PatternCase(
+									[
+										new ArrayExpression([
+											new IdentifierExpression('x'),
+											new RestElement(new IdentifierExpression('xs'))
+										])
+									],
+									new ArrayExpression([
+										new CallExpression(new IdentifierExpression('f'), [
+											new IdentifierExpression('x')
+										]),
+										new RestElement(
+											new CallExpression(new IdentifierExpression('map'), [
+												new IdentifierExpression('f'),
+												new IdentifierExpression('xs')
+											])
+										)
+									])
 								)
 							]
 						)

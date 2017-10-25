@@ -172,7 +172,7 @@ const grammar = [
 	// RestElement
 	new Production(
 		['...', 'Expression'],
-		(a, identifier) => new RestElement(identifier.name),
+		(a, identifier) => new RestElement(identifier),
 		lowestPrecedence
 	),
 

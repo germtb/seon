@@ -26,7 +26,7 @@ export const visitorsFactory = ({
 	ArrayExpression: (node, scopes) => {
 		const value = node.values.reduce((acc, value) => {
 			if (value.type === 'RestElement') {
-				const restValue = get(value.value, scopes).value
+				const restValue = aval(value.value, scopes).value
 				acc.push(...restValue)
 			} else {
 				acc.push(aval(value, scopes))
@@ -52,7 +52,7 @@ export const visitorsFactory = ({
 		} else if (property.type === 'IdentifierExpression') {
 			return { [property.name]: get(property.name, scopes) }
 		} else if (property.type === 'RestElement') {
-			return get(property.value, scopes).value
+			return aval(property.value, scopes).value
 		}
 	},
 	BinaryExpression: (node, scopes) => {

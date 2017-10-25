@@ -21,11 +21,16 @@ const match = (pattern, expression, matchScope) => {
 			const e = expression.value[expressionIndex]
 
 			if (p.type === 'RestElement') {
-				matchScope[p.value] = matchScope[p.value] || {
+				if (p.value.type !== 'IdentifierExpression') {
+					// TODO: This should happen in the parser
+					throw new Error('RestElement inside array has to be an identifier')
+				}
+
+				matchScope[p.value.name] = matchScope[p.value.name] || {
 					value: [],
 					type: 'Array'
 				}
-				matchScope[p.value].value.push(e)
+				matchScope[p.value.name].value.push(e)
 				restElement = 1
 				expressionIndex++
 			} else {
