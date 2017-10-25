@@ -50,7 +50,8 @@ const matchTable = {
 	CallExpression: ['CallExpression', 'Expression', 'Node'],
 	BinaryExpression: ['BinaryExpression', 'Expression', 'Node'],
 	UnaryExpression: ['UnaryExpression', 'Expression', 'Node'],
-	PatternExpression: ['PatternExpression', 'Expression', 'Node']
+	PatternExpression: ['PatternExpression', 'Expression', 'Node'],
+	LetExpression: ['LetExpression', 'Expression', 'Node']
 }
 
 const matches = (node, type) => {

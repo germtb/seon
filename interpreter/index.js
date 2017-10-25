@@ -43,16 +43,38 @@ const match = (pattern, expression, matchScope) => {
 	} else if (pattern.type === 'IdentifierExpression') {
 		matchScope[pattern.name] = expression
 		return true
+		// } else if (pattern.type === 'RestElement') {
 	} else if (pattern.type === 'ArrayExpression') {
-		const definition = pattern.values
+		let patternIndex = 0
+		let expressionIndex = 0
+		let restElement = 0
 
-		if (definition.length !== expression.value.length) {
-			return false
+		while (
+			patternIndex < pattern.values.length &&
+			expressionIndex < expression.value.length
+		) {
+			const p = pattern.values[patternIndex]
+			const e = expression.value[expressionIndex]
+
+			if (p.type === 'RestElement') {
+				matchScope[p.value] = matchScope[p.value] || []
+				matchScope[p.value].push(e)
+				restElement = 1
+				expressionIndex++
+			} else {
+				if (!match(p, e, matchScope)) {
+					return false
+				}
+
+				patternIndex++
+				expressionIndex++
+			}
 		}
 
-		return definition.every((d, index) => {
-			return match(d, expression.value[index], matchScope)
-		})
+		return (
+			expressionIndex === expression.value.length &&
+			patternIndex + restElement === pattern.values.length
+		)
 	}
 
 	console.error(`Pattern of type ${pattern.type} not implemented yet`)
@@ -64,9 +86,9 @@ const multiMatch = (multiPattern, expressions, matchedScope) => {
 		return false
 	}
 
-	return multiPattern.pattern.every((p, i) => {
-		return match(p, expressions[i], matchedScope)
-	})
+	return multiPattern.pattern.every((p, i) =>
+		match(p, expressions[i], matchedScope)
+	)
 }
 
 export const set = (name, value, scopes) => {

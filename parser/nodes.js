@@ -177,3 +177,11 @@ export class Declaration extends Statement {
 		this.value = value
 	}
 }
+
+export class LetExpression extends Expression {
+	constructor(declarations, expression) {
+		super('LetExpression')
+		this.declarations = declarations
+		this.expression = expression
+	}
+}

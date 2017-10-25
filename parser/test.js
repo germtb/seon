@@ -20,7 +20,8 @@ import {
 	NoPattern,
 	PatternCase,
 	PatternExpression,
-	Declaration
+	Declaration,
+	LetExpression
 } from './nodes'
 
 describe('parser', () => {
@@ -611,6 +612,19 @@ describe('parser', () => {
 						[new IdentifierExpression('x')],
 						new IdentifierExpression('x')
 					)
+				)
+			])
+		])
+	})
+
+	test('converts a let expression #1', () => {
+		const tokens = tokenizer('let x = 0 in x')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new LetExpression(
+					[ new Declaration(new IdentifierExpression('x'), new NumberExpression(0))],
+					new IdentifierExpression('x')
 				)
 			])
 		])

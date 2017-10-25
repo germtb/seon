@@ -18,7 +18,8 @@ import {
 	NoPattern,
 	PatternCase,
 	PatternExpression,
-	Declaration
+	Declaration,
+	LetExpression
 } from './nodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -291,6 +292,24 @@ const grammar = [
 	new Production(
 		['Node', 'File'],
 		(statement, file) => new File([statement, ...file.nodes])
+	),
+
+	// Let
+	new Production(['let', 'Declaration'], (_, declaration) => ({
+		type: 'OpenLetExpression',
+		declarations: [declaration]
+	})),
+	new Production(
+		['OpenLetExpression', 'Declaration'],
+		(openLet, declaration) => ({
+			type: 'OpenLetExpression',
+			declarations: [...openLet.declarations, declaration]
+		})
+	),
+	new Production(
+		['OpenLetExpression', 'in', 'Expression'],
+		(openLet, _, expression) =>
+			new LetExpression(openLet.declarations, expression)
 	)
 ]
 
