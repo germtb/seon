@@ -641,6 +641,36 @@ describe('parser', () => {
 		])
 	})
 
+	test('converts a let expression #2', () => {
+		const tokens = tokenizer(`
+			let x = 0
+					y = 1
+			in x + y
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new LetExpression(
+					[
+						new Declaration(
+							new IdentifierExpression('x'),
+							new NumberExpression(0)
+						),
+						new Declaration(
+							new IdentifierExpression('y'),
+							new NumberExpression(1)
+						)
+					],
+					new BinaryExpression(
+						new IdentifierExpression('x'),
+						new BinaryOperator('+'),
+						new IdentifierExpression('y')
+					)
+				)
+			])
+		])
+	})
+
 	test('bug #1', () => {
 		const tokens = tokenizer('f(10)')
 		const nodes = parse(tokens)
@@ -712,105 +742,5 @@ describe('parser', () => {
 	test('throws an exception when the parsing is not correct', () => {
 		const tokens = tokenizer('=>')
 		expect(() => parse(tokens)).toThrow('Parsing error')
-	})
-
-	test('spec #1 - fibonacci', () => {
-		const tokens = tokenizer(`
-			fib = n => n
-				| 1 -> 1
-				| 2 -> 1
-				| _ -> fib(n - 1) + fib(n - 2)
-		`)
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new Declaration(
-					new IdentifierExpression('fib'),
-					new FunctionExpression(
-						[new IdentifierExpression('n')],
-						new PatternExpression(
-							[new IdentifierExpression('n')],
-							[
-								new PatternCase(
-									[new NumberExpression(1)],
-									new NumberExpression(1)
-								),
-								new PatternCase(
-									[new NumberExpression(2)],
-									new NumberExpression(1)
-								),
-								new PatternCase(
-									[new NoPattern()],
-									new BinaryExpression(
-										new CallExpression(new IdentifierExpression('fib'), [
-											new BinaryExpression(
-												new IdentifierExpression('n'),
-												new BinaryOperator('-'),
-												new NumberExpression(1)
-											)
-										]),
-										new BinaryOperator('+'),
-										new CallExpression(new IdentifierExpression('fib'), [
-											new BinaryExpression(
-												new IdentifierExpression('n'),
-												new BinaryOperator('-'),
-												new NumberExpression(2)
-											)
-										])
-									)
-								)
-							]
-						)
-					)
-				)
-			])
-		])
-	})
-
-	test('spec #2 - map', () => {
-		const tokens = tokenizer(`
-			map = (f, x) => x
-				| [] -> []
-				| [x, ...xs] -> [f(x), ...map(f, xs)]
-		`)
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new Declaration(
-					new IdentifierExpression('map'),
-					new FunctionExpression(
-						[new IdentifierExpression('f'), new IdentifierExpression('x')],
-						new PatternExpression(
-							[new IdentifierExpression('x')],
-							[
-								new PatternCase(
-									[new ArrayExpression([])],
-									new ArrayExpression([])
-								),
-								new PatternCase(
-									[
-										new ArrayExpression([
-											new IdentifierExpression('x'),
-											new RestElement(new IdentifierExpression('xs'))
-										])
-									],
-									new ArrayExpression([
-										new CallExpression(new IdentifierExpression('f'), [
-											new IdentifierExpression('x')
-										]),
-										new RestElement(
-											new CallExpression(new IdentifierExpression('map'), [
-												new IdentifierExpression('f'),
-												new IdentifierExpression('xs')
-											])
-										)
-									])
-								)
-							]
-						)
-					)
-				)
-			])
-		])
 	})
 })

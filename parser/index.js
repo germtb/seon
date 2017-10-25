@@ -310,7 +310,8 @@ const grammar = [
 	new Production(
 		['OpenLetExpression', 'in', 'Expression'],
 		(openLet, _, expression) =>
-			new LetExpression(openLet.declarations, expression)
+			new LetExpression(openLet.declarations, expression),
+		lowestPrecedence
 	)
 ]
 

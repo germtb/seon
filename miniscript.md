@@ -127,6 +127,8 @@ let x = foo | true -> 1 | false -> 0
 ```
 
 # TODO
+- loc in tokens
+- negative unary operator
 - float numbers
 - negative numbers
 - auto caching
