@@ -365,20 +365,4 @@ describe('interpreter', () => {
 			type: 'Array'
 		})
 	})
-
-	// test('fib', () => {
-	// 	const tokens = tokenizer(`
-	// 		fib = n => n
-	// 			| 1 -> 1
-	// 			| 2 -> 1
-	// 			| _ -> fib(n - 1) + fib(n - 2)
-	// 		x = fib(3)
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	aval(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 5,
-	// 		type: 'Number'
-	// 	})
-	// })
 })

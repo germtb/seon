@@ -680,4 +680,26 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('bug #4 - multiline pattern expressions', () => {
+		const tokens = tokenizer(`
+			f = x => x
+				| _ -> 0
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new IdentifierExpression('f'),
+					new FunctionExpression(
+						[new IdentifierExpression('x')],
+						new PatternExpression(
+							[new IdentifierExpression('x')],
+							[new PatternCase([new NoPattern()], new NumberExpression(0))]
+						)
+					)
+				)
+			])
+		])
+	})
 })

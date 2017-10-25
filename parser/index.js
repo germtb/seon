@@ -49,6 +49,9 @@ const lowestPrecedence = peek =>
 	!unaryOperators.includes(peek) &&
 	!binaryOperators.includes(peek)
 
+const functionExpressionPrecedence = peek =>
+	lowestPrecedence(peek) && peek !== '|' && peek !== '('
+
 const operatorPrecedence = {
 	TypeOperator: ['(', '.'],
 	'!': ['(', '.'],
@@ -225,7 +228,7 @@ const grammar = [
 	new Production(
 		['IdentifierExpression', '=>', 'Expression'],
 		(identifier, _, body) => new FunctionExpression([identifier], body),
-		lowestPrecedence
+		functionExpressionPrecedence
 	),
 	new Production(['(', ')'], () => ({
 		type: 'ClosedParameters',
@@ -258,7 +261,7 @@ const grammar = [
 	new Production(
 		['ClosedParameters', '=>', 'Expression'],
 		(parameters, _, body) => new FunctionExpression(parameters.values, body),
-		lowestPrecedence
+		functionExpressionPrecedence
 	),
 
 	// FunctionCalls
