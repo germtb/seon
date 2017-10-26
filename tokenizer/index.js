@@ -49,6 +49,9 @@ const keywords = {
 	},
 	type: {
 		type: 'TypeOperator'
+	},
+	match: {
+		type: 'match'
 	}
 }
 

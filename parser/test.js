@@ -380,7 +380,7 @@ describe('parser', () => {
 		const tokens = tokenizer('| _ -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
-			new File([new PatternCase([new NoPattern()], new NumberExpression(0))])
+			new File([new PatternCase(new NoPattern(), new NumberExpression(0))])
 		])
 	})
 
@@ -389,10 +389,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase(
-					[new IdentifierExpression('x')],
-					new NumberExpression(0)
-				)
+				new PatternCase(new IdentifierExpression('x'), new NumberExpression(0))
 			])
 		])
 	})
@@ -402,7 +399,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new BooleanExpression(true)], new NumberExpression(0))
+				new PatternCase(new BooleanExpression(true), new NumberExpression(0))
 			])
 		])
 	})
@@ -412,7 +409,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new NumberExpression(0)], new NumberExpression(0))
+				new PatternCase(new NumberExpression(0), new NumberExpression(0))
 			])
 		])
 	})
@@ -422,10 +419,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase(
-					[new StringExpression('hello')],
-					new NumberExpression(0)
-				)
+				new PatternCase(new StringExpression('hello'), new NumberExpression(0))
 			])
 		])
 	})
@@ -435,7 +429,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new ArrayExpression([])], new NumberExpression(0))
+				new PatternCase(new ArrayExpression([]), new NumberExpression(0))
 			])
 		])
 	})
@@ -446,12 +440,10 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new PatternCase(
-					[
-						new ArrayExpression([
-							new IdentifierExpression('x'),
-							new RestElement(new IdentifierExpression('y'))
-						])
-					],
+					new ArrayExpression([
+						new IdentifierExpression('x'),
+						new RestElement(new IdentifierExpression('y'))
+					]),
 					new NumberExpression(0)
 				)
 			])
@@ -463,7 +455,7 @@ describe('parser', () => {
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternCase([new ObjectExpression([])], new NumberExpression(0))
+				new PatternCase(new ObjectExpression([]), new NumberExpression(0))
 			])
 		])
 	})
@@ -474,93 +466,31 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new PatternCase(
-					[
-						new ObjectExpression([
-							new ObjectProperty(new IdentifierExpression('x')),
-							new ObjectProperty(
-								new NamedParameter('y', new NumberExpression(10))
-							),
-							new ObjectProperty(new RestElement(new IdentifierExpression('z')))
-						])
-					],
-					new NumberExpression(0)
-				)
-			])
-		])
-	})
-
-	test('converts multi-patterns #1', () => {
-		const tokens = tokenizer('| 0, 10 -> 0')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new PatternCase(
-					[new NumberExpression(0), new NumberExpression(10)],
-					new NumberExpression(0)
-				)
-			])
-		])
-	})
-
-	test('converts multi-patterns #2', () => {
-		const tokens = tokenizer('| _, [] -> []')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new PatternCase(
-					[new NoPattern(), new ArrayExpression([])],
-					new ArrayExpression([])
-				)
-			])
-		])
-	})
-
-	test('converts multi-patterns #3', () => {
-		const tokens = tokenizer('| f, { x, ...xs } -> { x: f(x), ...xs }')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new PatternCase(
-					[
-						new IdentifierExpression('f'),
-						new ObjectExpression([
-							new ObjectProperty(new IdentifierExpression('x')),
-							new ObjectProperty(
-								new RestElement(new IdentifierExpression('xs'))
-							)
-						])
-					],
 					new ObjectExpression([
+						new ObjectProperty(new IdentifierExpression('x')),
 						new ObjectProperty(
-							new NamedParameter(
-								'x',
-								new CallExpression(new IdentifierExpression('f'), [
-									new IdentifierExpression('x')
-								])
-							)
+							new NamedParameter('y', new NumberExpression(10))
 						),
-						new ObjectProperty(new RestElement(new IdentifierExpression('xs')))
-					])
+						new ObjectProperty(new RestElement(new IdentifierExpression('z')))
+					]),
+					new NumberExpression(0)
 				)
 			])
 		])
 	})
 
 	test('converts a pattern expression #1', () => {
-		const tokens = tokenizer('x | 0 -> false | _ -> true')
+		const tokens = tokenizer('match x | 0 -> false | _ -> true')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
-				new PatternExpression(
-					[new IdentifierExpression('x')],
-					[
-						new PatternCase(
-							[new NumberExpression(0)],
-							new BooleanExpression(false)
-						),
-						new PatternCase([new NoPattern()], new BooleanExpression(true))
-					]
-				)
+				new PatternExpression(new IdentifierExpression('x'), [
+					new PatternCase(
+						new NumberExpression(0),
+						new BooleanExpression(false)
+					),
+					new PatternCase(new NoPattern(), new BooleanExpression(true))
+				])
 			])
 		])
 	})
@@ -697,14 +627,12 @@ describe('parser', () => {
 	})
 
 	test('bug #3', () => {
-		const tokens = tokenizer(`
-			| _ -> f(0) + 1
-		`)
+		const tokens = tokenizer('| _ -> f(0) + 1')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
 				new PatternCase(
-					[new NoPattern()],
+					new NoPattern(),
 					new BinaryExpression(
 						new CallExpression(new IdentifierExpression('f'), [
 							new NumberExpression(0)
@@ -719,7 +647,7 @@ describe('parser', () => {
 
 	test('bug #4 - multiline pattern expressions', () => {
 		const tokens = tokenizer(`
-			f = x => x
+			f = x => match x
 				| _ -> 0
 		`)
 		const nodes = parse(tokens)
@@ -729,10 +657,9 @@ describe('parser', () => {
 					new IdentifierExpression('f'),
 					new FunctionExpression(
 						[new IdentifierExpression('x')],
-						new PatternExpression(
-							[new IdentifierExpression('x')],
-							[new PatternCase([new NoPattern()], new NumberExpression(0))]
-						)
+						new PatternExpression(new IdentifierExpression('x'), [
+							new PatternCase(new NoPattern(), new NumberExpression(0))
+						])
 					)
 				)
 			])
@@ -742,5 +669,19 @@ describe('parser', () => {
 	test('throws an exception when the parsing is not correct', () => {
 		const tokens = tokenizer('=>')
 		expect(() => parse(tokens)).toThrow('Parsing error')
+	})
+
+	test('converts a pipe operator', () => {
+		const tokens = tokenizer('x |> y')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new BinaryExpression(
+					new IdentifierExpression('x'),
+					new BinaryOperator('|>'),
+					new IdentifierExpression('y')
+				)
+			])
+		])
 	})
 })

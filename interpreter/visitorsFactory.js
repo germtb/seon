@@ -2,7 +2,7 @@ export const visitorsFactory = ({
 	aval,
 	get,
 	set,
-	multiMatch,
+	match,
 	createFunction,
 	operations
 }) => ({
@@ -91,13 +91,13 @@ export const visitorsFactory = ({
 		console.info('LetExpression not implemented yet')
 	},
 	PatternExpression: (node, scopes) => {
-		const expressions = node.expressions.map(e => aval(e, scopes))
+		const expression = aval(node.expression, scopes)
 
 		for (let i = 0; i < node.patternCases.length; i++) {
 			const pattern = node.patternCases[i]
 			const matchedScope = {}
 
-			if (multiMatch(pattern, expressions, matchedScope)) {
+			if (match(pattern.pattern, expression, matchedScope)) {
 				return aval(pattern.result, [...scopes, matchedScope])
 			}
 		}

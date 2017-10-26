@@ -24,7 +24,7 @@ import {
 import { Production } from './Production'
 import { arrayOf } from './utils'
 
-const nonOperators = ['(', '.', '[', '{', '=>']
+const nonOperators = ['[', '{', '=>', '(', 'match']
 const unaryOperators = ['!', 'TypeOperator']
 const binaryOperators = [
 	'+',
@@ -50,26 +50,26 @@ const lowestPrecedence = peek =>
 	!binaryOperators.includes(peek)
 
 const functionExpressionPrecedence = peek =>
-	lowestPrecedence(peek) && peek !== '|' && peek !== '('
+	lowestPrecedence(peek) && peek !== '|'
 
 const operatorPrecedence = {
 	TypeOperator: ['(', '.'],
-	'!': ['(', '.'],
-	'**': ['!', '(', '.'],
-	'*': ['!', '(', '.', '**'],
-	'/': ['!', '(', '.', '**'],
-	'%': ['!', '(', '.', '**'],
-	'+': ['!', '(', '.', '**', '*', '%', '/'],
-	'-': ['!', '(', '.', '**', '*', '%', '/'],
-	'<': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'>': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'>=': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'<=': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'==': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'!=': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'&&': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'||': ['!', '(', '.', '**', '*', '%', '/', '+', '-'],
-	'|>': ['!', '(', '.', '**', '*', '%', '/', '+', '-']
+	'|>': ['!', '('],
+	'!': ['|>', '(', '.'],
+	'**': ['!', '|>', '('],
+	'*': ['!', '|>', '(', '**'],
+	'/': ['!', '|>', '(', '**'],
+	'%': ['!', '|>', '(', '**'],
+	'+': ['!', '|>', '(', '**', '*', '%', '/'],
+	'-': ['!', '|>', '(', '**', '*', '%', '/'],
+	'<': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'>': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'>=': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'<=': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'==': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'!=': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'&&': ['!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'||': ['!', '|>', '(', '**', '*', '%', '/', '+', '-']
 }
 
 const grammar = [
@@ -180,51 +180,39 @@ const grammar = [
 	new Production(
 		['PatternExpression', 'PatternCase'],
 		(patternExpression, patternCase) =>
-			new PatternExpression(patternExpression.expressions, [
+			new PatternExpression(patternExpression.expression, [
 				...patternExpression.patternCases,
 				patternCase
 			])
 	),
 	new Production(
-		['Expression', 'PatternCase'],
-		(expression, patternCase) =>
-			new PatternExpression([expression], [patternCase])
+		['match', 'Expression', 'PatternCase'],
+		(_, expression, patternCase) =>
+			new PatternExpression(expression, [patternCase])
 	),
 
 	// Begin pattern
-	new Production(['|', '_', ',|->'], () =>
-		arrayOf('Pattern', [new NoPattern()])
-	),
+	new Production(['|', '_', '->'], () => ({
+		type: 'UnusedPattern',
+		pattern: new NoPattern()
+	})),
 	new Production(
 		[
 			'|',
 			'IdentifierExpression|BooleanExpression|NumberExpression|StringExpression|ArrayExpression|ObjectExpression',
-			',|->'
+			'->'
 		],
-		(_, identifier) => arrayOf('Pattern', [identifier])
-	),
-
-	// Concatenate patterns
-	new Production(['[Pattern]', '_', ',|->'], patterns =>
-		arrayOf('Pattern', [...patterns.values, new NoPattern()])
+		(_, identifier) => ({ type: 'UnusedPattern', pattern: identifier })
 	),
 	new Production(
-		[
-			'[Pattern]',
-			'IdentifierExpression|BooleanExpression|NumberExpression|StringExpression|ArrayExpression|ObjectExpression',
-			',|->'
-		],
-		(patterns, expression) =>
-			arrayOf('Pattern', [...patterns.values, expression])
-	),
-
-	new Production(
-		['[Pattern]', 'Expression'],
-		(patterns, expression) => new PatternCase(patterns.values, expression),
-		peek => lowestPrecedence(peek) && peek !== ',' && peek !== '->'
+		['UnusedPattern', 'Expression'],
+		({ pattern }, expression) => new PatternCase(pattern, expression),
+		lowestPrecedence
 	),
 
 	// Functions
+	// new Production(['(', 'BinaryExpression', ')'], (_, expression) => expression),
+
 	new Production(
 		['IdentifierExpression', '=>', 'Expression'],
 		(identifier, _, body) => new FunctionExpression([identifier], body),
@@ -338,7 +326,9 @@ const parse = tokens => {
 	}
 
 	if (stack.length > 1) {
-		throw new Error(`Parsing error with stack ${stack}`)
+		throw new Error(
+			`Parsing error with stack ${JSON.stringify(stack, null, 2)}`
+		)
 	}
 
 	return stack

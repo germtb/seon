@@ -163,9 +163,9 @@ export class PatternCase extends Node {
 }
 
 export class PatternExpression extends Node {
-	constructor(expressions, patternCases) {
+	constructor(expression, patternCases) {
 		super('PatternExpression')
-		this.expressions = expressions
+		this.expression = expression
 		this.patternCases = patternCases
 	}
 }

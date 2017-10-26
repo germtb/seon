@@ -1,4 +1,4 @@
-const match = (pattern, expression, matchScope) => {
+export const match = (pattern, expression, matchScope) => {
 	if (pattern.type === 'NoPattern') {
 		return true
 	} else if (pattern.type === 'BooleanExpression') {
@@ -51,14 +51,4 @@ const match = (pattern, expression, matchScope) => {
 
 	console.error(`Pattern of type ${pattern.type} not implemented yet`)
 	return false
-}
-
-export const multiMatch = (multiPattern, expressions, matchedScope) => {
-	if (multiPattern.pattern.length !== expressions.length) {
-		return false
-	}
-
-	return multiPattern.pattern.every((p, i) =>
-		match(p, expressions[i], matchedScope)
-	)
 }

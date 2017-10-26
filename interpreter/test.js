@@ -280,84 +280,84 @@ describe('interpreter', () => {
 	})
 
 	test('Pattern matching booleans #1', () => {
-		const tokens = tokenizer('true | true -> 1 | false -> 0')
+		const tokens = tokenizer('match true | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching booleans #2', () => {
-		const tokens = tokenizer('false | true -> 1 | false -> 0')
+		const tokens = tokenizer('match false | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching no pattern #1', () => {
-		const tokens = tokenizer('false | true -> 1 | _ -> 0')
+		const tokens = tokenizer('match false | true -> 1 | _ -> 0')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching number pattern #1', () => {
-		const tokens = tokenizer('1 | 0 -> 1 | 1 -> 2 | _ -> 3')
+		const tokens = tokenizer('match 1 | 0 -> 1 | 1 -> 2 | _ -> 3')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 2, type: 'Number' })
 	})
 
 	test('Pattern matching any pattern #1', () => {
-		const tokens = tokenizer('1 | 0 -> 1 | n -> n')
+		const tokens = tokenizer('match 1 | 0 -> 1 | n -> n')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #2', () => {
-		const tokens = tokenizer('[] | [] -> 0 | [x, ...xs] -> x')
+		const tokens = tokenizer('match [] | [] -> 0 | [x, ...xs] -> x')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #3', () => {
-		const tokens = tokenizer('[ 1 ] | [] -> 0 | [ x ] -> x')
+		const tokens = tokenizer('match [ 1 ] | [] -> 0 | [ x ] -> x')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #4', () => {
-		const tokens = tokenizer('[ 1, 2 ] | [] -> 0 | [ x, y ] -> x + y')
+		const tokens = tokenizer('match [ 1, 2 ] | [] -> 0 | [ x, y ] -> x + y')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 3, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #5', () => {
-		const tokens = tokenizer('[ 1, 2, 3 ] | [ x, y ] -> x + y | _ -> 10')
+		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, y ] -> x + y | _ -> 10')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 10, type: 'Number' })
 	})
 
-	test('Pattern matching array pattern	 with a rest element #1', () => {
-		const tokens = tokenizer('[ 1, 2, 3 ] | [ x, ...xs ] -> x')
+	test('Pattern matching array pattern with a rest element #1', () => {
+		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> x')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern with a rest element #2', () => {
-		const tokens = tokenizer('[ 1, 2, 3 ] | [ x, ...xs ] -> x')
+		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> x')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern with a rest element #3', () => {
-		const tokens = tokenizer('[ 1, 2, 3 ] | [ x, ...xs ] -> xs')
+		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> xs')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({

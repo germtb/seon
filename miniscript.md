@@ -124,7 +124,24 @@ map = (f, xs) => f, xs
 	| f, [x, ...xs] -> [f(x), ...xs]
 
 let x = foo | true -> 1 | false -> 0
+
+find = (selector, xs) => case xs of
+	| [] -> false
+	| [x, ...xs] -> selector(x) | true -> true | false -> xs |> find(selector)
+
+find = (selector, xs) => case xs of
+	| [] -> false
+	| [x, ...xs] -> case selector(x) of | true -> true | false -> xs |> find(selector)
+
 ```
+
+# Monads
+Nothing = () => { type: 'Nothing' }
+Just = x -> { type: 'Just', value: x }
+
+map = (f, maybe) => case maybe.type of
+	| 'Nothing' -> Nothing()
+	| 'Just' -> Just(f(x))
 
 # TODO
 - loc in tokens

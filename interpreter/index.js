@@ -1,7 +1,7 @@
 import tokenizer from '../tokenizer'
 import parse from '../parser'
 import { visitorsFactory } from './visitorsFactory'
-import { multiMatch } from './patternMatching'
+import { match } from './patternMatching'
 import { get, set } from './scopes'
 import { createFunctionFactory } from './createFunction'
 import { operations } from './operations'
@@ -29,7 +29,7 @@ const createEval = () => {
 		get,
 		set,
 		createFunction,
-		multiMatch,
+		match,
 		operations
 	})
 

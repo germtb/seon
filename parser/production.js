@@ -25,7 +25,6 @@ const matchTable = {
 	ObjectProperty: ['ObjectProperty', 'Node'],
 	BinaryOperator: ['BinaryOperator', 'Node'],
 	UnaryOperator: ['UnaryOperator', 'Node'],
-	PatternMatchingDefault: ['PatternMatchingDefault', 'Node'],
 	NamedParameter: ['NamedParameter', 'Node'],
 	RestElement: ['RestElement', 'Node'],
 
@@ -58,6 +57,8 @@ const matches = (node, type) => {
 	if (type === '||' && node === '||') {
 		return true
 	} else if (type === '|' && node === '|') {
+		return true
+	} else if (type === '|>' && node === '|>') {
 		return true
 	}
 
