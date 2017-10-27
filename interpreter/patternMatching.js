@@ -11,25 +11,37 @@ export const match = (pattern, expression, matchScope) => {
 	} else if (pattern.type === 'ObjectExpression') {
 		let patternIndex = 0
 		let expressionIndex = 0
+		let restElement = 0
 
 		while (
 			patternIndex < pattern.properties.length &&
 			expressionIndex < Object.keys(expression.value).length
 		) {
 			const p = pattern.properties[patternIndex].property
-			const e = expression.value[Object.keys(expression.value)[expressionIndex]]
+			const propName = Object.keys(expression.value)[expressionIndex]
+			const e = expression.value[propName]
 
-			if (!match(p, e, matchScope)) {
-				return false
+			if (p.type === 'RestElement') {
+				matchScope[p.value.name] = matchScope[p.value.name] || {
+					value: {},
+					type: 'Object'
+				}
+				matchScope[p.value.name].value[propName] = e
+				restElement = 1
+				expressionIndex++
+			} else {
+				if (!match(p, e, matchScope)) {
+					return false
+				}
+
+				patternIndex++
+				expressionIndex++
 			}
-
-			patternIndex++
-			expressionIndex++
 		}
 
 		return (
 			expressionIndex === Object.keys(expression.value).length &&
-			patternIndex === pattern.properties.length
+			patternIndex + restElement === pattern.properties.length
 		)
 	} else if (pattern.type === 'ArrayExpression') {
 		let patternIndex = 0

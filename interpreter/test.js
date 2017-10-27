@@ -397,4 +397,18 @@ describe('interpreter', () => {
 			type: 'Number'
 		})
 	})
+
+	test('Pattern matching object pattern with a rest element #1', () => {
+		const tokens = tokenizer(
+			'match { x: 1, y: 10 } | {} -> 0 | { x, ...xs } -> xs'
+		)
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: {
+				y: { value: 10, type: 'Number' }
+			},
+			type: 'Object'
+		})
+	})
 })
