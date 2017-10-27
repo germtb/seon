@@ -69,56 +69,56 @@ describe('parser specs', () => {
 		])
 	})
 
-	test('find', () => {
-		// const tokens = tokenizer(`
-		// 	find = (selector, xs) => match xs
-		// 		| [] -> false
-		// 		| [x,...xs] -> match selector(x) | true -> true | false -> find(selector, xs)
-		// `)
-		// const nodes = parse(tokens)
-		// expect(nodes).toEqual([
-		// 	new File([
-		// 		new Declaration(
-		// 			new IdentifierExpression('find'),
-		// 			new FunctionExpression(
-		// 				[
-		// 					new IdentifierExpression('selector'),
-		// 					new IdentifierExpression('xs')
-		// 				],
-		// 				new PatternExpression(new IdentifierExpression('xs'), [
-		// 					new PatternCase(
-		// 						new ArrayExpression([]),
-		// 						new BooleanExpression(false)
-		// 					),
-		// 					new PatternCase(
-		// 						new ArrayExpression([
-		// 							new IdentifierExpression('x'),
-		// 							new RestElement(new IdentifierExpression('xs'))
-		// 						]),
-		// 						new PatternExpression(
-		// 							new CallExpression(new IdentifierExpression('selector'), [
-		// 								new IdentifierExpression('x')
-		// 							]),
-		// 							[
-		// 								new PatternCase(
-		// 									new BooleanExpression(true),
-		// 									new BooleanExpression(true)
-		// 								),
-		// 								new PatternCase(
-		// 									new BooleanExpression(false),
-		// 									new CallExpression(new IdentifierExpression('find'), [
-		// 										new IdentifierExpression('selector'),
-		// 										new IdentifierExpression('xs')
-		// 									])
-		// 								)
-		// 							]
-		// 						)
-		// 					)
-		// 				])
-		// 			)
-		// 		)
-		// 	])
-		// ])
+	test('includes', () => {
+		const tokens = tokenizer(`
+			includes = (selector, xs) => match xs
+				| [] -> false
+				| [ x,...xs ] -> (match selector(x) | true -> true | false -> includes(selector, xs))
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new IdentifierExpression('includes'),
+					new FunctionExpression(
+						[
+							new IdentifierExpression('selector'),
+							new IdentifierExpression('xs')
+						],
+						new PatternExpression(new IdentifierExpression('xs'), [
+							new PatternCase(
+								new ArrayExpression([]),
+								new BooleanExpression(false)
+							),
+							new PatternCase(
+								new ArrayExpression([
+									new IdentifierExpression('x'),
+									new RestElement(new IdentifierExpression('xs'))
+								]),
+								new PatternExpression(
+									new CallExpression(new IdentifierExpression('selector'), [
+										new IdentifierExpression('x')
+									]),
+									[
+										new PatternCase(
+											new BooleanExpression(true),
+											new BooleanExpression(true)
+										),
+										new PatternCase(
+											new BooleanExpression(false),
+											new CallExpression(new IdentifierExpression('includes'), [
+												new IdentifierExpression('selector'),
+												new IdentifierExpression('xs')
+											])
+										)
+									]
+								)
+							)
+						])
+					)
+				)
+			])
+		])
 	})
 
 	test('map', () => {

@@ -25,9 +25,24 @@ import {
 } from './nodes'
 
 describe('parser', () => {
-	test('pattern expression returns pattern expression', () => {
-		const tokens = tokenizer('x | true -> (0 | -> 0)')
-		// const nodes = parse(tokens)
-		// expect(nodes).toEqual([new File([])])
+	test('pattern expression in pattern expression', () => {
+		const tokens = tokenizer(`
+			match true
+				| true -> (match 0 | 0 -> 0 | _ -> 1)
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternExpression(new BooleanExpression(true), [
+					new PatternCase(
+						new BooleanExpression(true),
+						new PatternExpression(new NumberExpression(0), [
+							new PatternCase(new NumberExpression(0), new NumberExpression(0)),
+							new PatternCase(new NoPattern(), new NumberExpression(1))
+						])
+					)
+				])
+			])
+		])
 	})
 })

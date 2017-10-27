@@ -211,7 +211,11 @@ const grammar = [
 	),
 
 	// Functions
-	// new Production(['(', 'BinaryExpression', ')'], (_, expression) => expression),
+	new Production(['Expression', '('], expression => [
+		expression,
+		arrayOf('Parameter', [])
+	]),
+	new Production(['(', 'Expression', ')'], (_, expression) => expression),
 
 	new Production(
 		['IdentifierExpression', '=>', 'Expression'],
