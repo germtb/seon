@@ -684,4 +684,28 @@ describe('parser', () => {
 			])
 		])
 	})
+
+	test('converts a unary - operator', () => {
+		const tokens = tokenizer('-1')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new UnaryExpression(new UnaryOperator('-'), new NumberExpression(1))
+			])
+		])
+	})
+
+	test('converts a binary - operator', () => {
+		const tokens = tokenizer('1 - 1')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new BinaryExpression(
+					new NumberExpression(1),
+					new BinaryOperator('-'),
+					new NumberExpression(1)
+				)
+			])
+		])
+	})
 })

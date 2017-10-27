@@ -144,11 +144,13 @@ map = (f, maybe) => case maybe.type of
 	| 'Just' -> Just(f(x))
 
 # TODO
-- loc in tokens
 - negative unary operator
+- pattern match or syntax
+- loc in tokens
 - float numbers
-- negative numbers
+- syntax sugar for type matching?
+- libraries
 - auto caching
-- function equality
+- function equality?
 - transpile to something (js)
 - rewrite in itself

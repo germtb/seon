@@ -25,7 +25,7 @@ import { Production } from './Production'
 import { arrayOf } from './utils'
 
 const nonOperators = ['[', '{', '=>', '(', 'match']
-const unaryOperators = ['!', 'TypeOperator']
+const unaryOperators = ['!', 'TypeOperator', '-']
 const binaryOperators = [
 	'+',
 	'*',
@@ -52,10 +52,14 @@ const lowestPrecedence = peek =>
 const functionExpressionPrecedence = peek =>
 	lowestPrecedence(peek) && peek !== '|'
 
-const operatorPrecedence = {
+const unaryOperatorPrecedence = {
 	TypeOperator: ['(', '.'],
-	'|>': ['!', '('],
 	'!': ['|>', '(', '.'],
+	'-': ['|>', '(', '.']
+}
+
+const binaryOperatorPrecedence = {
+	'|>': ['!', '('],
 	'**': ['!', '|>', '('],
 	'*': ['!', '|>', '(', '**'],
 	'/': ['!', '|>', '(', '**'],
@@ -97,12 +101,28 @@ const grammar = [
 	new Production(
 		['Expression', 'BinaryOperator', 'Expression'],
 		(left, op, right) => new BinaryExpression(left, op, right),
-		(peek, _, op) => !operatorPrecedence[op.operator].includes(peek)
+		(peek, _, op) => !binaryOperatorPrecedence[op.operator].includes(peek)
 	),
 	new Production(
 		['UnaryOperator', 'Expression'],
 		(op, expression) => new UnaryExpression(op, expression),
-		(peek, op) => !operatorPrecedence[op.operator].includes(peek)
+		(peek, op) => !unaryOperatorPrecedence[op.operator].includes(peek)
+	),
+	new Production(['Expression', 'UnaryOperator'], (left, operator) => ({
+		type: 'OpenUnaryExpression',
+		left,
+		operator: operator.operator
+	})),
+
+	new Production(
+		['OpenUnaryExpression', 'Expression'],
+		(openExpression, right) =>
+			new BinaryExpression(
+				openExpression.left,
+				new BinaryOperator(openExpression.operator),
+				right
+			),
+		peek => !binaryOperatorPrecedence['-'].includes(peek)
 	),
 
 	// Arrays
