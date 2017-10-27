@@ -61,11 +61,7 @@ export const visitorsFactory = ({
 		const operator = node.operator.operator
 		const operation = operations[operator]
 
-		if (operation) {
-			return operation(left, right)
-		} else {
-			console.error(`BinaryExpression ${operator} not implemented yet`)
-		}
+		return operation(left, right)
 	},
 	UnaryExpression: (node, scopes) => {
 		const expression = aval(node.expression, scopes)
@@ -75,8 +71,6 @@ export const visitorsFactory = ({
 			return !expression
 		} else if (op === 'type') {
 			return expression.type
-		} else {
-			console.error(`UnaryExpression ${op} not implemented yet`)
 		}
 	},
 	FunctionExpression: (node, scopes) => {

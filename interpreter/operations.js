@@ -34,5 +34,32 @@ export const operations = {
 			)
 		}
 		return left.call(right)
+	},
+	'**': () => {
+		throw new Error('** not implemented')
+	},
+	'<': (left, right) => {
+		return left < right
+	},
+	'>': (left, right) => {
+		return left > right
+	},
+	'>=': (left, right) => {
+		return left >= right
+	},
+	'<=': (left, right) => {
+		return left <= right
+	},
+	'==': (left, right) => {
+		return left == right
+	},
+	'!=': (left, right) => {
+		return left != right
+	},
+	'&&': (left, right) => {
+		return left && right
+	},
+	'||': (left, right) => {
+		return left || right
 	}
 }
