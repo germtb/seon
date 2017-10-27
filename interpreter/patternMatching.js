@@ -8,6 +8,29 @@ export const match = (pattern, expression, matchScope) => {
 	} else if (pattern.type === 'IdentifierExpression') {
 		matchScope[pattern.name] = expression
 		return true
+	} else if (pattern.type === 'ObjectExpression') {
+		let patternIndex = 0
+		let expressionIndex = 0
+
+		while (
+			patternIndex < pattern.properties.length &&
+			expressionIndex < Object.key(expression.value).length
+		) {
+			const p = pattern.properties[patternIndex]
+			const e = expression.value[expressionIndex]
+
+			if (!match(p, e, matchScope)) {
+				return false
+			}
+
+			patternIndex++
+			expressionIndex++
+		}
+
+		return (
+			expressionIndex === Object.keys(expression.value).length &&
+			patternIndex === pattern.properties.length
+		)
 	} else if (pattern.type === 'ArrayExpression') {
 		let patternIndex = 0
 		let expressionIndex = 0
@@ -21,11 +44,6 @@ export const match = (pattern, expression, matchScope) => {
 			const e = expression.value[expressionIndex]
 
 			if (p.type === 'RestElement') {
-				if (p.value.type !== 'IdentifierExpression') {
-					// TODO: This should happen in the parser
-					throw new Error('RestElement inside array has to be an identifier')
-				}
-
 				matchScope[p.value.name] = matchScope[p.value.name] || {
 					value: [],
 					type: 'Array'

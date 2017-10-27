@@ -365,4 +365,14 @@ describe('interpreter', () => {
 			type: 'Array'
 		})
 	})
+
+	test('Pattern matching object pattern #1', () => {
+		const tokens = tokenizer('match {} | {} -> 0')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: 0,
+			type: 'Number'
+		})
+	})
 })
