@@ -375,4 +375,26 @@ describe('interpreter', () => {
 			type: 'Number'
 		})
 	})
+
+	test('Pattern matching object pattern #2', () => {
+		const tokens = tokenizer('match { x: 1 } | {} -> 0 | { x } -> x')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: 1,
+			type: 'Number'
+		})
+	})
+
+	test('Pattern matching object pattern #3', () => {
+		const tokens = tokenizer(
+			'match { x: 1, y: 10 } | {} -> 0 | { x } -> x | { x, y } -> x + y'
+		)
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: 11,
+			type: 'Number'
+		})
+	})
 })

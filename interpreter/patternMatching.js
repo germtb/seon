@@ -14,10 +14,10 @@ export const match = (pattern, expression, matchScope) => {
 
 		while (
 			patternIndex < pattern.properties.length &&
-			expressionIndex < Object.key(expression.value).length
+			expressionIndex < Object.keys(expression.value).length
 		) {
-			const p = pattern.properties[patternIndex]
-			const e = expression.value[expressionIndex]
+			const p = pattern.properties[patternIndex].property
+			const e = expression.value[Object.keys(expression.value)[expressionIndex]]
 
 			if (!match(p, e, matchScope)) {
 				return false
