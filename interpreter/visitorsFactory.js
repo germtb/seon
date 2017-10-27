@@ -87,8 +87,12 @@ export const visitorsFactory = ({
 		const func = aval(callee, scopes)
 		return func.call(parameters)
 	},
-	LetExpression: () => {
-		console.info('LetExpression not implemented yet')
+	LetExpression: (node, scopes) => {
+		const letScope = [...scopes, {}]
+		node.declarations.forEach(d => {
+			aval(d, letScope)
+		})
+		return aval(node.expression, letScope)
 	},
 	PatternExpression: (node, scopes) => {
 		const expression = aval(node.expression, scopes)

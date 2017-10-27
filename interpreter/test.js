@@ -411,4 +411,18 @@ describe('interpreter', () => {
 			type: 'Object'
 		})
 	})
+
+	test('let expression #1', () => {
+		const tokens = tokenizer(`
+			let x = 1
+					y = 10
+			in x + y
+		`)
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({
+			value: 11,
+			type: 'Number'
+		})
+	})
 })
