@@ -178,6 +178,14 @@ export class Declaration extends Statement {
 	}
 }
 
+export class ImportDeclaration extends Declaration {
+	constructor(declarator, path) {
+		super('Declaration')
+		this.declarator = declarator
+		this.path = path
+	}
+}
+
 export class LetExpression extends Expression {
 	constructor(declarations, expression) {
 		super('LetExpression')

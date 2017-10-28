@@ -21,6 +21,7 @@ import {
 	PatternCase,
 	PatternExpression,
 	Declaration,
+	ImportDeclaration,
 	LetExpression
 } from './nodes'
 
@@ -704,6 +705,51 @@ describe('parser', () => {
 					new NumberExpression(1),
 					new BinaryOperator('-'),
 					new NumberExpression(1)
+				)
+			])
+		])
+	})
+
+	test('converts an import declaration #1', () => {
+		const tokens = tokenizer("import x from './somewhere'")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ImportDeclaration(
+					new IdentifierExpression('x'),
+					new StringExpression('./somewhere')
+				)
+			])
+		])
+	})
+
+	test('converts an import declaration #2', () => {
+		const tokens = tokenizer("import { x, y } from './somewhere'")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ImportDeclaration(
+					new ObjectExpression([
+						new ObjectProperty(new IdentifierExpression('x')),
+						new ObjectProperty(new IdentifierExpression('y'))
+					]),
+					new StringExpression('./somewhere')
+				)
+			])
+		])
+	})
+
+	test('converts an import declaration #3', () => {
+		const tokens = tokenizer("import [ x, y ] from './somewhere'")
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ImportDeclaration(
+					new ArrayExpression([
+						new IdentifierExpression('x'),
+						new IdentifierExpression('y')
+					]),
+					new StringExpression('./somewhere')
 				)
 			])
 		])

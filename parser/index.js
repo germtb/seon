@@ -19,6 +19,7 @@ import {
 	PatternCase,
 	PatternExpression,
 	Declaration,
+	ImportDeclaration,
 	LetExpression
 } from './nodes'
 import { Production } from './Production'
@@ -285,18 +286,24 @@ const grammar = [
 
 	// Declarations
 	new Production(
-		['ArrayExpression', '=', 'Expression'],
+		['import', 'ArrayExpression|IdentifierExpression|ObjectExpression', 'from'],
+		(_, expression) => ({
+			type: 'OpenImport',
+			expression
+		})
+	),
+	new Production(
+		['OpenImport', 'StringExpression'],
+		(openImport, path) => new ImportDeclaration(openImport.expression, path)
+	),
+
+	new Production(
+		[
+			'ArrayExpression|IdentifierExpression|ObjectExpression',
+			'=',
+			'Expression'
+		],
 		(array, _, expression) => new Declaration(array, expression),
-		lowestPrecedence
-	),
-	new Production(
-		['ObjectExpression', '=', 'Expression'],
-		(obj, _, expression) => new Declaration(obj, expression),
-		lowestPrecedence
-	),
-	new Production(
-		['IdentifierExpression', '=', 'Expression'],
-		(identifier, _, expression) => new Declaration(identifier, expression),
 		lowestPrecedence
 	),
 

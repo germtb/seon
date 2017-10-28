@@ -52,6 +52,12 @@ const keywords = {
 	},
 	match: {
 		type: 'match'
+	},
+	import: {
+		type: 'import'
+	},
+	from: {
+		type: 'from'
 	}
 }
 
