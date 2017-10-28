@@ -66,6 +66,7 @@ export default code => {
 	let line = 0
 	let inString = false
 	let inIdentifier = false
+	let inComment = false
 	let currentToken = ''
 	let start = null
 
@@ -77,6 +78,37 @@ export default code => {
 
 		column = character === '\n' ? 0 : column + 1
 		line = character === '\n' ? line + 1 : line
+
+		if (inComment) {
+			if (character === '\n') {
+				tokens.push({
+					type: 'Comment',
+					value: currentToken,
+					loc: {
+						start,
+						end: { column: column, line: line - 1 }
+					}
+				})
+				inComment = false
+				currentToken = ''
+			} else if (i === code.length - 1) {
+				currentToken += character
+				tokens.push({
+					type: 'Comment',
+					value: currentToken,
+					loc: {
+						start,
+						end: { column: column + 1, line }
+					}
+				})
+				inComment = false
+				currentToken = ''
+			} else {
+				currentToken += character
+			}
+
+			continue
+		}
 
 		if (inString) {
 			if (character === "'") {
@@ -93,6 +125,12 @@ export default code => {
 			} else {
 				currentToken += character
 			}
+		} else if (character === '/' && peek === '/') {
+			currentToken = ''
+			start = { column, line }
+			inComment = true
+			column += 1
+			i += 1
 		} else if (/\s/.test(character)) {
 			continue
 		} else if (character === '.' && peek === '.') {

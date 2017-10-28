@@ -42,6 +42,7 @@ exports.default = function (code) {
 	var line = 0;
 	var inString = false;
 	var inIdentifier = false;
+	var inComment = false;
 	var currentToken = '';
 	var start = null;
 
@@ -53,6 +54,22 @@ exports.default = function (code) {
 
 		column = character === '\n' ? 0 : column + 1;
 		line = character === '\n' ? line + 1 : line;
+
+		if (inComment) {
+			if (character === '\n' || i === code.length - 1) {
+				tokens.push({
+					type: 'Comment',
+					value: currentToken,
+					loc: {
+						start: start,
+						end: { column: column, line: line }
+					}
+				});
+				inComment = false;
+				currentToken = '';
+			}
+			continue;
+		}
 
 		if (inString) {
 			if (character === "'") {
@@ -69,6 +86,10 @@ exports.default = function (code) {
 			} else {
 				currentToken += character;
 			}
+		} else if (character === '/' && peek === '/') {
+			currentToken = '';
+			start = { column: column, line: line };
+			inComment = true;
 		} else if (/\s/.test(character)) {
 			continue;
 		} else if (character === '.' && peek === '.') {

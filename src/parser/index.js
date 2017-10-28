@@ -81,6 +81,7 @@ const grammar = [
 	// Terminals
 	...unaryOperators.map(o => new Production([o], () => new UnaryOperator(o))),
 	...binaryOperators.map(o => new Production([o], () => new BinaryOperator(o))),
+	new Production(['Comment'], () => []),
 	new Production(
 		['Identifier'],
 		identifier => new IdentifierExpression(identifier.value)

@@ -110,7 +110,6 @@ x | 0 -> 0 | _ -> x * x
 
 # Pattern matching
 
-```
 cap = x => x
 	| [y, ...ys] -> y
 	| [] -> 0
@@ -118,22 +117,6 @@ cap = x => x
 fib = n => n
 	| 1 | 2 -> 1
 	| _ -> fib(n: n - 1) + fib(n: n - 2)
-
-map = (f, xs) => f, xs
-	| _, [] -> []
-	| f, [x, ...xs] -> [f(x), ...xs]
-
-let x = foo | true -> 1 | false -> 0
-
-find = (selector, xs) => case xs of
-	| [] -> false
-	| [x, ...xs] -> selector(x) | true -> true | false -> xs |> find(selector)
-
-find = (selector, xs) => case xs of
-	| [] -> false
-	| [x, ...xs] -> case selector(x) of | true -> true | false -> xs |> find(selector)
-
-```
 
 # Monads
 Nothing = () => { type: 'Nothing' }
@@ -153,14 +136,14 @@ map = (f, maybe) => match maybe
 	| Just -> Just(f(x))
 
 # TODO
+- Comments
 - Object access
 - float numbers
 - modules
-- pattern match or syntax
-- loc in tokens
-- syntax sugar for type matching?
+- pattern match with 1 | 2 | 3 ...
 - core libraries
-- eval
+- eval as part of the core libraries
+- syntax sugar for type matching?
 - parser
 - extensible parser
 - transpile to something (js)

@@ -408,4 +408,38 @@ describe('tokenizer', () => {
 			}
 		])
 	})
+
+	test('produces a comment #1', () => {
+		expect(tokenizer('// x1 1234 1234')).toEqual([
+			{
+				type: 'Comment',
+				value: ' x1 1234 1234',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 15, line: 0 }
+				}
+			}
+		])
+	})
+
+	test('produces a comment #2', () => {
+		expect(tokenizer('x // x')).toEqual([
+			{
+				type: 'Identifier',
+				value: 'x',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
+			},
+			{
+				type: 'Comment',
+				value: ' x',
+				loc: {
+					start: { column: 2, line: 0 },
+					end: { column: 6, line: 0 }
+				}
+			}
+		])
+	})
 })
