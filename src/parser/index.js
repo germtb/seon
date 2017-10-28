@@ -237,6 +237,11 @@ const grammar = [
 		expression,
 		arrayOf('Parameter', [])
 	]),
+	new Production(
+		['Expression', '[Parameter]', ')'],
+		expression => new CallExpression(expression, [])
+	),
+
 	new Production(['(', 'Expression', ')'], (_, expression) => expression),
 
 	new Production(

@@ -56,7 +56,9 @@ var grammar = [].concat(_toConsumableArray(unaryOperators.map(function (o) {
 	return new _Production.Production([o], function () {
 		return new _nodes.BinaryOperator(o);
 	});
-})), [new _Production.Production(['Identifier'], function (identifier) {
+})), [new _Production.Production(['Comment'], function () {
+	return [];
+}), new _Production.Production(['Identifier'], function (identifier) {
 	return new _nodes.IdentifierExpression(identifier.value);
 }), new _Production.Production(['Boolean'], function (expression) {
 	return new _nodes.BooleanExpression(expression.value);
@@ -146,6 +148,8 @@ new _Production.Production(['|', '_', '->'], function () {
 // Functions
 new _Production.Production(['Expression', '('], function (expression) {
 	return [expression, (0, _utils.arrayOf)('Parameter', [])];
+}), new _Production.Production(['Expression', '[Parameter]', ')'], function (expression) {
+	return new _nodes.CallExpression(expression, []);
 }), new _Production.Production(['(', 'Expression', ')'], function (_, expression) {
 	return expression;
 }), new _Production.Production(['IdentifierExpression', '=>', 'Expression'], function (identifier, _, body) {
