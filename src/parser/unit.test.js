@@ -63,7 +63,7 @@ describe('parser', () => {
 	})
 
 	test('converts a type opertor', () => {
-		const tokens = tokenizer('type')
+		const tokens = tokenizer('typeof')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new UnaryOperator('TypeOperator')])])
 	})
@@ -93,7 +93,7 @@ describe('parser', () => {
 	})
 
 	test('converts a type expression', () => {
-		const tokens = tokenizer('type 5')
+		const tokens = tokenizer('typeof 5')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
@@ -663,6 +663,20 @@ describe('parser', () => {
 						])
 					)
 				)
+			])
+		])
+	})
+
+	test('bug #5', () => {
+		const tokens = tokenizer('{ type: 10 }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(
+						new NamedParameter('type', new NumberExpression(10))
+					)
+				])
 			])
 		])
 	})

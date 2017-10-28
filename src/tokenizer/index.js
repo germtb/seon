@@ -47,7 +47,7 @@ const keywords = {
 		type: 'Boolean',
 		value: false
 	},
-	type: {
+	typeof: {
 		type: 'TypeOperator'
 	},
 	match: {
