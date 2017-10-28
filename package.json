@@ -1,11 +1,14 @@
 {
 	"name": "miniscript",
-	"bin": "./miniscript",
+	"bin": {
+		"miniscript": "./bin/miniscript.js"
+	},
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest"
+		"test": "jest",
+		"build": "babel src --out-dir dist --ignore *.test.js"
 	},
 	"keywords": [],
 	"author": "",
@@ -13,6 +16,7 @@
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-plugin-transform-flow-strip-types": "^6.22.0",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
 		"babel-preset-env": "^1.6.0",
 		"eslint": "^4.9.0",
 		"eslint-plugin-jest": "^21.2.0",
