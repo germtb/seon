@@ -88,6 +88,16 @@ describe('interpreter', () => {
 		})
 	})
 
+	test('converts an array-shape declaration #1', () => {
+		const tokens = tokenizer('[ x ] = [0, 1, 2, 3]')
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 0,
+			type: 'Number'
+		})
+	})
+
 	test('can spread arrays in arrays', () => {
 		const tokens = tokenizer(`
 			x = [1, 2, 3]

@@ -1,7 +1,6 @@
 export const visitorsFactory = ({
 	aval,
 	get,
-	set,
 	match,
 	createFunction,
 	operations
@@ -101,16 +100,11 @@ export const visitorsFactory = ({
 		}
 
 		console.error('PatternExpression did not match')
+		throw new Error('PatternExpression did not match')
 	},
 	Declaration: (node, scopes) => {
 		const { declarator, value } = node
-
-		if (declarator.type === 'IdentifierExpression') {
-			set(declarator.name, aval(value, scopes), scopes)
-		} else {
-			console.error(
-				`Declaration of type ${declarator.type} not implemented yet`
-			)
-		}
+		const expression = aval(value, scopes)
+		match(declarator, expression, scopes[scopes.length - 1])
 	}
 })

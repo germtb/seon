@@ -1,4 +1,4 @@
-export const match = (pattern, expression, matchScope) => {
+export const match = (pattern, expression, scope) => {
 	if (pattern.type === 'NoPattern') {
 		return true
 	} else if (pattern.type === 'BooleanExpression') {
@@ -6,7 +6,7 @@ export const match = (pattern, expression, matchScope) => {
 	} else if (pattern.type === 'NumberExpression') {
 		return pattern.value === expression.value
 	} else if (pattern.type === 'IdentifierExpression') {
-		matchScope[pattern.name] = expression
+		scope[pattern.name] = expression
 		return true
 	} else if (pattern.type === 'ObjectExpression') {
 		let patternIndex = 0
@@ -22,15 +22,15 @@ export const match = (pattern, expression, matchScope) => {
 			const e = expression.value[propName]
 
 			if (p.type === 'RestElement') {
-				matchScope[p.value.name] = matchScope[p.value.name] || {
+				scope[p.value.name] = scope[p.value.name] || {
 					value: {},
 					type: 'Object'
 				}
-				matchScope[p.value.name].value[propName] = e
+				scope[p.value.name].value[propName] = e
 				restElement = 1
 				expressionIndex++
 			} else {
-				if (!match(p, e, matchScope)) {
+				if (!match(p, e, scope)) {
 					return false
 				}
 
@@ -56,15 +56,15 @@ export const match = (pattern, expression, matchScope) => {
 			const e = expression.value[expressionIndex]
 
 			if (p.type === 'RestElement') {
-				matchScope[p.value.name] = matchScope[p.value.name] || {
+				scope[p.value.name] = scope[p.value.name] || {
 					value: [],
 					type: 'Array'
 				}
-				matchScope[p.value.name].value.push(e)
+				scope[p.value.name].value.push(e)
 				restElement = 1
 				expressionIndex++
 			} else {
-				if (!match(p, e, matchScope)) {
+				if (!match(p, e, scope)) {
 					return false
 				}
 

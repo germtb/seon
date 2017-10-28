@@ -133,7 +133,7 @@ export default code => {
 				// 	end: { column, line }
 				// }
 
-				tokens.push({ ...token })
+				tokens.push(token)
 				currentToken = ''
 			}
 		} else if (!inIdentifier && /[a-zA-Z]/.test(character)) {

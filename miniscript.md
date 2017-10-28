@@ -137,20 +137,34 @@ find = (selector, xs) => case xs of
 
 # Monads
 Nothing = () => { type: 'Nothing' }
-Just = x -> { type: 'Just', value: x }
+Just = x => { type: 'Just', value: x }
 
 map = (f, maybe) => case maybe.type of
 	| 'Nothing' -> Nothing()
 	| 'Just' -> Just(f(x))
 
+With syntactic sugar:
+
+type Nothing = () => {}
+type Just = x => { value: x }
+
+map = (f, maybe) => match maybe
+	| Nothing -> Nothing()
+	| Just -> Just(f(x))
+
 # TODO
-- negative unary operator
+- Object access
+- float numbers
+- modules
 - pattern match or syntax
 - loc in tokens
-- float numbers
 - syntax sugar for type matching?
-- libraries
-- auto caching
-- function equality?
+- core libraries
+- eval
+- parser
+- extensible parser
 - transpile to something (js)
 - rewrite in itself
+- auto caching?
+- better array syntax?
+- function equality?
