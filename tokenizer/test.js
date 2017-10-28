@@ -5,7 +5,11 @@ describe('tokenizer', () => {
 		expect(tokenizer('1')).toEqual([
 			{
 				type: 'Number',
-				value: 1
+				value: 1,
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 1 }
+				}
 			}
 		])
 	})
@@ -24,11 +28,29 @@ describe('tokenizer', () => {
 	})
 
 	test('produces a true boolean token', () => {
-		expect(tokenizer('true')).toEqual([{ type: 'Boolean', value: true }])
+		expect(tokenizer('true')).toEqual([
+			{
+				type: 'Boolean',
+				value: true,
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 4 }
+				}
+			}
+		])
 	})
 
 	test('produces a false boolean token', () => {
-		expect(tokenizer('false')).toEqual([{ type: 'Boolean', value: false }])
+		expect(tokenizer('false')).toEqual([
+			{
+				type: 'Boolean',
+				value: false,
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 5 }
+				}
+			}
+		])
 	})
 
 	test('produces a == token', () => {
@@ -236,23 +258,44 @@ describe('tokenizer', () => {
 	})
 
 	test('produces an Identifier token', () => {
-		expect(tokenizer('hello')).toEqual([{ type: 'Identifier', value: 'hello' }])
+		expect(tokenizer('hello')).toEqual([
+			{
+				type: 'Identifier',
+				value: 'hello',
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 5 }
+				}
+			}
+		])
 	})
 
 	test('produces a let token', () => {
-		expect(tokenizer('let')).toEqual([{ type: 'let' }])
+		expect(tokenizer('let')).toEqual([
+			{
+				type: 'let',
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 3 }
+				}
+			}
+		])
 	})
 
 	test('produces an in token', () => {
 		expect(tokenizer('in')).toEqual([
 			{
-				type: 'in'
+				type: 'in',
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 2 }
+				}
 			}
 		])
 	})
 
 	test('produces open and close SquareBrackets', () => {
-		expect(tokenizer('[1]')).toEqual([
+		expect(tokenizer('[ 1 ]')).toEqual([
 			{
 				type: '[',
 				loc: {
@@ -262,20 +305,24 @@ describe('tokenizer', () => {
 			},
 			{
 				type: 'Number',
-				value: 1
+				value: 1,
+				loc: {
+					start: { column: 2, line: 0 },
+					end: { column: 3, line: 0 }
+				}
 			},
 			{
 				type: ']',
 				loc: {
-					start: { column: 2, line: 0 },
-					end: { column: 3, line: 0 }
+					start: { column: 4, line: 0 },
+					end: { column: 5, line: 0 }
 				}
 			}
 		])
 	})
 
 	test('produces open and close CurlyBrackets', () => {
-		expect(tokenizer('{1}')).toEqual([
+		expect(tokenizer('{ 1 }')).toEqual([
 			{
 				type: '{',
 				loc: {
@@ -285,13 +332,17 @@ describe('tokenizer', () => {
 			},
 			{
 				type: 'Number',
-				value: 1
+				value: 1,
+				loc: {
+					start: { column: 2, line: 0 },
+					end: { column: 3, line: 0 }
+				}
 			},
 			{
 				type: '}',
 				loc: {
-					start: { column: 2, line: 0 },
-					end: { column: 3, line: 0 }
+					start: { column: 4, line: 0 },
+					end: { column: 5, line: 0 }
 				}
 			}
 		])
@@ -314,7 +365,11 @@ describe('tokenizer', () => {
 		expect(tokenizer('x1')).toEqual([
 			{
 				type: 'Identifier',
-				value: 'x1'
+				value: 'x1',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 2, line: 0 }
+				}
 			}
 		])
 	})
@@ -323,7 +378,11 @@ describe('tokenizer', () => {
 		expect(tokenizer('f , { x')).toEqual([
 			{
 				type: 'Identifier',
-				value: 'f'
+				value: 'f',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 1, line: 0 }
+				}
 			},
 			{
 				type: ',',
@@ -341,7 +400,11 @@ describe('tokenizer', () => {
 			},
 			{
 				type: 'Identifier',
-				value: 'x'
+				value: 'x',
+				loc: {
+					start: { column: 6, line: 0 },
+					end: { column: 7, line: 0 }
+				}
 			}
 		])
 	})

@@ -97,6 +97,7 @@ export default code => {
 					end: { column: column + 2, line }
 				}
 			})
+			column += 2
 			i += 2
 		} else if (character === "'") {
 			currentToken = ''
@@ -110,6 +111,7 @@ export default code => {
 					end: { column: column + 2, line }
 				}
 			})
+			column += 1
 			i += 1
 		} else if (simpleTokens.includes(character)) {
 			tokens.push({
@@ -128,12 +130,12 @@ export default code => {
 					type: 'Number',
 					value: parseInt(currentToken)
 				}
-				// const loc = {
-				// 	start: { column: column - currentToken.length, line },
-				// 	end: { column, line }
-				// }
+				const loc = {
+					start: { column: column - currentToken.length + 1, line },
+					end: { column: column + 1, line }
+				}
 
-				tokens.push(token)
+				tokens.push({ ...token, loc })
 				currentToken = ''
 			}
 		} else if (!inIdentifier && /[a-zA-Z]/.test(character)) {
@@ -148,12 +150,12 @@ export default code => {
 							value: currentToken
 						}
 
-				// const loc = {
-				// 	start: { column: column - currentToken.length, line },
-				// 	end: { column: column + 1, line }
-				// }
+				const loc = {
+					start: { column: column - currentToken.length + 1, line },
+					end: { column: column + 1, line }
+				}
 
-				tokens.push({ ...token })
+				tokens.push({ ...token, loc })
 
 				inIdentifier = false
 				currentToken = ''
@@ -169,12 +171,12 @@ export default code => {
 							value: currentToken
 						}
 
-				// const loc = {
-				// 	start: { column: column - currentToken.length, line },
-				// 	end: { column: column + 1, line }
-				// }
+				const loc = {
+					start: { column: column - currentToken.length + 1, line },
+					end: { column: column + 1, line }
+				}
 
-				tokens.push({ ...token })
+				tokens.push({ ...token, loc })
 
 				inIdentifier = false
 				currentToken = ''
