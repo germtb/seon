@@ -68,6 +68,7 @@ var matchTable = {
 	StringExpression: ['StringExpression', 'Expression', 'Node'],
 	ArrayExpression: ['ArrayExpression', 'Expression', 'Node'],
 	ObjectExpression: ['ObjectExpression', 'Expression', 'Node'],
+	ObjectAccessExpression: ['ObjectAccessExpression', 'Expression', 'Node'],
 	FunctionExpression: ['FunctionExpression', 'Expression', 'Node'],
 	CallExpression: ['CallExpression', 'Expression', 'Node'],
 	BinaryExpression: ['BinaryExpression', 'Expression', 'Node'],

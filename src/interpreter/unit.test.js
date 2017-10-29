@@ -472,4 +472,15 @@ describe('interpreter', () => {
 			type: 'Object'
 		})
 	})
+
+	test('bug #1', () => {
+		const tokens = tokenizer(`
+			id = x => x
+			y = id(id(id(1)))
+		`)
+		const nodes = parse(tokens)
+		const scopes = [{}]
+		aval(nodes[0], scopes)
+		expect(scopes[0].y).toEqual({ value: 1, type: 'Number' })
+	})
 })

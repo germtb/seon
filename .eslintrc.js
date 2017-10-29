@@ -29,6 +29,8 @@ module.exports = {
 	globals: {
 		__filename: true,
 		__dirname: true,
-		process: true
+		process: true,
+		module: true,
+		exports: true
 	}
 }

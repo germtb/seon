@@ -88,6 +88,10 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 				return aval(property.value, scopes).value;
 			}
 		},
+		ObjectAccessExpression: function ObjectAccessExpression(node, scopes) {
+			var obj = aval(node.expression, scopes);
+			return obj.value[node.accessIdentifier.name];
+		},
 		BinaryExpression: function BinaryExpression(node, scopes) {
 			var left = aval(node.left, scopes);
 			var right = aval(node.right, scopes);

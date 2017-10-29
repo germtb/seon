@@ -23,9 +23,6 @@ var keywords = {
 		type: 'Boolean',
 		value: false
 	},
-	typeof: {
-		type: 'TypeOperator'
-	},
 	match: {
 		type: 'match'
 	},

@@ -33,7 +33,7 @@ const toJSString = (x, tabulation = '') => {
 	return ''
 }
 
-export const toString = {
+exports.toString = {
 	type: 'Function',
 	call: params => ({
 		type: 'String',
@@ -41,7 +41,7 @@ export const toString = {
 	})
 }
 
-export const log = {
+exports.log = {
 	type: 'Function',
 	call: params => {
 		const logResult = params.map(p => toJSString(p)).join(' ')
@@ -50,7 +50,7 @@ export const log = {
 	}
 }
 
-export const type = {
+exports.type = {
 	type: 'Function',
 	call: params => ({
 		type: 'String',
