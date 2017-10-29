@@ -1,8 +1,7 @@
 const sameTypeCheck = (left, right) => {
 	if (left.type !== right.type) {
-		console.error(
-			`Cannot sum two nodes of types ${left.type} and ${right.type}`
-		)
+		const error = `Cannot sum two nodes of types ${left.type} and ${right.type}`
+		throw new Error(error)
 	}
 }
 
@@ -29,7 +28,7 @@ export const operations = {
 	},
 	'|>': (left, right) => {
 		if (left.type !== 'Function') {
-			console.error(
+			throw new Error(
 				`Node of type ${left.type} is not a function and cannot be called`
 			)
 		}

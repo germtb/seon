@@ -18,18 +18,18 @@ var createFunctionFactory = exports.createFunctionFactory = function createFunct
 				var _loop = function _loop(i) {
 					var param = params[i];
 
-					if (/Expression/.test(param.type)) {
-						var definition = leftDefinitions.shift();
-						hydratedParams[definition.name] = aval(param, scopes);
-					} else if (param.type === 'NamedParameter') {
-						var _definition = leftDefinitions.find(function (definition) {
+					if (param.type === 'NamedParameter') {
+						var definition = leftDefinitions.find(function (definition) {
 							return definition.name === param.name;
 						});
 						leftDefinitions = leftDefinitions.filter(function (definition) {
 							return definition.name !== param.name;
 						});
 
-						hydratedParams[_definition.name] = aval(param.value, scopes);
+						hydratedParams[definition.name] = param.value;
+					} else {
+						var _definition = leftDefinitions.shift();
+						hydratedParams[_definition.name] = param;
 					}
 				};
 

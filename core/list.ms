@@ -17,6 +17,8 @@ head = list => match list
   | [] -> Nothing()
   | [x, ...xs] -> Just(x)
 
+log(map(x => x, [0, 1, 2]))
+
 module = {
   map,
   reduce,

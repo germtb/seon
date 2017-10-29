@@ -114,11 +114,18 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			return createFunction(node.parameters, node.body, scopes);
 		},
 		CallExpression: function CallExpression(node, scopes) {
-			var callee = node.callee,
-			    parameters = node.parameters;
-
-			var func = aval(callee, scopes);
+			var func = aval(node.callee, scopes);
+			var parameters = node.parameters.map(function (node) {
+				return aval(node, scopes);
+			});
 			return func.call(parameters);
+		},
+		NamedParameter: function NamedParameter(node, scopes) {
+			return {
+				type: 'NamedParameter',
+				name: node.name,
+				value: aval(node.value, scopes)
+			};
 		},
 		LetExpression: function LetExpression(node, scopes) {
 			var letScope = [].concat(_toConsumableArray(scopes), [{}]);

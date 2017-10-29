@@ -89,7 +89,6 @@ export const visitorsFactory = ({ transpile }) => ({
 		// 	}
 		// }
 		//
-		// console.error('PatternExpression did not match')
 		// throw new Error('PatternExpression did not match')
 	},
 	Declaration: node => {

@@ -6,7 +6,7 @@ import { get, set } from './scopes'
 import { createFunctionFactory } from './createFunction'
 import { operations } from './operations'
 
-const createEval = () => {
+const createAval = () => {
 	const aval = (node, scopes = [{}]) => {
 		const type = node.type
 		const visitor = visitors[type]
@@ -15,11 +15,7 @@ const createEval = () => {
 			return `${type} is not a visitor`
 		}
 
-		try {
-			return visitor(node, scopes)
-		} catch (error) {
-			return error
-		}
+		return visitor(node, scopes)
 	}
 
 	const run = (code, scopes = [{}]) => {
@@ -43,4 +39,4 @@ const createEval = () => {
 	return { aval, run }
 }
 
-export const { aval, run } = createEval()
+export const { aval, run } = createAval()

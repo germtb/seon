@@ -44,41 +44,41 @@ export const match = (pattern, expression, scope) => {
 			patternIndex + restElement === pattern.properties.length
 		)
 	} else if (pattern.type === 'ArrayExpression') {
-		let patternIndex = 0
-		let expressionIndex = 0
-		let restElement = 0
+		if (pattern.values.length === 0) {
+			return expression.value.length === 0
+		}
 
-		while (
-			patternIndex < pattern.values.length &&
-			expressionIndex < expression.value.length
-		) {
-			const p = pattern.values[patternIndex]
-			const e = expression.value[expressionIndex]
+		const lastElement = pattern.values[pattern.values.length - 1]
+		const restElement = lastElement.type === 'RestElement' ? lastElement : false
 
-			if (p.type === 'RestElement') {
-				scope[p.value.name] = scope[p.value.name] || {
-					value: [],
-					type: 'Array'
-				}
-				scope[p.value.name].value.push(e)
-				restElement = 1
-				expressionIndex++
-			} else {
+		if (restElement) {
+			for (let i = 0; i < pattern.values.length - 1; i++) {
+				const p = pattern.values[i]
+				const e = expression.value[i]
+
 				if (!match(p, e, scope)) {
 					return false
 				}
-
-				patternIndex++
-				expressionIndex++
 			}
-		}
 
-		return (
-			expressionIndex === expression.value.length &&
-			patternIndex + restElement === pattern.values.length
-		)
+			scope[restElement.value.name] = scope[restElement.value.name] || {
+				value: expression.value.slice(pattern.values.length - 1),
+				type: 'Array'
+			}
+			return true
+		} else {
+			for (let i = 0; i < pattern.values.length; i++) {
+				const p = pattern.values[i]
+				const e = expression.value[i]
+
+				if (!match(p, e, scope)) {
+					return false
+				}
+			}
+
+			return pattern.values.length === expression.value.length
+		}
 	}
 
-	console.error(`Pattern of type ${pattern.type} not implemented yet`)
 	return false
 }

@@ -98,9 +98,16 @@ export const visitorsFactory = ({
 		return createFunction(node.parameters, node.body, scopes)
 	},
 	CallExpression: (node, scopes) => {
-		const { callee, parameters } = node
-		const func = aval(callee, scopes)
+		const func = aval(node.callee, scopes)
+		const parameters = node.parameters.map(node => aval(node, scopes))
 		return func.call(parameters)
+	},
+	NamedParameter: (node, scopes) => {
+		return {
+			type: 'NamedParameter',
+			name: node.name,
+			value: aval(node.value, scopes)
+		}
 	},
 	LetExpression: (node, scopes) => {
 		const letScope = [...scopes, {}]
@@ -121,7 +128,6 @@ export const visitorsFactory = ({
 			}
 		}
 
-		console.error('PatternExpression did not match')
 		throw new Error('PatternExpression did not match')
 	},
 	Declaration: (node, scopes) => {

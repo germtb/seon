@@ -1,6 +1,6 @@
 export const set = (name, value, scopes) => {
 	if (name in scopes[scopes.length - 1]) {
-		console.error(`${name} has already been assigned.`)
+		throw new Error(`${name} has already been assigned.`)
 	}
 	scopes[scopes.length - 1][name] = value
 }
@@ -12,7 +12,10 @@ export const get = (name, scopes) => {
 		}
 	}
 
-	console.error(
-		`${name} not found in scopes: ${JSON.stringify(scopes, null, 2)}`
-	)
+	const error = `${name} not found in scopes: ${JSON.stringify(
+		scopes,
+		null,
+		2
+	)}`
+	throw new Error(error)
 }
