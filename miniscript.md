@@ -136,10 +136,8 @@ map = (f, maybe) => match maybe
 	| Just -> Just(f(x))
 
 # TODO
-- Comments
 - Object access
 - float numbers
-- modules
 - pattern match with 1 | 2 | 3 ...
 - core libraries
 - eval as part of the core libraries

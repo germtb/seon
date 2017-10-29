@@ -12,6 +12,7 @@ import {
 	RestElement,
 	ObjectExpression,
 	ObjectProperty,
+	ObjectAccessExpression,
 	NamedParameter,
 	FunctionExpression,
 	CallExpression,
@@ -25,7 +26,7 @@ import {
 import { Production } from './Production'
 import { arrayOf } from './utils'
 
-const nonOperators = ['[', '{', '=>', '(', 'match']
+const nonOperators = ['[', '{', '=>', '(', 'match', '.']
 const unaryOperators = ['!', 'TypeOperator', '-']
 const binaryOperators = [
 	'+',
@@ -181,6 +182,11 @@ const grammar = [
 				...expressions.values,
 				new ObjectProperty(expression)
 			])
+	),
+	new Production(
+		['Expression', '.', 'IdentifierExpression'],
+		(expression, _, identifierExpression) =>
+			new ObjectAccessExpression(expression, identifierExpression)
 	),
 
 	// NamedParameters

@@ -12,7 +12,7 @@ var _utils = require('./utils');
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var nonOperators = ['[', '{', '=>', '(', 'match'];
+var nonOperators = ['[', '{', '=>', '(', 'match', '.'];
 var unaryOperators = ['!', 'TypeOperator', '-'];
 var binaryOperators = ['+', '*', '/', '-', '%', '**', '<', '>', '>=', '<=', '==', '!=', '&&', '||', '|>'];
 
@@ -113,6 +113,8 @@ new _Production.Production(['{', '}'], function () {
 	return (0, _utils.arrayOf)('ObjectProperty', [].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression)]));
 }), new _Production.Production(['[ObjectProperty]', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (expressions, expression) {
 	return new _nodes.ObjectExpression([].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression)]));
+}), new _Production.Production(['Expression', '.', 'IdentifierExpression'], function (expression, _, identifierExpression) {
+	return new _nodes.ObjectAccessExpression(expression, identifierExpression);
 }),
 
 // NamedParameters

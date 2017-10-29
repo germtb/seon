@@ -160,16 +160,32 @@ var ObjectProperty = exports.ObjectProperty = function (_Node5) {
 	return ObjectProperty;
 }(Node);
 
-var BinaryOperator = exports.BinaryOperator = function (_Node6) {
-	_inherits(BinaryOperator, _Node6);
+var ObjectAccessExpression = exports.ObjectAccessExpression = function (_Node6) {
+	_inherits(ObjectAccessExpression, _Node6);
+
+	function ObjectAccessExpression(expression, accessIdentifier) {
+		_classCallCheck(this, ObjectAccessExpression);
+
+		var _this11 = _possibleConstructorReturn(this, (ObjectAccessExpression.__proto__ || Object.getPrototypeOf(ObjectAccessExpression)).call(this, 'ObjectAccessExpression'));
+
+		_this11.expression = expression;
+		_this11.accessIdentifier = accessIdentifier;
+		return _this11;
+	}
+
+	return ObjectAccessExpression;
+}(Node);
+
+var BinaryOperator = exports.BinaryOperator = function (_Node7) {
+	_inherits(BinaryOperator, _Node7);
 
 	function BinaryOperator(operator) {
 		_classCallCheck(this, BinaryOperator);
 
-		var _this11 = _possibleConstructorReturn(this, (BinaryOperator.__proto__ || Object.getPrototypeOf(BinaryOperator)).call(this, 'BinaryOperator'));
+		var _this12 = _possibleConstructorReturn(this, (BinaryOperator.__proto__ || Object.getPrototypeOf(BinaryOperator)).call(this, 'BinaryOperator'));
 
-		_this11.operator = operator;
-		return _this11;
+		_this12.operator = operator;
+		return _this12;
 	}
 
 	return BinaryOperator;
@@ -181,27 +197,27 @@ var BinaryExpression = exports.BinaryExpression = function (_Expression6) {
 	function BinaryExpression(left, operator, right) {
 		_classCallCheck(this, BinaryExpression);
 
-		var _this12 = _possibleConstructorReturn(this, (BinaryExpression.__proto__ || Object.getPrototypeOf(BinaryExpression)).call(this, 'BinaryExpression'));
+		var _this13 = _possibleConstructorReturn(this, (BinaryExpression.__proto__ || Object.getPrototypeOf(BinaryExpression)).call(this, 'BinaryExpression'));
 
-		_this12.left = left;
-		_this12.operator = operator;
-		_this12.right = right;
-		return _this12;
+		_this13.left = left;
+		_this13.operator = operator;
+		_this13.right = right;
+		return _this13;
 	}
 
 	return BinaryExpression;
 }(Expression);
 
-var UnaryOperator = exports.UnaryOperator = function (_Node7) {
-	_inherits(UnaryOperator, _Node7);
+var UnaryOperator = exports.UnaryOperator = function (_Node8) {
+	_inherits(UnaryOperator, _Node8);
 
 	function UnaryOperator(operator) {
 		_classCallCheck(this, UnaryOperator);
 
-		var _this13 = _possibleConstructorReturn(this, (UnaryOperator.__proto__ || Object.getPrototypeOf(UnaryOperator)).call(this, 'UnaryOperator'));
+		var _this14 = _possibleConstructorReturn(this, (UnaryOperator.__proto__ || Object.getPrototypeOf(UnaryOperator)).call(this, 'UnaryOperator'));
 
-		_this13.operator = operator;
-		return _this13;
+		_this14.operator = operator;
+		return _this14;
 	}
 
 	return UnaryOperator;
@@ -213,42 +229,42 @@ var UnaryExpression = exports.UnaryExpression = function (_Expression7) {
 	function UnaryExpression(operator, expression) {
 		_classCallCheck(this, UnaryExpression);
 
-		var _this14 = _possibleConstructorReturn(this, (UnaryExpression.__proto__ || Object.getPrototypeOf(UnaryExpression)).call(this, 'UnaryExpression'));
+		var _this15 = _possibleConstructorReturn(this, (UnaryExpression.__proto__ || Object.getPrototypeOf(UnaryExpression)).call(this, 'UnaryExpression'));
 
-		_this14.operator = operator;
-		_this14.expression = expression;
-		return _this14;
+		_this15.operator = operator;
+		_this15.expression = expression;
+		return _this15;
 	}
 
 	return UnaryExpression;
 }(Expression);
 
-var RestElement = exports.RestElement = function (_Node8) {
-	_inherits(RestElement, _Node8);
+var RestElement = exports.RestElement = function (_Node9) {
+	_inherits(RestElement, _Node9);
 
 	function RestElement(value) {
 		_classCallCheck(this, RestElement);
 
-		var _this15 = _possibleConstructorReturn(this, (RestElement.__proto__ || Object.getPrototypeOf(RestElement)).call(this, 'RestElement'));
+		var _this16 = _possibleConstructorReturn(this, (RestElement.__proto__ || Object.getPrototypeOf(RestElement)).call(this, 'RestElement'));
 
-		_this15.value = value;
-		return _this15;
+		_this16.value = value;
+		return _this16;
 	}
 
 	return RestElement;
 }(Node);
 
-var NamedParameter = exports.NamedParameter = function (_Node9) {
-	_inherits(NamedParameter, _Node9);
+var NamedParameter = exports.NamedParameter = function (_Node10) {
+	_inherits(NamedParameter, _Node10);
 
 	function NamedParameter(name, value) {
 		_classCallCheck(this, NamedParameter);
 
-		var _this16 = _possibleConstructorReturn(this, (NamedParameter.__proto__ || Object.getPrototypeOf(NamedParameter)).call(this, 'NamedParameter'));
+		var _this17 = _possibleConstructorReturn(this, (NamedParameter.__proto__ || Object.getPrototypeOf(NamedParameter)).call(this, 'NamedParameter'));
 
-		_this16.name = name;
-		_this16.value = value;
-		return _this16;
+		_this17.name = name;
+		_this17.value = value;
+		return _this17;
 	}
 
 	return NamedParameter;
@@ -260,41 +276,41 @@ var FunctionExpression = exports.FunctionExpression = function (_Expression8) {
 	function FunctionExpression(parameters, body) {
 		_classCallCheck(this, FunctionExpression);
 
-		var _this17 = _possibleConstructorReturn(this, (FunctionExpression.__proto__ || Object.getPrototypeOf(FunctionExpression)).call(this, 'FunctionExpression'));
+		var _this18 = _possibleConstructorReturn(this, (FunctionExpression.__proto__ || Object.getPrototypeOf(FunctionExpression)).call(this, 'FunctionExpression'));
 
-		_this17.parameters = parameters;
-		_this17.body = body;
-		return _this17;
+		_this18.parameters = parameters;
+		_this18.body = body;
+		return _this18;
 	}
 
 	return FunctionExpression;
 }(Expression);
 
-var FunctionBody = exports.FunctionBody = function (_Node10) {
-	_inherits(FunctionBody, _Node10);
+var FunctionBody = exports.FunctionBody = function (_Node11) {
+	_inherits(FunctionBody, _Node11);
 
 	function FunctionBody(nodes) {
 		_classCallCheck(this, FunctionBody);
 
-		var _this18 = _possibleConstructorReturn(this, (FunctionBody.__proto__ || Object.getPrototypeOf(FunctionBody)).call(this, 'FunctionBody'));
+		var _this19 = _possibleConstructorReturn(this, (FunctionBody.__proto__ || Object.getPrototypeOf(FunctionBody)).call(this, 'FunctionBody'));
 
-		_this18.nodes = nodes;
-		return _this18;
+		_this19.nodes = nodes;
+		return _this19;
 	}
 
 	return FunctionBody;
 }(Node);
 
-var ReturnStatement = exports.ReturnStatement = function (_Node11) {
-	_inherits(ReturnStatement, _Node11);
+var ReturnStatement = exports.ReturnStatement = function (_Node12) {
+	_inherits(ReturnStatement, _Node12);
 
 	function ReturnStatement(value) {
 		_classCallCheck(this, ReturnStatement);
 
-		var _this19 = _possibleConstructorReturn(this, (ReturnStatement.__proto__ || Object.getPrototypeOf(ReturnStatement)).call(this, 'ReturnStatement'));
+		var _this20 = _possibleConstructorReturn(this, (ReturnStatement.__proto__ || Object.getPrototypeOf(ReturnStatement)).call(this, 'ReturnStatement'));
 
-		_this19.value = value;
-		return _this19;
+		_this20.value = value;
+		return _this20;
 	}
 
 	return ReturnStatement;
@@ -306,11 +322,11 @@ var CallExpression = exports.CallExpression = function (_Expression9) {
 	function CallExpression(callee, parameters) {
 		_classCallCheck(this, CallExpression);
 
-		var _this20 = _possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this, 'CallExpression'));
+		var _this21 = _possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this, 'CallExpression'));
 
-		_this20.callee = callee;
-		_this20.parameters = parameters;
-		return _this20;
+		_this21.callee = callee;
+		_this21.parameters = parameters;
+		return _this21;
 	}
 
 	return CallExpression;
@@ -328,33 +344,33 @@ var NoPattern = exports.NoPattern = function (_Expression10) {
 	return NoPattern;
 }(Expression);
 
-var PatternCase = exports.PatternCase = function (_Node12) {
-	_inherits(PatternCase, _Node12);
+var PatternCase = exports.PatternCase = function (_Node13) {
+	_inherits(PatternCase, _Node13);
 
 	function PatternCase(pattern, result) {
 		_classCallCheck(this, PatternCase);
 
-		var _this22 = _possibleConstructorReturn(this, (PatternCase.__proto__ || Object.getPrototypeOf(PatternCase)).call(this, 'PatternCase'));
+		var _this23 = _possibleConstructorReturn(this, (PatternCase.__proto__ || Object.getPrototypeOf(PatternCase)).call(this, 'PatternCase'));
 
-		_this22.pattern = pattern;
-		_this22.result = result;
-		return _this22;
+		_this23.pattern = pattern;
+		_this23.result = result;
+		return _this23;
 	}
 
 	return PatternCase;
 }(Node);
 
-var PatternExpression = exports.PatternExpression = function (_Node13) {
-	_inherits(PatternExpression, _Node13);
+var PatternExpression = exports.PatternExpression = function (_Node14) {
+	_inherits(PatternExpression, _Node14);
 
 	function PatternExpression(expression, patternCases) {
 		_classCallCheck(this, PatternExpression);
 
-		var _this23 = _possibleConstructorReturn(this, (PatternExpression.__proto__ || Object.getPrototypeOf(PatternExpression)).call(this, 'PatternExpression'));
+		var _this24 = _possibleConstructorReturn(this, (PatternExpression.__proto__ || Object.getPrototypeOf(PatternExpression)).call(this, 'PatternExpression'));
 
-		_this23.expression = expression;
-		_this23.patternCases = patternCases;
-		return _this23;
+		_this24.expression = expression;
+		_this24.patternCases = patternCases;
+		return _this24;
 	}
 
 	return PatternExpression;
@@ -366,11 +382,11 @@ var Declaration = exports.Declaration = function (_Statement) {
 	function Declaration(declarator, value) {
 		_classCallCheck(this, Declaration);
 
-		var _this24 = _possibleConstructorReturn(this, (Declaration.__proto__ || Object.getPrototypeOf(Declaration)).call(this, 'Declaration'));
+		var _this25 = _possibleConstructorReturn(this, (Declaration.__proto__ || Object.getPrototypeOf(Declaration)).call(this, 'Declaration'));
 
-		_this24.declarator = declarator;
-		_this24.value = value;
-		return _this24;
+		_this25.declarator = declarator;
+		_this25.value = value;
+		return _this25;
 	}
 
 	return Declaration;
@@ -382,11 +398,11 @@ var ImportDeclaration = exports.ImportDeclaration = function (_Statement2) {
 	function ImportDeclaration(declarator, path) {
 		_classCallCheck(this, ImportDeclaration);
 
-		var _this25 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
+		var _this26 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
 
-		_this25.declarator = declarator;
-		_this25.path = path;
-		return _this25;
+		_this26.declarator = declarator;
+		_this26.path = path;
+		return _this26;
 	}
 
 	return ImportDeclaration;
@@ -398,11 +414,11 @@ var LetExpression = exports.LetExpression = function (_Expression11) {
 	function LetExpression(declarations, expression) {
 		_classCallCheck(this, LetExpression);
 
-		var _this26 = _possibleConstructorReturn(this, (LetExpression.__proto__ || Object.getPrototypeOf(LetExpression)).call(this, 'LetExpression'));
+		var _this27 = _possibleConstructorReturn(this, (LetExpression.__proto__ || Object.getPrototypeOf(LetExpression)).call(this, 'LetExpression'));
 
-		_this26.declarations = declarations;
-		_this26.expression = expression;
-		return _this26;
+		_this27.declarations = declarations;
+		_this27.expression = expression;
+		return _this27;
 	}
 
 	return LetExpression;

@@ -72,6 +72,14 @@ export class ObjectProperty extends Node {
 	}
 }
 
+export class ObjectAccessExpression extends Node {
+	constructor(expression, accessIdentifier) {
+		super('ObjectAccessExpression')
+		this.expression = expression
+		this.accessIdentifier = accessIdentifier
+	}
+}
+
 export class BinaryOperator extends Node {
 	constructor(operator) {
 		super('BinaryOperator')

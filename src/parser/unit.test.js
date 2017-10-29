@@ -14,6 +14,7 @@ import {
 	RestElement,
 	ObjectExpression,
 	ObjectProperty,
+	ObjectAccessExpression,
 	NamedParameter,
 	FunctionExpression,
 	CallExpression,
@@ -26,49 +27,49 @@ import {
 } from './nodes'
 
 describe('parser', () => {
-	test('converts an identifier', () => {
+	test('an identifier', () => {
 		const tokens = tokenizer('x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new IdentifierExpression('x')])])
 	})
 
-	test('converts a boolean', () => {
+	test('a boolean', () => {
 		const tokens = tokenizer('true')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new BooleanExpression(true)])])
 	})
 
-	test('converts a number', () => {
+	test('a number', () => {
 		const tokens = tokenizer('1234')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new NumberExpression(1234)])])
 	})
 
-	test('converts a string', () => {
+	test('a string', () => {
 		const tokens = tokenizer("'1234'")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new StringExpression('1234')])])
 	})
 
-	test('converts a binary opertor', () => {
+	test('a binary opertor', () => {
 		const tokens = tokenizer('+')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new BinaryOperator('+')])])
 	})
 
-	test('converts a unary opertor', () => {
+	test('a unary opertor', () => {
 		const tokens = tokenizer('!')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new UnaryOperator('!')])])
 	})
 
-	test('converts a type opertor', () => {
+	test('a type opertor', () => {
 		const tokens = tokenizer('typeof')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new UnaryOperator('TypeOperator')])])
 	})
 
-	test('converts a binary expression', () => {
+	test('a binary expression', () => {
 		const tokens = tokenizer('10 - 5')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -82,7 +83,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a unary expression', () => {
+	test('a unary expression', () => {
 		const tokens = tokenizer('!5')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -92,7 +93,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a type expression', () => {
+	test('a type expression', () => {
 		const tokens = tokenizer('typeof 5')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -149,13 +150,13 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an empty array', () => {
+	test('an empty array', () => {
 		const tokens = tokenizer('[]')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new ArrayExpression([])])])
 	})
 
-	test('converts a non-empty array #1', () => {
+	test('a non-empty array #1', () => {
 		const tokens = tokenizer('[0]')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -163,7 +164,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a non-empty array #2', () => {
+	test('a non-empty array #2', () => {
 		const tokens = tokenizer("[0, x, 'hello']")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -177,7 +178,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a non-empty array #3', () => {
+	test('a non-empty array #3', () => {
 		const tokens = tokenizer('[0, x, ...y]')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -191,7 +192,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a rest element', () => {
+	test('a rest element', () => {
 		const tokens = tokenizer('...x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -199,7 +200,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a parameter #1', () => {
+	test('a parameter #1', () => {
 		const tokens = tokenizer('x: 10')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -207,7 +208,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a parameter #2', () => {
+	test('a parameter #2', () => {
 		const tokens = tokenizer('x: 10 + 2')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -224,13 +225,13 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an empty object', () => {
+	test('an empty object', () => {
 		const tokens = tokenizer('{}')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([new File([new ObjectExpression([])])])
 	})
 
-	test('converts a non-empty object #1', () => {
+	test('a non-empty object #1', () => {
 		const tokens = tokenizer('{ x }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -242,7 +243,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a non-empty object #2', () => {
+	test('a non-empty object #2', () => {
 		const tokens = tokenizer('{ x: 10 }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -254,7 +255,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a non-empty object #3', () => {
+	test('a non-empty object #3', () => {
 		const tokens = tokenizer('{ ...x }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -266,7 +267,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a non-empty object #4', () => {
+	test('a non-empty object #4', () => {
 		const tokens = tokenizer('{ x, y: 100, ...z }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -282,7 +283,20 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function expression with no parameter', () => {
+	test('an object access', () => {
+		const tokens = tokenizer('test.hello')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectAccessExpression(
+					new IdentifierExpression('test'),
+					new IdentifierExpression('hello')
+				)
+			])
+		])
+	})
+
+	test('a function expression with no parameter', () => {
 		const tokens = tokenizer('() => x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -290,7 +304,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function expression with one parameter #1', () => {
+	test('a function expression with one parameter #1', () => {
 		const tokens = tokenizer('x => x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -303,7 +317,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function expression several parameters #1', () => {
+	test('a function expression several parameters #1', () => {
 		const tokens = tokenizer('(x, y) => x + y')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -320,7 +334,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function expression several parameters #2', () => {
+	test('a function expression several parameters #2', () => {
 		const tokens = tokenizer('(x, z: 10, ...y) => x + y')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -341,7 +355,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function call #1', () => {
+	test('a function call #1', () => {
 		const tokens = tokenizer('f(x)')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -353,7 +367,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function call #2', () => {
+	test('a function call #2', () => {
 		const tokens = tokenizer('f(x: 10)')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -365,7 +379,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function call #3', () => {
+	test('a function call #3', () => {
 		const tokens = tokenizer('f(...x)')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -377,7 +391,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a no-pattern pattern case', () => {
+	test('a no-pattern pattern case', () => {
 		const tokens = tokenizer('| _ -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -385,7 +399,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an any-pattern pattern case', () => {
+	test('an any-pattern pattern case', () => {
 		const tokens = tokenizer('| x -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -395,7 +409,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a boolean pattern case', () => {
+	test('a boolean pattern case', () => {
 		const tokens = tokenizer('| true -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -405,7 +419,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a number pattern case', () => {
+	test('a number pattern case', () => {
 		const tokens = tokenizer('| 0 -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -415,7 +429,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a string pattern case', () => {
+	test('a string pattern case', () => {
 		const tokens = tokenizer("| 'hello' -> 0")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -425,7 +439,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an array pattern case #1', () => {
+	test('an array pattern case #1', () => {
 		const tokens = tokenizer('| [] -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -435,7 +449,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an array pattern case #2', () => {
+	test('an array pattern case #2', () => {
 		const tokens = tokenizer('| [x, ...y] -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -451,7 +465,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an object pattern case #1', () => {
+	test('an object pattern case #1', () => {
 		const tokens = tokenizer('| {} -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -461,7 +475,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an object pattern case #2', () => {
+	test('an object pattern case #2', () => {
 		const tokens = tokenizer('| { x, y: 10, ...z } -> 0')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -480,7 +494,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a pattern expression #1', () => {
+	test('a pattern expression #1', () => {
 		const tokens = tokenizer('match x | 0 -> false | _ -> true')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -496,7 +510,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a declaration #1', () => {
+	test('a declaration #1', () => {
 		const tokens = tokenizer('x = 10')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -506,7 +520,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a declaration #2', () => {
+	test('a declaration #2', () => {
 		const tokens = tokenizer('[x, ...xs] = 10')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -522,7 +536,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a declaration #3', () => {
+	test('a declaration #3', () => {
 		const tokens = tokenizer('{ x, ...xs } = 10')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -538,7 +552,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a function declaration', () => {
+	test('a function declaration', () => {
 		const tokens = tokenizer('f = x => x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -554,7 +568,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a let expression #1', () => {
+	test('a let expression #1', () => {
 		const tokens = tokenizer('let x = 0 in x')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -572,7 +586,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a let expression #2', () => {
+	test('a let expression #2', () => {
 		const tokens = tokenizer(`
 			let x = 0
 					y = 1
@@ -686,7 +700,7 @@ describe('parser', () => {
 		expect(() => parse(tokens)).toThrow('Parsing error')
 	})
 
-	test('converts a pipe operator', () => {
+	test('a pipe operator', () => {
 		const tokens = tokenizer('x |> y')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -700,7 +714,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a unary - operator', () => {
+	test('a unary - operator', () => {
 		const tokens = tokenizer('-1')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -710,7 +724,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts a binary - operator', () => {
+	test('a binary - operator', () => {
 		const tokens = tokenizer('1 - 1')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -724,7 +738,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an import declaration #1', () => {
+	test('an import declaration #1', () => {
 		const tokens = tokenizer("import x from './somewhere'")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -737,7 +751,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an import declaration #2', () => {
+	test('an import declaration #2', () => {
 		const tokens = tokenizer("import { x, y } from './somewhere'")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
@@ -753,7 +767,7 @@ describe('parser', () => {
 		])
 	})
 
-	test('converts an import declaration #3', () => {
+	test('an import declaration #3', () => {
 		const tokens = tokenizer("import [ x, y ] from './somewhere'")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
