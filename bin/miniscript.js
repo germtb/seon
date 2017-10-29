@@ -47,12 +47,10 @@ const toJSString = (x, tabulation = '') => {
 
 const toString = {
 	type: 'Function',
-	call: params => {
-		return {
-			type: 'String',
-			value: params.map(p => toJSString(p)).join(' ')
-		}
-	}
+	call: params => ({
+		type: 'String',
+		value: params.map(p => toJSString(p)).join(' ')
+	})
 }
 
 const log = {
@@ -64,4 +62,12 @@ const log = {
 	}
 }
 
-run(file, [{ filename, dirname, log, toString }])
+const type = {
+	type: 'Function',
+	call: params => ({
+		type: 'String',
+		value: params[0].type
+	})
+}
+
+run(file, [{ filename, dirname, log, toString, type }])

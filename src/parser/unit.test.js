@@ -63,12 +63,6 @@ describe('parser', () => {
 		expect(nodes).toEqual([new File([new UnaryOperator('!')])])
 	})
 
-	test('a type opertor', () => {
-		const tokens = tokenizer('typeof')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([new File([new UnaryOperator('TypeOperator')])])
-	})
-
 	test('a binary expression', () => {
 		const tokens = tokenizer('10 - 5')
 		const nodes = parse(tokens)
@@ -89,19 +83,6 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new UnaryExpression(new UnaryOperator('!'), new NumberExpression(5))
-			])
-		])
-	})
-
-	test('a type expression', () => {
-		const tokens = tokenizer('typeof 5')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new UnaryExpression(
-					new UnaryOperator('TypeOperator'),
-					new NumberExpression(5)
-				)
 			])
 		])
 	})

@@ -27,7 +27,7 @@ import { Production } from './Production'
 import { arrayOf } from './utils'
 
 const nonOperators = ['[', '{', '=>', '(', 'match', '.']
-const unaryOperators = ['!', 'TypeOperator', '-']
+const unaryOperators = ['!', '-']
 const binaryOperators = [
 	'+',
 	'*',
@@ -55,7 +55,6 @@ const functionExpressionPrecedence = peek =>
 	lowestPrecedence(peek) && peek !== '|'
 
 const unaryOperatorPrecedence = {
-	TypeOperator: ['(', '.'],
 	'!': ['|>', '(', '.'],
 	'-': ['|>', '(', '.']
 }

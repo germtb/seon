@@ -136,7 +136,7 @@ map = (f, maybe) => match maybe
 	| Just -> Just(f(x))
 
 # TODO
-- Object access
+- Cache imports
 - float numbers
 - pattern match with 1 | 2 | 3 ...
 - core libraries

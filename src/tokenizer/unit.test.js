@@ -14,6 +14,19 @@ describe('tokenizer', () => {
 		])
 	})
 
+	// test('produces a float number token', () => {
+	// 	expect(tokenizer('1.0')).toEqual([
+	// 		{
+	// 			type: 'Number',
+	// 			value: 1.0,
+	// 			loc: {
+	// 				start: { line: 0, column: 0 },
+	// 				end: { line: 0, column: 1 }
+	// 			}
+	// 		}
+	// 	])
+	// })
+
 	test('produces a string token', () => {
 		expect(tokenizer("'1'")).toEqual([
 			{
