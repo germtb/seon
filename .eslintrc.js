@@ -25,5 +25,10 @@ module.exports = {
 		'jest/no-identical-title': ['error'],
 		'jest/valid-expect': ['error'],
 		indent: ['off']
+	},
+	globals: {
+		__filename: true,
+		__dirname: true,
+		process: true
 	}
 }

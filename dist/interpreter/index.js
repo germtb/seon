@@ -60,7 +60,9 @@ var createEval = function createEval() {
 var aval = exports.aval = createEval();
 
 var run = exports.run = function run(code) {
+	var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
+
 	var tokens = (0, _tokenizer2.default)(code);
 	var nodes = (0, _parser2.default)(tokens);
-	return aval(nodes);
+	return aval(nodes, scopes);
 };

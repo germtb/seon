@@ -376,13 +376,13 @@ var Declaration = exports.Declaration = function (_Statement) {
 	return Declaration;
 }(Statement);
 
-var ImportDeclaration = exports.ImportDeclaration = function (_Declaration) {
-	_inherits(ImportDeclaration, _Declaration);
+var ImportDeclaration = exports.ImportDeclaration = function (_Statement2) {
+	_inherits(ImportDeclaration, _Statement2);
 
 	function ImportDeclaration(declarator, path) {
 		_classCallCheck(this, ImportDeclaration);
 
-		var _this25 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'Declaration'));
+		var _this25 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
 
 		_this25.declarator = declarator;
 		_this25.path = path;
@@ -390,7 +390,7 @@ var ImportDeclaration = exports.ImportDeclaration = function (_Declaration) {
 	}
 
 	return ImportDeclaration;
-}(Declaration);
+}(Statement);
 
 var LetExpression = exports.LetExpression = function (_Expression11) {
 	_inherits(LetExpression, _Expression11);

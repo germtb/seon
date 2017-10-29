@@ -1,5 +1,9 @@
+import path from 'path'
+import fs from 'fs'
+
 export const visitorsFactory = ({
 	aval,
+	run,
 	get,
 	match,
 	createFunction,
@@ -9,6 +13,20 @@ export const visitorsFactory = ({
 		node.nodes.forEach(node => {
 			aval(node, scopes)
 		})
+
+		return scopes[scopes.length - 1].module
+	},
+	ImportDeclaration: (node, scopes) => {
+		const filename = path.resolve(
+			get('dirname', scopes),
+			node.path.value + '.ms'
+		)
+		const dirname = path.dirname(filename)
+		const file = fs.readFileSync(filename, 'utf8')
+
+		const fileScope = [{ filename, dirname }]
+		run(file, fileScope)
+		match(node.declarator, fileScope[0].module, scopes[scopes.length - 1])
 	},
 	IdentifierExpression: (node, scopes) => {
 		return get(node.name, scopes)

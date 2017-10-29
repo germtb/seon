@@ -3,6 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.visitorsFactory = undefined;
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -19,6 +30,16 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			node.nodes.forEach(function (node) {
 				aval(node, scopes);
 			});
+
+			return scopes[scopes.length - 1].module;
+		},
+		ImportDeclaration: function ImportDeclaration(node, scopes) {
+			console.log('ImportDeclaration node: ', node);
+			var filename = _path2.default.resolve(get('filename', scopes), node.path);
+			console.log('filename: ', filename);
+			// const file = fs.readFileSync(filename, 'utf8')
+			// const file =
+			// match(declarator, expression, scopes[scopes.length - 1])
 		},
 		IdentifierExpression: function IdentifierExpression(node, scopes) {
 			return get(node.name, scopes);

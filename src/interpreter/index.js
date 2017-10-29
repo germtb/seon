@@ -22,10 +22,17 @@ const createEval = () => {
 		}
 	}
 
+	const run = (code, scopes = [{}]) => {
+		const tokens = tokenizer(code)
+		const nodes = parse(tokens)
+		return aval(nodes[0], scopes)
+	}
+
 	const createFunction = createFunctionFactory({ aval })
 
 	const visitors = visitorsFactory({
 		aval,
+		run,
 		get,
 		set,
 		createFunction,
@@ -33,13 +40,7 @@ const createEval = () => {
 		operations
 	})
 
-	return aval
+	return { aval, run }
 }
 
-export const aval = createEval()
-
-export const run = code => {
-	const tokens = tokenizer(code)
-	const nodes = parse(tokens)
-	return aval(nodes)
-}
+export const { aval, run } = createEval()

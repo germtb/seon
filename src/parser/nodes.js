@@ -178,9 +178,9 @@ export class Declaration extends Statement {
 	}
 }
 
-export class ImportDeclaration extends Declaration {
+export class ImportDeclaration extends Statement {
 	constructor(declarator, path) {
-		super('Declaration')
+		super('ImportDeclaration')
 		this.declarator = declarator
 		this.path = path
 	}

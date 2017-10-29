@@ -435,4 +435,28 @@ describe('interpreter', () => {
 			type: 'Number'
 		})
 	})
+
+	test('import declaration #1', () => {
+		const tokens = tokenizer("import x from './mock'")
+		const nodes = parse(tokens)
+		const scopes = [{ filename: __filename, dirname: __dirname }]
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: { x: { value: 10, type: 'Number' } },
+			type: 'Object'
+		})
+	})
+
+	test('module declaration', () => {
+		const tokens = tokenizer('module = { x: 10 }')
+		const nodes = parse(tokens)
+		const scopes = [{}]
+		aval(nodes[0], scopes)
+		expect(scopes[0].module).toEqual({
+			value: {
+				x: { value: 10, type: 'Number' }
+			},
+			type: 'Object'
+		})
+	})
 })
