@@ -43,10 +43,19 @@ var createEval = function createEval() {
 		}
 	};
 
+	var run = function run(code) {
+		var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
+
+		var tokens = (0, _tokenizer2.default)(code);
+		var nodes = (0, _parser2.default)(tokens);
+		return aval(nodes[0], scopes);
+	};
+
 	var createFunction = (0, _createFunction.createFunctionFactory)({ aval: aval });
 
 	var visitors = (0, _visitorsFactory.visitorsFactory)({
 		aval: aval,
+		run: run,
 		get: _scopes.get,
 		set: _scopes.set,
 		createFunction: createFunction,
@@ -54,15 +63,12 @@ var createEval = function createEval() {
 		operations: _operations.operations
 	});
 
-	return aval;
+	return { aval: aval, run: run };
 };
 
-var aval = exports.aval = createEval();
+var _createEval = createEval(),
+    aval = _createEval.aval,
+    run = _createEval.run;
 
-var run = exports.run = function run(code) {
-	var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
-
-	var tokens = (0, _tokenizer2.default)(code);
-	var nodes = (0, _parser2.default)(tokens);
-	return aval(nodes, scopes);
-};
+exports.aval = aval;
+exports.run = run;

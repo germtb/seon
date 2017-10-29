@@ -21,6 +21,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 	var aval = _ref.aval,
+	    run = _ref.run,
 	    get = _ref.get,
 	    match = _ref.match,
 	    createFunction = _ref.createFunction,
@@ -34,12 +35,13 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			return scopes[scopes.length - 1].module;
 		},
 		ImportDeclaration: function ImportDeclaration(node, scopes) {
-			console.log('ImportDeclaration node: ', node);
-			var filename = _path2.default.resolve(get('filename', scopes), node.path);
-			console.log('filename: ', filename);
-			// const file = fs.readFileSync(filename, 'utf8')
-			// const file =
-			// match(declarator, expression, scopes[scopes.length - 1])
+			var filename = _path2.default.resolve(get('dirname', scopes), node.path.value + '.ms');
+			var dirname = _path2.default.dirname(filename);
+			var file = _fs2.default.readFileSync(filename, 'utf8');
+
+			var fileScope = [{ filename: filename, dirname: dirname }];
+			run(file, fileScope);
+			match(node.declarator, fileScope[0].module, scopes[scopes.length - 1]);
 		},
 		IdentifierExpression: function IdentifierExpression(node, scopes) {
 			return get(node.name, scopes);
