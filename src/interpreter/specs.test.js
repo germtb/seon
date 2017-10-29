@@ -37,4 +37,34 @@ describe('interpreter', () => {
 			type: 'Array'
 		})
 	})
+
+	test('reduce #1', () => {
+		const tokens = tokenizer(`
+		reduce = (f, list, acc) => match list
+			| [] -> acc
+			| [ x, ... xs ] -> reduce(f, xs, f(acc, x))
+		x = reduce((acc, x) => acc + 1, [], 0)
+	`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 0,
+			type: 'Number'
+		})
+	})
+
+	test('reduce #2', () => {
+		const tokens = tokenizer(`
+			reduce = (f, list, acc) => match list
+				| [] -> acc
+				| [ x, ... xs ] -> reduce(f, xs, f(acc, x))
+			x = reduce((acc, x) => acc + 1, [1, 2, 3], 0)
+		`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			value: 3,
+			type: 'Number'
+		})
+	})
 })

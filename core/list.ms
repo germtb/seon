@@ -6,7 +6,7 @@ map = (f, list) => match list
 
 reduce = (f, list, acc) => match list
   | [] -> acc
-  | [ x, ...xs ] -> xs |> reduce(f: f, acc: f(acc, x))
+  | [ x, ... xs ] -> reduce(f, xs, f(acc, x))
 
 take = (n, list) => match [n, list]
   | [0, list]  -> []
