@@ -72,6 +72,10 @@ export const visitorsFactory = ({
 			return aval(property.value, scopes).value
 		}
 	},
+	ObjectAccessExpression: (node, scopes) => {
+		const obj = aval(node.expression, scopes)
+		return obj.value[node.accessIdentifier.name]
+	},
 	BinaryExpression: (node, scopes) => {
 		const left = aval(node.left, scopes)
 		const right = aval(node.right, scopes)

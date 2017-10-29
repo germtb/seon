@@ -8,28 +8,28 @@ describe('interpreter', () => {
 		scopes = [{}]
 	})
 
-	test('converts a boolean', () => {
+	test('a boolean', () => {
 		const tokens = tokenizer('true')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: true, type: 'Boolean' })
 	})
 
-	test('converts a number', () => {
+	test('a number', () => {
 		const tokens = tokenizer('1234')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 1234, type: 'Number' })
 	})
 
-	test('converts a string', () => {
+	test('a string', () => {
 		const tokens = tokenizer("'1234'")
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: '1234', type: 'String' })
 	})
 
-	test('converts an array', () => {
+	test('an array', () => {
 		const tokens = tokenizer('[0, 1, 2]')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
@@ -43,28 +43,28 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a binary expression', () => {
+	test('a binary expression', () => {
 		const tokens = tokenizer('10 + 5')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: 15, type: 'Number' })
 	})
 
-	test('converts a unary expression', () => {
+	test('a unary expression', () => {
 		const tokens = tokenizer('!true')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual(false)
 	})
 
-	test('converts a declaration #1', () => {
+	test('a declaration #1', () => {
 		const tokens = tokenizer('x = 10')
 		const nodes = parse(tokens)
 		aval(nodes[0], scopes)
 		expect(scopes[0].x).toEqual({ value: 10, type: 'Number' })
 	})
 
-	test('converts a declaration #2', () => {
+	test('a declaration #2', () => {
 		const tokens = tokenizer('x = [1, 2, 3]')
 		const nodes = parse(tokens)
 		aval(nodes[0], scopes)
@@ -78,7 +78,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a declaration #3', () => {
+	test('a declaration #3', () => {
 		const tokens = tokenizer("x = 'Hello'")
 		const nodes = parse(tokens)
 		aval(nodes[0], scopes)
@@ -88,7 +88,20 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts an array-shape declaration #1', () => {
+	test('an object access #1', () => {
+		const tokens = tokenizer(`
+			x = { test: 'Hello' }
+			y = x.test
+		`)
+		const nodes = parse(tokens)
+		aval(nodes[0], scopes)
+		expect(scopes[0].y).toEqual({
+			value: 'Hello',
+			type: 'String'
+		})
+	})
+
+	test('an array-shape declaration #1', () => {
 		const tokens = tokenizer('[ x ] = [0, 1, 2, 3]')
 		const nodes = parse(tokens)
 		aval(nodes[0], scopes)
@@ -116,14 +129,14 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts an object expression #1', () => {
+	test('an object expression #1', () => {
 		const tokens = tokenizer('{}')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual({ value: {}, type: 'Object' })
 	})
 
-	test('converts an object expression #2', () => {
+	test('an object expression #2', () => {
 		const tokens = tokenizer('{ x: 10 }')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
@@ -135,7 +148,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts an object expression #3', () => {
+	test('an object expression #3', () => {
 		const tokens = tokenizer(`
 			x = 10
 			y = { x }
@@ -150,7 +163,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts an object expression #4', () => {
+	test('an object expression #4', () => {
 		const tokens = tokenizer(`
 			x = { x: 10, y: 20 }
 			y = { ...x }
@@ -166,7 +179,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts an object expression #5', () => {
+	test('an object expression #5', () => {
 		const tokens = tokenizer(`
 			x = 'hello'
 			y = { y1: 10, y2: 20 }
@@ -192,7 +205,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #1', () => {
+	test('a function #1', () => {
 		const tokens = tokenizer(`
 			f = x => x
 			x = f(10)
@@ -205,7 +218,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #2 ', () => {
+	test('a function #2 ', () => {
 		const tokens = tokenizer(`
 		f = x => x
 		x = f(x: 10)
@@ -218,7 +231,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #3 ', () => {
+	test('a function #3 ', () => {
 		const tokens = tokenizer(`
 			f = (x, y) => x + y
 			x = f(x: 10, y: 20)
@@ -232,7 +245,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #4 ', () => {
+	test('a function #4 ', () => {
 		const tokens = tokenizer(`
 			f = (x, y) => x / y
 			x = f(y: 2, x: 4)
@@ -246,7 +259,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #5', () => {
+	test('a function #5', () => {
 		const tokens = tokenizer(`
 			f = (x, y) => x / y
 			x = f(y: 2, 4)
@@ -260,7 +273,7 @@ describe('interpreter', () => {
 		})
 	})
 
-	test('converts a function #6', () => {
+	test('a function #6', () => {
 		const tokens = tokenizer(`
 			f = (x, y) => x / y
 			x = f(4, y: 2)
