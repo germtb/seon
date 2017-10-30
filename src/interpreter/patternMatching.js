@@ -9,40 +9,50 @@ export const match = (pattern, expression, scope) => {
 		scope[pattern.name] = expression
 		return true
 	} else if (pattern.type === 'ObjectExpression') {
-		let patternIndex = 0
-		let expressionIndex = 0
-		let restElement = 0
+		if (pattern.properties.length === 0) {
+			return Object.keys(expression.value).length === 0
+		}
 
-		while (
-			patternIndex < pattern.properties.length &&
-			expressionIndex < Object.keys(expression.value).length
-		) {
-			const p = pattern.properties[patternIndex].property
-			const propName = Object.keys(expression.value)[expressionIndex]
-			const e = expression.value[propName]
+		const restElement = pattern.properties.find(
+			p => p.property.type === 'RestElement'
+		)
+		const notRestElements = pattern.properties.filter(
+			p => p.property.type !== 'RestElement'
+		)
 
-			if (p.type === 'RestElement') {
-				scope[p.value.name] = scope[p.value.name] || {
-					value: {},
-					type: 'Object'
-				}
-				scope[p.value.name].value[propName] = e
-				restElement = 1
-				expressionIndex++
-			} else {
+		if (restElement) {
+			for (let i = 0; i < notRestElements.length; i++) {
+				const p = notRestElements[i].property
+				const e = expression.value[p.name]
+
 				if (!match(p, e, scope)) {
 					return false
 				}
-
-				patternIndex++
-				expressionIndex++
 			}
-		}
 
-		return (
-			expressionIndex === Object.keys(expression.value).length &&
-			patternIndex + restElement === pattern.properties.length
-		)
+			scope[restElement.property.value.name] = {
+				value: Object.keys(expression.value).reduce((acc, e) => {
+					if (!notRestElements.find(x => x.property.name === e)) {
+						acc[e] = expression.value[e]
+					}
+					return acc
+				}, {}),
+				type: 'Object'
+			}
+
+			return true
+		} else {
+			for (let i = 0; i < notRestElements.length; i++) {
+				const p = notRestElements[i].property
+				const e = expression.value[p.name]
+
+				if (!match(p, e, scope)) {
+					return false
+				}
+			}
+
+			return notRestElements.length === Object.keys(expression.value).length
+		}
 	} else if (pattern.type === 'ArrayExpression') {
 		if (pattern.values.length === 0) {
 			return expression.value.length === 0

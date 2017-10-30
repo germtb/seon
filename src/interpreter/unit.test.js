@@ -435,6 +435,47 @@ describe('interpreter', () => {
 		})
 	})
 
+	test('match object #1', () => {
+		const tokens = tokenizer('{ x } = { x: 10 }')
+		const nodes = parse(tokens)
+		const scopes = [{}]
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			type: 'Number',
+			value: 10
+		})
+	})
+
+	test('match object #2', () => {
+		const tokens = tokenizer('{ x, y } = { x: 10, y: 20 }')
+		const nodes = parse(tokens)
+		const scopes = [{}]
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			type: 'Number',
+			value: 10
+		})
+		expect(scopes[0].y).toEqual({
+			type: 'Number',
+			value: 20
+		})
+	})
+
+	test('match object #3', () => {
+		const tokens = tokenizer('{ y, x } = { x: 10, y: 20 }')
+		const nodes = parse(tokens)
+		const scopes = [{}]
+		aval(nodes[0], scopes)
+		expect(scopes[0].x).toEqual({
+			type: 'Number',
+			value: 10
+		})
+		expect(scopes[0].y).toEqual({
+			type: 'Number',
+			value: 20
+		})
+	})
+
 	test('let expression #1', () => {
 		const tokens = tokenizer(`
 			let x = 1
