@@ -534,18 +534,12 @@ describe('parser', () => {
 	})
 
 	test('a declaration #4', () => {
-	const tokens = tokenizer('_ = 10')
-	const nodes = parse(tokens)
-	expect(nodes).toEqual([
-		new File([
-			new Declaration(
-				new NoPattern(),
-				new NumberExpression(10)
-			)
+		const tokens = tokenizer('_ = 10')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([new Declaration(new NoPattern(), new NumberExpression(10))])
 		])
-	])
-})
-
+	})
 
 	test('a function declaration', () => {
 		const tokens = tokenizer('f = x => x')
@@ -607,6 +601,31 @@ describe('parser', () => {
 						new IdentifierExpression('y')
 					)
 				)
+			])
+		])
+	})
+
+	test('a let expression #3', () => {
+		const tokens = tokenizer('match true | true -> let _ = log(0) in true')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new PatternExpression(new BooleanExpression(true), [
+					new PatternCase(
+						new BooleanExpression(true),
+						new LetExpression(
+							[
+								new Declaration(
+									new NoPattern(),
+									new CallExpression(new IdentifierExpression('log'), [
+										new NumberExpression(0)
+									])
+								)
+							],
+							new BooleanExpression(true)
+						)
+					)
+				])
 			])
 		])
 	})

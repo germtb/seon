@@ -140,8 +140,9 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			for (var i = 0; i < node.patternCases.length; i++) {
 				var pattern = node.patternCases[i];
 				var matchedScope = {};
+				var matched = match(pattern.pattern, expression, matchedScope);
 
-				if (match(pattern.pattern, expression, matchedScope)) {
+				if (matched) {
 					return aval(pattern.result, [].concat(_toConsumableArray(scopes), [matchedScope]));
 				}
 			}

@@ -1,4 +1,4 @@
-import { Nothing, Just } from './maybe'
+import { Nothing, Just } from './Maybe'
 
 map = (f, list) => match list
   | [] -> []
@@ -8,9 +8,17 @@ reduce = (f, list, acc) => match list
   | [] -> acc
   | [ x, ... xs ] -> reduce(f, xs, f(acc, x))
 
-some = (selector, list) => reduce((acc, x) => acc || selector(x), list, false)
+some = (selector, list) => reduce(
+  (acc, x) => acc || selector(x),
+  list,
+  false
+)
 
-all = (selector, list) => reduce((acc, x) => acc && selector(x), list, true)
+all = (selector, list) => reduce(
+  (acc, x) => acc && selector(x),
+  list,
+  true
+)
 
 take = (n, list) => match [n, list]
   | [0, list]  -> []
@@ -29,6 +37,7 @@ first = (selector, list) => match list
   )
 
 module = {
+  some,
   map,
   reduce,
   take,

@@ -45,9 +45,8 @@ exports.toString = {
 exports.log = {
 	type: 'Function',
 	call: params => {
-		const logResult = params.map(p => toJSString(p)).join(' ')
 		// eslint-disable-next-line
-		console.log(logResult)
+		console.log(...params.map(p => toJSString(p)))
 	}
 }
 

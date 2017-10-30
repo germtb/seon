@@ -1,13 +1,14 @@
-import { some } from './list'
+import { some } from './List'
 
-// describe = (message, tests) => match some(e => e.result == 'Failed', expectations)
-//   | true -> { result: 'Pass' }
-//   | false -> { result: 'Failed' }
+describe = (message, tests) =>
+  match some(e => e.result == 'Failed', tests)
+  | true -> let _ = log('Describe failed') in { result: 'Failed' }
+  | false -> let _ = log('Describe passed') in { result: 'Pass' }
 
 test = (message, expectations) =>
   match some(e => e.result == 'Failed', expectations)
-  | true -> { result: 'Pass' }
-  | false -> let _ = log('Failed') in { result: 'Failed' }
+  | true -> let _ = log('Failed: ' + message) in { result: 'Failed' }
+  | false -> let _ = log('Passed') in { result: 'Pass' }
 
 expect = (expression) => {
   toEqual: (expected) => match (expression == expected)
@@ -15,12 +16,14 @@ expect = (expression) => {
     | false -> { result: 'Failed' }
 }
 
-test([
-  expect(1).toEqual(0)
+describe('describe', [
+  test('test', [
+    expect(0).toEqual(0)
+  ])
 ])
 
-// module = {
-//   describe,
-//   test,
-//   expect
-// }
+module = {
+  describe,
+  test,
+  expect
+}

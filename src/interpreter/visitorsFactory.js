@@ -122,8 +122,9 @@ export const visitorsFactory = ({
 		for (let i = 0; i < node.patternCases.length; i++) {
 			const pattern = node.patternCases[i]
 			const matchedScope = {}
+			const matched = match(pattern.pattern, expression, matchedScope)
 
-			if (match(pattern.pattern, expression, matchedScope)) {
+			if (matched) {
 				return aval(pattern.result, [...scopes, matchedScope])
 			}
 		}
