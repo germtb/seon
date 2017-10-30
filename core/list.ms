@@ -8,6 +8,10 @@ reduce = (f, list, acc) => match list
   | [] -> acc
   | [ x, ... xs ] -> reduce(f, xs, f(acc, x))
 
+some = (selector, list) => reduce((acc, x) => acc || selector(x), list, false)
+
+all = (selector, list) => reduce((acc, x) => acc && selector(x), list, true)
+
 take = (n, list) => match [n, list]
   | [0, list]  -> []
   | [n, []] -> []

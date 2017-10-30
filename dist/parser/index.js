@@ -134,7 +134,9 @@ new _Production.Production(['PatternExpression', 'PatternCase'], function (patte
 }),
 
 // Begin pattern
-new _Production.Production(['|', '_', '->'], function () {
+new _Production.Production(['_'], function () {
+	return new _nodes.NoPattern();
+}), new _Production.Production(['|', 'NoPattern', '->'], function () {
 	return {
 		type: 'UnusedPattern',
 		pattern: new _nodes.NoPattern()
@@ -184,14 +186,14 @@ new _Production.Production(['Expression', 'ClosedParameters'], function (express
 }),
 
 // Declarations
-new _Production.Production(['import', 'ArrayExpression|IdentifierExpression|ObjectExpression', 'from'], function (_, expression) {
+new _Production.Production(['import', 'NoPattern|ArrayExpression|IdentifierExpression|ObjectExpression', 'from'], function (_, expression) {
 	return {
 		type: 'OpenImport',
 		expression: expression
 	};
 }), new _Production.Production(['OpenImport', 'StringExpression'], function (openImport, path) {
 	return new _nodes.ImportDeclaration(openImport.expression, path);
-}), new _Production.Production(['ArrayExpression|IdentifierExpression|ObjectExpression', '=', 'Expression'], function (array, _, expression) {
+}), new _Production.Production(['NoPattern|ArrayExpression|IdentifierExpression|ObjectExpression', '=', 'Expression'], function (array, _, expression) {
 	return new _nodes.Declaration(array, expression);
 }, lowestPrecedence),
 

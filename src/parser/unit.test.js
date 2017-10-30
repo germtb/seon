@@ -533,6 +533,20 @@ describe('parser', () => {
 		])
 	})
 
+	test('a declaration #4', () => {
+	const tokens = tokenizer('_ = 10')
+	const nodes = parse(tokens)
+	expect(nodes).toEqual([
+		new File([
+			new Declaration(
+				new NoPattern(),
+				new NumberExpression(10)
+			)
+		])
+	])
+})
+
+
 	test('a function declaration', () => {
 		const tokens = tokenizer('f = x => x')
 		const nodes = parse(tokens)

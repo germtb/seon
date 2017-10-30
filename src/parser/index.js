@@ -219,7 +219,8 @@ const grammar = [
 	),
 
 	// Begin pattern
-	new Production(['|', '_', '->'], () => ({
+	new Production(['_'], () => new NoPattern()),
+	new Production(['|', 'NoPattern', '->'], () => ({
 		type: 'UnusedPattern',
 		pattern: new NoPattern()
 	})),
@@ -297,7 +298,11 @@ const grammar = [
 
 	// Declarations
 	new Production(
-		['import', 'ArrayExpression|IdentifierExpression|ObjectExpression', 'from'],
+		[
+			'import',
+			'NoPattern|ArrayExpression|IdentifierExpression|ObjectExpression',
+			'from'
+		],
 		(_, expression) => ({
 			type: 'OpenImport',
 			expression
@@ -310,7 +315,7 @@ const grammar = [
 
 	new Production(
 		[
-			'ArrayExpression|IdentifierExpression|ObjectExpression',
+			'NoPattern|ArrayExpression|IdentifierExpression|ObjectExpression',
 			'=',
 			'Expression'
 		],
