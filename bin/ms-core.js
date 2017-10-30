@@ -1,33 +1,34 @@
 const toJSString = (x, tabulation = '') => {
-	if (x.type === 'NumberExpression') {
+	if (x.type === 'Number') {
 		return x.value
-	} else if (x.type === 'BooleanExpression') {
+	} else if (x.type === 'Boolean') {
 		return x.value ? 'true' : 'false'
-	} else if (x.type === 'StringExpression') {
-		return x.value
-	} else if (x.type === 'FunctionExpression') {
-		return 'FunctionExpression'
-	} else if (x.type === 'ObjectExpression') {
-		if (x.properties.length === 0) {
+	} else if (x.type === 'String') {
+		return `'${x.value}'`
+	} else if (x.type === 'Function') {
+		return 'Function'
+	} else if (x.type === 'Object') {
+		const keys = Object.keys(x.value)
+		if (keys.length === 0) {
 			return '{}'
-		} else if (x.properties.length === 1) {
-			return '{ ' + toJSString(x.properties[0]) + ' }'
+		} else if (keys.length === 1) {
+			return `{ ${keys[0]}: ${toJSString(x.value[keys[0]])} }`
 		}
 
 		return (
 			'{\n' +
-			x.properties.map(p => toJSString(p, tabulation + '  ')).join('\n') +
+			keys
+				.map(key => {
+					return `${tabulation + '  '}${key}: ${toJSString(
+						x.value[key],
+						tabulation + '  '
+					)}`
+				})
+				.join(',\n') +
 			'\n}'
 		)
-	} else if (x.type === 'ObjectProperty') {
-		return (
-			tabulation +
-			x.property.name +
-			': ' +
-			toJSString(x.property.value, tabulation)
-		)
-	} else if (x.type === 'ArrayExpression') {
-		return '[' + x.values.map(toJSString).join(', ') + ']'
+	} else if (x.type === 'Array') {
+		return '[' + x.value.map(toJSString).join(', ') + ']'
 	}
 
 	return ''
@@ -44,7 +45,6 @@ exports.toString = {
 exports.log = {
 	type: 'Function',
 	call: params => {
-		console.log('params: ', params)
 		const logResult = params.map(p => toJSString(p)).join(' ')
 		// eslint-disable-next-line
 		console.log(logResult)

@@ -12,7 +12,7 @@ var createFunctionFactory = exports.createFunctionFactory = function createFunct
 	var createFunction = function createFunction(definitions, body, scopes) {
 		return {
 			call: function call(params) {
-				var hydratedParams = [];
+				var hydratedParams = {};
 				var leftDefinitions = [].concat(_toConsumableArray(definitions));
 
 				var _loop = function _loop(i) {

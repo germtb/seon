@@ -25,7 +25,7 @@ var _operations = require('./operations');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createEval = function createEval() {
+var createAval = function createAval() {
 	var aval = function aval(node) {
 		var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
 
@@ -36,11 +36,7 @@ var createEval = function createEval() {
 			return type + ' is not a visitor';
 		}
 
-		try {
-			return visitor(node, scopes);
-		} catch (error) {
-			return error;
-		}
+		return visitor(node, scopes);
 	};
 
 	var run = function run(code) {
@@ -66,9 +62,9 @@ var createEval = function createEval() {
 	return { aval: aval, run: run };
 };
 
-var _createEval = createEval(),
-    aval = _createEval.aval,
-    run = _createEval.run;
+var _createAval = createAval(),
+    aval = _createAval.aval,
+    run = _createAval.run;
 
 exports.aval = aval;
 exports.run = run;

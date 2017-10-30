@@ -94,7 +94,6 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			// 	}
 			// }
 			//
-			// console.error('PatternExpression did not match')
 			// throw new Error('PatternExpression did not match')
 		},
 		Declaration: function Declaration(node) {

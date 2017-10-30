@@ -1,11 +1,21 @@
-import { reduce } from './list'
+import { some } from './list'
 
-// describe = (message, tests) => reduce((acc, ))
+describe = (message, tests) => match some(e => e.result === 'Failed', expectations)
+  | true -> { result: 'Pass' }
+  | false -> { result: 'Failed' }
 
-// test = (message, testFunction) => let result = testFunction() in match result
-//   | Pass -> log(message + 'passed')
-//   | Failed -> log(message + 'failed with error: ' + result.error)
+test = (message, expectations) => match some(e => e.result === 'Failed', expectations)
+  | true -> { result: 'Pass' }
+  | false -> { result: 'Failed' }
+
+expect = (expression) => {
+  toEqual: (expected) => match (expression === expected)
+    | true -> { result: 'Pass' }
+    | false -> { result: 'Failed' }
+}
 
 module = {
-  // test
+  describe,
+  test,
+  expect
 }

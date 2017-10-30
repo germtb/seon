@@ -43,35 +43,41 @@ var match = exports.match = function match(pattern, expression, scope) {
 
 		return expressionIndex === Object.keys(expression.value).length && patternIndex + restElement === pattern.properties.length;
 	} else if (pattern.type === 'ArrayExpression') {
-		var _patternIndex = 0;
-		var _expressionIndex = 0;
-		var _restElement = 0;
+		if (pattern.values.length === 0) {
+			return expression.value.length === 0;
+		}
 
-		while (_patternIndex < pattern.values.length && _expressionIndex < expression.value.length) {
-			var _p = pattern.values[_patternIndex];
-			var _e = expression.value[_expressionIndex];
+		var lastElement = pattern.values[pattern.values.length - 1];
+		var _restElement = lastElement.type === 'RestElement' ? lastElement : false;
 
-			if (_p.type === 'RestElement') {
-				scope[_p.value.name] = scope[_p.value.name] || {
-					value: [],
-					type: 'Array'
-				};
-				scope[_p.value.name].value.push(_e);
-				_restElement = 1;
-				_expressionIndex++;
-			} else {
+		if (_restElement) {
+			for (var i = 0; i < pattern.values.length - 1; i++) {
+				var _p = pattern.values[i];
+				var _e = expression.value[i];
+
 				if (!match(_p, _e, scope)) {
 					return false;
 				}
-
-				_patternIndex++;
-				_expressionIndex++;
 			}
-		}
 
-		return _expressionIndex === expression.value.length && _patternIndex + _restElement === pattern.values.length;
+			scope[_restElement.value.name] = scope[_restElement.value.name] || {
+				value: expression.value.slice(pattern.values.length - 1),
+				type: 'Array'
+			};
+			return true;
+		} else {
+			for (var _i = 0; _i < pattern.values.length; _i++) {
+				var _p2 = pattern.values[_i];
+				var _e2 = expression.value[_i];
+
+				if (!match(_p2, _e2, scope)) {
+					return false;
+				}
+			}
+
+			return pattern.values.length === expression.value.length;
+		}
 	}
 
-	console.error('Pattern of type ' + pattern.type + ' not implemented yet');
 	return false;
 };

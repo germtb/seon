@@ -17,7 +17,14 @@ head = list => match list
   | [] -> Nothing()
   | [x, ...xs] -> Just(x)
 
-log(map(x => x, [0, 1, 2]))
+first = (selector, list) => match list
+  | [] -> Nothing()
+  | [x, ...xs] -> (match selector(x)
+    | true -> Just(x)
+    | false -> first(selector, xs)
+  )
+
+log(first(list: [ 1 ], selector: x => true))
 
 module = {
   map,
