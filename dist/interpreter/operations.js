@@ -41,27 +41,27 @@ var operations = exports.operations = {
 		throw new Error('** not implemented');
 	},
 	'<': function _(left, right) {
-		return left < right;
+		return { type: 'Boolean', value: left.value < right.value };
 	},
 	'>': function _(left, right) {
-		return left > right;
+		return { type: 'Boolean', value: left.value > right.value };
 	},
 	'>=': function _(left, right) {
-		return left >= right;
+		return { type: 'Boolean', value: left.value >= right.value };
 	},
 	'<=': function _(left, right) {
-		return left <= right;
+		return { type: 'Boolean', value: left.value <= right.value };
 	},
 	'==': function _(left, right) {
-		return left == right;
+		return { type: 'Boolean', value: left.value == right.value };
 	},
 	'!=': function _(left, right) {
-		return left != right;
+		return { type: 'Boolean', value: left.value != right.value };
 	},
 	'&&': function _(left, right) {
-		return left && right;
+		return { type: 'Boolean', value: left.value && right.value };
 	},
 	'||': function _(left, right) {
-		return left || right;
+		return { type: 'Boolean', value: left.value || right.value };
 	}
 };

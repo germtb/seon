@@ -38,27 +38,27 @@ export const operations = {
 		throw new Error('** not implemented')
 	},
 	'<': (left, right) => {
-		return left < right
+		return { type: 'Boolean', value: left.value < right.value }
 	},
 	'>': (left, right) => {
-		return left > right
+		return { type: 'Boolean', value: left.value > right.value }
 	},
 	'>=': (left, right) => {
-		return left >= right
+		return { type: 'Boolean', value: left.value >= right.value }
 	},
 	'<=': (left, right) => {
-		return left <= right
+		return { type: 'Boolean', value: left.value <= right.value }
 	},
 	'==': (left, right) => {
-		return left == right
+		return { type: 'Boolean', value: left.value == right.value }
 	},
 	'!=': (left, right) => {
-		return left != right
+		return { type: 'Boolean', value: left.value != right.value }
 	},
 	'&&': (left, right) => {
-		return left && right
+		return { type: 'Boolean', value: left.value && right.value }
 	},
 	'||': (left, right) => {
-		return left || right
+		return { type: 'Boolean', value: left.value || right.value }
 	}
 }

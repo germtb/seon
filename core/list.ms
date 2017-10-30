@@ -24,8 +24,6 @@ first = (selector, list) => match list
     | false -> first(selector, xs)
   )
 
-log(first(list: [ 1 ], selector: x => true))
-
 module = {
   map,
   reduce,
