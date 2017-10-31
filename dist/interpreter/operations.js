@@ -35,10 +35,7 @@ var operations = exports.operations = {
 		if (right.type !== 'Function') {
 			throw new Error('Node of type ' + right.type + ' is not a function and cannot be called');
 		}
-		console.log('right: ', right);
-		console.log('left: ', left);
-		var result = right.call(left);
-		return result;
+		return right.call([left]);
 	},
 	'**': function _() {
 		throw new Error('** not implemented');

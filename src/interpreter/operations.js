@@ -32,10 +32,7 @@ export const operations = {
 				`Node of type ${right.type} is not a function and cannot be called`
 			)
 		}
-		console.log('right: ', right)
-		console.log('left: ', left)
-		const result = right.call(left)
-		return result
+		return right.call([left])
 	},
 	'**': () => {
 		throw new Error('** not implemented')

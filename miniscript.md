@@ -136,16 +136,17 @@ map = (f, maybe) => match maybe
 	| Just -> Just(f(x))
 
 # TODO
-- Cache imports
+- Core modules (aboslute imports)
+- Computed props
 - float numbers
+- Cache imports
+- Implement core libraries
+- Create bindings for node libraries
 - pattern match with 1 | 2 | 3 ...
-- core libraries
-- eval as part of the core libraries
-- syntax sugar for type matching?
-- parser
-- extensible parser
 - transpile to something (js)
+- Create syntax theme
 - rewrite in itself
+- eval as part of the core libraries?
+- extensible parser?
 - auto caching?
-- better array syntax?
 - function equality?

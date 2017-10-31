@@ -1,8 +1,19 @@
 
 Nothing = () => { type: 'Nothing' }
-Just = x => { type: 'Just', value: x }
+
+Just = value => { type: 'Just', value }
+
+map = (f, maybe) => match maybe.type
+  | 'Nothing' -> Nothing()
+  | 'Just' -> Just(f(maybe.value))
+
+andThen = (f, maybe) => match maybe.type
+  | 'Nothing' -> Nothing()
+  | 'Just' -> f(maybe.value)
 
 module = {
   Nothing,
-  Just
+  Just,
+  map,
+  andThen
 }
