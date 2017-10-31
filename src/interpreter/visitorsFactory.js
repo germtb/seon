@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import msCore from '../../bin/ms-core'
 
 export const visitorsFactory = ({
 	aval,
@@ -24,7 +25,7 @@ export const visitorsFactory = ({
 		const dirname = path.dirname(filename)
 		const file = fs.readFileSync(filename, 'utf8')
 
-		const fileScope = [{ filename, dirname }]
+		const fileScope = [{ filename, dirname, ...msCore }]
 		run(file, fileScope)
 		match(node.declarator, fileScope[0].module, scopes[scopes.length - 1])
 	},

@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.visitorsFactory = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
@@ -12,6 +14,10 @@ var _path2 = _interopRequireDefault(_path);
 var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
+
+var _msCore = require('../../bin/ms-core');
+
+var _msCore2 = _interopRequireDefault(_msCore);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39,7 +45,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			var dirname = _path2.default.dirname(filename);
 			var file = _fs2.default.readFileSync(filename, 'utf8');
 
-			var fileScope = [{ filename: filename, dirname: dirname }];
+			var fileScope = [_extends({ filename: filename, dirname: dirname }, _msCore2.default)];
 			run(file, fileScope);
 			match(node.declarator, fileScope[0].module, scopes[scopes.length - 1]);
 		},

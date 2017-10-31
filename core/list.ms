@@ -37,9 +37,10 @@ first = (selector, list) => match list
   )
 
 module = {
-  some,
   map,
   reduce,
+  some,
+  all,
   take,
   head
 }
