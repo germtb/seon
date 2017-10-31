@@ -50,6 +50,13 @@ describe('interpreter', () => {
 		expect(result).toEqual({ value: 15, type: 'Number' })
 	})
 
+	test('a pipe expression', () => {
+		const tokens = tokenizer('10 |> x => x')
+		const nodes = parse(tokens)
+		const result = aval(nodes[0].nodes[0])
+		expect(result).toEqual({ value: 10, type: 'Number' })
+	})
+
 	test('a unary expression', () => {
 		const tokens = tokenizer('!true')
 		const nodes = parse(tokens)

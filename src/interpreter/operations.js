@@ -27,12 +27,15 @@ export const operations = {
 		return { value: left.value % right.value, type: left.type }
 	},
 	'|>': (left, right) => {
-		if (left.type !== 'Function') {
+		if (right.type !== 'Function') {
 			throw new Error(
-				`Node of type ${left.type} is not a function and cannot be called`
+				`Node of type ${right.type} is not a function and cannot be called`
 			)
 		}
-		return left.call(right)
+		console.log('right: ', right)
+		console.log('left: ', left)
+		const result = right.call(left)
+		return result
 	},
 	'**': () => {
 		throw new Error('** not implemented')
