@@ -1,8 +1,8 @@
 # TODO
 - Implement core libraries
-- transpile to something (js)
-- rewrite in itself
+- transpile to something (js) -> rewrite in itself
 - Create syntax theme
+- Better parsing errors
 
 # MAYBE DO
 - pattern match with 1 | 2 | 3 ...
