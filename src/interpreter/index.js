@@ -7,7 +7,13 @@ import { createFunctionFactory } from './createFunction'
 import { operations } from './operations'
 
 const createAval = () => {
-	const aval = (node, scopes = [{}]) => {
+	const aval = (
+		node,
+		scopes = [{}],
+		internals = {
+			modules: {}
+		}
+	) => {
 		const type = node.type
 		const visitor = visitors[type]
 
@@ -15,13 +21,13 @@ const createAval = () => {
 			return `${type} is not a visitor`
 		}
 
-		return visitor(node, scopes)
+		return visitor(node, scopes, internals)
 	}
 
-	const run = (code, scopes = [{}]) => {
+	const run = (code, scopes = [{}], internals) => {
 		const tokens = tokenizer(code)
 		const nodes = parse(tokens)
-		return aval(nodes[0], scopes)
+		return aval(nodes[0], scopes, internals)
 	}
 
 	const createFunction = createFunctionFactory({ aval })

@@ -1,4 +1,4 @@
-import { Nothing, Just } from './Maybe'
+import { Nothing, Just } from 'Maybe'
 
 map = (f, list) => match list
   | [] -> []

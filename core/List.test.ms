@@ -1,5 +1,5 @@
-import { map, reduce, some, head, filter, all, take, first } from './List'
-import { test, describe, expect } from './Test'
+import { map, reduce, some, head, filter, all, take, first } from 'List'
+import { test, describe, expect } from 'Test'
 
 describe('List', [
 	test('map', [

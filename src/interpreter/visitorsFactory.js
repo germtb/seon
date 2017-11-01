@@ -1,6 +1,5 @@
 import path from 'path'
 import fs from 'fs'
-import msCore from '../../bin/ms-core'
 
 export const visitorsFactory = ({
 	aval,
@@ -10,24 +9,33 @@ export const visitorsFactory = ({
 	createFunction,
 	operations
 }) => ({
-	File: (node, scopes) => {
+	File: (node, scopes, internals) => {
 		node.nodes.forEach(node => {
-			aval(node, scopes)
+			aval(node, scopes, internals)
 		})
 
 		return scopes[scopes.length - 1].module
 	},
-	ImportDeclaration: (node, scopes) => {
-		const filename = path.resolve(
-			get('dirname', scopes),
-			node.path.value + '.ms'
-		)
-		const dirname = path.dirname(filename)
-		const file = fs.readFileSync(filename, 'utf8')
+	ImportDeclaration: (node, scopes, { modules }) => {
+		const relativeModule = node.path.value[0] === '.'
+		const moduleName = relativeModule
+			? path.resolve(get('dirname', scopes), node.path.value + '.ms')
+			: node.path.value
 
-		const fileScope = [{ filename, dirname, ...msCore }]
-		run(file, fileScope)
-		match(node.declarator, fileScope[0].module, scopes[scopes.length - 1])
+		let module
+
+		if (!relativeModule || moduleName in modules) {
+			module = modules[moduleName]
+		} else if (relativeModule) {
+			const dirname = path.dirname(moduleName)
+			const moduleScope = [{ filename: moduleName, dirname }]
+			const file = fs.readFileSync(moduleName, 'utf8')
+			run(file, moduleScope)
+			module = moduleScope[0].module
+			modules[moduleName] = module
+		}
+
+		match(node.declarator, module, scopes[scopes.length - 1])
 	},
 	IdentifierExpression: (node, scopes) => {
 		return get(node.name, scopes)

@@ -136,10 +136,8 @@ map = (f, maybe) => match maybe
 	| Just -> Just(f(x))
 
 # TODO
-- Core modules (aboslute imports)
 - Computed props
 - float numbers
-- Cache imports
 - Implement core libraries
 - Create bindings for node libraries
 - pattern match with 1 | 2 | 3 ...

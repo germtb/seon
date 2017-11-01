@@ -1,4 +1,5 @@
-import { some, map } from './List'
+import { some, map } from 'List'
+import { log } from 'Debug'
 
 test = (message, tests) =>
   match some(e => e.result == 'Failed', tests)

@@ -28,6 +28,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var createAval = function createAval() {
 	var aval = function aval(node) {
 		var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
+		var internals = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+			modules: {}
+		};
 
 		var type = node.type;
 		var visitor = visitors[type];
@@ -36,15 +39,16 @@ var createAval = function createAval() {
 			return type + ' is not a visitor';
 		}
 
-		return visitor(node, scopes);
+		return visitor(node, scopes, internals);
 	};
 
 	var run = function run(code) {
 		var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
+		var internals = arguments[2];
 
 		var tokens = (0, _tokenizer2.default)(code);
 		var nodes = (0, _parser2.default)(tokens);
-		return aval(nodes[0], scopes);
+		return aval(nodes[0], scopes, internals);
 	};
 
 	var createFunction = (0, _createFunction.createFunctionFactory)({ aval: aval });

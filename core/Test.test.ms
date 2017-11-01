@@ -1,4 +1,4 @@
-import { describe, test, expect } from './Test'
+import { describe, test, expect } from 'Test'
 
 describe('describe', [
   test('test', [
