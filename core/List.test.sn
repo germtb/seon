@@ -11,7 +11,8 @@ import {
 	drop,
 	first,
 	length,
-	zip
+	zip,
+	reverse
 } from 'List'
 import { Just, Nothing } from 'Maybe'
 import { Success, Error } from 'Errable'
@@ -62,5 +63,10 @@ describe('List', [
 		expect(zip([1], [2])).toDeepEqual(Success([[1, 2]])),
 		expect(zip([], [2])).toDeepEqual(Error('zipped lists differ in length')),
 		expect(zip([1, 2], [3, 4])).toDeepEqual(Success([[1, 3], [2, 4]]))
+	]),
+	test('reverse', [
+		expect(reverse([])).toDeepEqual([]),
+		expect(reverse([1])).toDeepEqual([1]),
+		expect(reverse([1, 2, 3])).toDeepEqual([3, 2, 1])
 	])
 ])

@@ -68,6 +68,10 @@ zip = (list1, list2) => match length(list1) == length(list2)
   | false -> Error('zipped lists differ in length')
   | true -> Success(unsafeZip(list1, list2))
 
+reverse = list => match list
+  | [] -> []
+  | [x, ...xs] -> [...reverse(xs), x]
+
 module = {
   map,
   andThen,
@@ -81,5 +85,6 @@ module = {
   drop,
   first,
   length,
-  zip
+  zip,
+  reverse
 }
