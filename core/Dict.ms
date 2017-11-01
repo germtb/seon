@@ -1,18 +1,9 @@
-import { Nothing, Just } from 'Maybe'
+import { keys } from 'InternalDict'
+import { map } from 'List'
 
-keys = dict => match dict
-  | {} -> []
-  | { [x], ...xs } -> [x, ...keys(xs)]
+values = dict => dict |> keys |> k => dict[k]
 
-values = dict => match dict
-  | {} -> []
-  | { [x], ...xs } -> [dict[x], ...values(xs)]
-
-entries = dict => match dict
-  | {} -> []
-  | { [x], ...xs } -> [[ x, dict[x] ], ...entries(xs)]
-
-keyMap = dict => match dict
+entries = dict => dict |> keys |> k => [k, dict[k]]
 
 module = {
   keys,

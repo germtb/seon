@@ -126,25 +126,18 @@ map = (f, maybe) => case maybe.type of
 	| 'Nothing' -> Nothing()
 	| 'Just' -> Just(f(x))
 
-With syntactic sugar:
-
-type Nothing = () => {}
-type Just = x => { value: x }
-
-map = (f, maybe) => match maybe
-	| Nothing -> Nothing()
-	| Just -> Just(f(x))
-
 # TODO
-- Computed props
-- Default function parameters
 - Implement core libraries
-- pattern match with 1 | 2 | 3 ...
 - transpile to something (js)
-- Create bindings for node libraries?
-- Create syntax theme?
-- rewrite in itself?
-- eval as part of the core libraries?
-- extensible parser?
-- auto caching?
-- function equality?
+- rewrite in itself
+- Create syntax theme
+
+# MAYBEDO
+- pattern match with 1 | 2 | 3 ...
+- Default function parameters
+- Computed props
+- Create bindings for node libraries
+- eval as part of the core libraries
+- extensible parser
+- auto caching
+- function equality

@@ -6,9 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var simpleTokens = ['**', '&&', '||', '==', '!=', '<=', '>=', '=>', '->', '|>', '[', ']', '{', '}', ')', '(', '=', '+', '-', '_', '*', '/', '%', ',', ':', '&', '|', '!', '.', '>', '<'];
 
-var keywords = {
+var keywords = _defineProperty({
 	let: {
 		type: 'let'
 	},
@@ -32,7 +34,9 @@ var keywords = {
 	from: {
 		type: 'from'
 	}
-};
+}, '...', {
+	type: '...'
+});
 
 exports.default = function (code) {
 	// State
@@ -80,10 +84,15 @@ exports.default = function (code) {
 			} else if (simpleTokens.includes(currentToken + peek)) {
 				continue;
 			} else if (simpleTokens.includes(currentToken)) {
-				var type = simpleTokens.find(function (c) {
-					return c === currentToken;
-				});
-				push({ type: type });
+				if (currentToken === '.' && peek === '.') {
+					currentTokenType = 'Identifier';
+					continue;
+				} else {
+					var type = simpleTokens.find(function (c) {
+						return c === currentToken;
+					});
+					push({ type: type });
+				}
 				continue;
 			} else if (/[a-zA-Z]/.test(character)) {
 				currentTokenType = 'Identifier';
@@ -93,7 +102,11 @@ exports.default = function (code) {
 		}
 
 		if (currentTokenType === 'Identifier') {
-			if (!/[0-9a-zA-Z]/.test(peek) || eof) {
+			if (currentToken === '..') {
+				continue;
+			} else if (currentToken === '...') {
+				push({ type: '...' });
+			} else if (!/[0-9a-zA-Z]/.test(peek) || eof) {
 				var token = keywords[currentToken] ? keywords[currentToken] : { type: 'Identifier', value: currentToken };
 				push(token);
 			}

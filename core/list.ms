@@ -1,8 +1,10 @@
 import { Nothing, Just } from 'Maybe'
+import { Error, Success } from 'Errable'
+import { log } from 'Debug'
 
 map = (f, list) => match list
   | [] -> []
-  | [ x, ... xs ] -> [ f(x), ... map(f, xs) ]
+  | [ x, ...xs ] -> [ f(x), ... map(f, xs) ]
 
 andThen = (f, list) => match list
   | [] -> []
@@ -10,7 +12,7 @@ andThen = (f, list) => match list
 
 reduce = (f, list, acc) => match list
   | [] -> acc
-  | [ x, ... xs ] -> reduce(f, xs, f(acc, x))
+  | [ x, ...xs ] -> reduce(f, xs, f(acc, x))
 
 some = (selector, list) => reduce(
   (acc, x) => acc || selector(x),
@@ -21,6 +23,10 @@ some = (selector, list) => reduce(
 head = list => match list
   | [] -> Nothing()
   | [x, ...xs] -> Just(x)
+
+tail = list => match list
+  | [] -> Nothing()
+  | [x, ...xs] -> Just(xs)
 
 filter = (selector, list) => match list
   | [] -> []
@@ -36,9 +42,14 @@ all = (selector, list) => reduce(
 )
 
 take = (n, list) => match [n, list]
-  | [0, list]  -> []
-  | [n, []] -> []
-  | _ -> [x, ...take(n - 1, xs)]
+  | [0, _]  -> []
+  | [_, []] -> []
+  | [n, [ x, ...xs ]] -> [x, ...take(n - 1, xs)]
+
+drop = (n, list) => match [n, list]
+  | [0, _] -> list
+  | [_, []] -> []
+  | [n, [ x, ...xs]] -> [...drop(n - 1, xs)]
 
 first = (selector, list) => match list
   | [] -> Nothing()
@@ -47,14 +58,28 @@ first = (selector, list) => match list
     | false -> first(selector, xs)
   )
 
+length = list => reduce((acc, _) => acc + 1, list, 0)
+
+unsafeZip = (list1, list2) => match [list1, list2]
+  | [[], []] -> []
+  | [[x, ...xs], [y, ...ys]] -> [[x, y], ...unsafeZip(xs, ys)]
+
+zip = (list1, list2) => match length(list1) == length(list2)
+  | false -> Error('zipped lists differ in length')
+  | true -> Success(unsafeZip(list1, list2))
+
 module = {
   map,
   andThen,
   reduce,
   some,
   head,
+  tail,
   filter,
   all,
   take,
-  first
+  drop,
+  first,
+  length,
+  zip
 }

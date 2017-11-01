@@ -1,10 +1,30 @@
-import { map, reduce, some, head, filter, all, take, first } from 'List'
+import {
+	map,
+	andThen,
+	reduce,
+	some,
+	head,
+	tail,
+	filter,
+	all,
+	take,
+	drop,
+	first,
+	length,
+	zip
+} from 'List'
+import { Just, Nothing } from 'Maybe'
+import { Success, Error } from 'Errable'
 import { test, describe, expect } from 'Test'
 
 describe('List', [
 	test('map', [
-		expect(map(x => x, [0, 1, 2])).toEqual([0, 1, 2]),
-		expect(map(x => 2 * x, [0, 1, 2])).toEqual([0, 2, 4])
+		expect(map(x => x, [0, 1, 2])).toDeepEqual([0, 1, 2]),
+		expect(map(x => 2 * x, [0, 1, 2])).toDeepEqual([0, 2, 4])
+	]),
+	test('andThen', [
+		expect(andThen(x => [x, x], [0, 1, 2])).toDeepEqual([0, 0, 1, 1, 2, 2]),
+		expect(andThen(x => [2 * x], [0, 1, 2])).toDeepEqual([0, 2, 4])
 	]),
 	test('reduce', [
 		expect(reduce((acc, x) => acc + x, [0, 1, 2], 0)).toEqual(3)
@@ -13,18 +33,34 @@ describe('List', [
 		expect(some(x => x > 1, [0, 1, 2])).toBeTrue(),
 		expect(some(x => x > 2, [0, 1, 2])).toBeFalse()
 	]),
-	test('head', [expect(head([0, 1, 2])).toEqual(0)]),
-	test('filter', [expect(filter(x => x > 1, [0, 1, 2])).toEqual([2])]),
 	test('all', [
 		expect(all(x => x >= 0, [0, 1, 2])).toBeTrue(),
 		expect(all(x => x > 2, [0, 1, 2])).toBeFalse()
+	]),
+	test('head', [expect(head([0, 1, 2])).toDeepEqual(Just(0))]),
+	test('tail', [expect(tail([0, 1, 2])).toDeepEqual(Just([1, 2]))]),
+	test('filter', [expect(filter(x => x > 1, [0, 1, 2])).toDeepEqual([2])]),
+	test('length', [
+		expect(length([])).toEqual(0),
+		expect(length([0, 1, 2])).toEqual(3)
+	]),
+	test('take', [
+		expect(take(1, [0, 1, 2])).toDeepEqual([0]),
+		expect(take(2, [0, 1, 2])).toDeepEqual([0, 1])
+	]),
+	test('drop', [
+		expect(drop(1, [0, 1, 2])).toDeepEqual([1, 2]),
+		expect(drop(2, [0, 1, 2])).toDeepEqual([2])
+	]),
+	test('first', [
+		expect(first(x => x > 1, [0, 1, 2])).toDeepEqual(Just(2)),
+		expect(first(x => x > 0, [0, 1, 2])).toDeepEqual(Just(1)),
+		expect(first(x => x > 3, [0, 1, 2])).toDeepEqual(Nothing())
+	]),
+	test('zip', [
+		expect(zip([], [])).toDeepEqual(Success([])),
+		expect(zip([1], [2])).toDeepEqual(Success([[1, 2]])),
+		expect(zip([], [2])).toDeepEqual(Error('zipped lists differ in length')),
+		expect(zip([1, 2], [3, 4])).toDeepEqual(Success([[1, 3], [2, 4]]))
 	])
-	// test('take', [
-	// 	expect(take(1, [0, 1, 2])).toEqual([0]),
-	// 	expect(take(2, [0, 1, 2])).toBeFalse([0, 1])
-	// ])
-	// test('first', [
-	// 	expect(first(x => x > 1, [0, 1, 2])).toEqual(2),
-	// 	expect(first(x => x > 0, [0, 1, 2])).toBeFalse(1)
-	// ])
 ])

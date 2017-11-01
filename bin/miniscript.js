@@ -6,9 +6,11 @@ const path = require('path')
 const run = require('../dist/interpreter').run
 
 // Convert js core libraries into miniscript core modules
+const Core = require('../core-js/Core')
 const Debug = require('../core-js/Debug')
 
 const jsLibraries = {
+	Core: { type: 'Object', value: Core },
 	Debug: { type: 'Object', value: Debug }
 }
 
@@ -16,6 +18,7 @@ const jsLibraries = {
 // note: the order of the modules is important
 const nativeLibraries = [
 	'../core/Maybe',
+	'../core/Errable',
 	'../core/List',
 	'../core/Either',
 	'../core/Test'

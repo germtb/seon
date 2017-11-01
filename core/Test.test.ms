@@ -1,9 +1,9 @@
 import { describe, test, expect } from 'Test'
 
 describe('describe', [
-  test('test', [
-    expect(0).toEqual(0),
-    expect(true).toBeTrue(),
-    expect(false).toBeFalse()
-  ])
+	test('test', [
+		expect(0).toEqual(0),
+		expect(true).toBeTrue(),
+		expect(false).toBeFalse()
+	])
 ])
