@@ -40,8 +40,11 @@ const coreModules = nativeLibraries.reduce((acc, filepath) => {
 }, jsLibraries)
 
 const pwd = process.env.PWD
-const filename = path.resolve(pwd, argv._[0])
-const dirname = path.dirname(filename)
-const file = fs.readFileSync(filename, 'utf8')
 
-run(file, [{ filename, dirname }], { modules: coreModules })
+for (let i = 0; i < argv._.length; i++) {
+	const filename = path.resolve(pwd, argv._[i])
+	const dirname = path.dirname(filename)
+	const file = fs.readFileSync(filename, 'utf8')
+
+	run(file, [{ filename, dirname }], { modules: coreModules })
+}

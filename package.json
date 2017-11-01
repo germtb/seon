@@ -8,7 +8,8 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "jest",
-		"build": "babel src --out-dir dist --ignore *.test.js"
+		"build": "babel src --out-dir dist --ignore *.test.js",
+		"test-core": "node ./bin/seon.js ./core/*.test.sn"
 	},
 	"keywords": [],
 	"author": "",
