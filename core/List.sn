@@ -6,9 +6,9 @@ map = (f, list) => match list
   | [] -> []
   | [ x, ...xs ] -> [ f(x), ... map(f, xs) ]
 
-andThen = (f, list) => match list
+flatMap = (f, list) => match list
   | [] -> []
-  | [x, ...xs] -> [...f(x), ...andThen(f, xs)]
+  | [x, ...xs] -> [...f(x), ...flatMap(f, xs)]
 
 reduce = (f, list, acc) => match list
   | [] -> acc
