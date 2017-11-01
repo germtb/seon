@@ -373,9 +373,7 @@ const parse = tokens => {
 	}
 
 	if (stack.length > 1) {
-		throw new Error(
-			`Parsing error with stack ${JSON.stringify(stack, null, 2)}`
-		)
+		throw new Error('Parsing error')
 	}
 
 	return stack

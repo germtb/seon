@@ -1,4 +1,4 @@
-import tokenizer from './index'
+import tokenizer from '.'
 
 describe('tokenizer', () => {
 	test('produces a number token', () => {
@@ -14,18 +14,18 @@ describe('tokenizer', () => {
 		])
 	})
 
-	// test('produces a float number token', () => {
-	// 	expect(tokenizer('1.0')).toEqual([
-	// 		{
-	// 			type: 'Number',
-	// 			value: 1.0,
-	// 			loc: {
-	// 				start: { line: 0, column: 0 },
-	// 				end: { line: 0, column: 1 }
-	// 			}
-	// 		}
-	// 	])
-	// })
+	test('produces a float number token', () => {
+		expect(tokenizer('1.0')).toEqual([
+			{
+				type: 'Number',
+				value: 1.0,
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 3 }
+				}
+			}
+		])
+	})
 
 	test('produces a string token', () => {
 		expect(tokenizer("'1'")).toEqual([
@@ -34,7 +34,7 @@ describe('tokenizer', () => {
 				value: '1',
 				loc: {
 					start: { line: 0, column: 0 },
-					end: { line: 0, column: 2 }
+					end: { line: 0, column: 3 }
 				}
 			}
 		])
@@ -283,6 +283,19 @@ describe('tokenizer', () => {
 		])
 	})
 
+	test('produces an Identifier token not at the end of a file', () => {
+		expect(tokenizer('hello ')).toEqual([
+			{
+				type: 'Identifier',
+				value: 'hello',
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 5 }
+				}
+			}
+		])
+	})
+
 	test('produces a let token', () => {
 		expect(tokenizer('let')).toEqual([
 			{
@@ -368,7 +381,7 @@ describe('tokenizer', () => {
 				value: '{} this [] hello 1234',
 				loc: {
 					start: { column: 0, line: 0 },
-					end: { column: 22, line: 0 }
+					end: { column: 23, line: 0 }
 				}
 			}
 		])
@@ -426,7 +439,7 @@ describe('tokenizer', () => {
 		expect(tokenizer('// x1 1234 1234')).toEqual([
 			{
 				type: 'Comment',
-				value: ' x1 1234 1234',
+				value: '// x1 1234 1234',
 				loc: {
 					start: { column: 0, line: 0 },
 					end: { column: 15, line: 0 }
@@ -447,7 +460,7 @@ describe('tokenizer', () => {
 			},
 			{
 				type: 'Comment',
-				value: ' x',
+				value: '// x',
 				loc: {
 					start: { column: 2, line: 0 },
 					end: { column: 6, line: 0 }

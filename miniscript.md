@@ -137,13 +137,13 @@ map = (f, maybe) => match maybe
 
 # TODO
 - Computed props
-- float numbers
+- Default function parameters
 - Implement core libraries
-- Create bindings for node libraries
 - pattern match with 1 | 2 | 3 ...
 - transpile to something (js)
-- Create syntax theme
-- rewrite in itself
+- Create bindings for node libraries?
+- Create syntax theme?
+- rewrite in itself?
 - eval as part of the core libraries?
 - extensible parser?
 - auto caching?
