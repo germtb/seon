@@ -72,6 +72,11 @@ reverse = list => match list
   | [] -> []
   | [x, ...xs] -> [...reverse(xs), x]
 
+intersperse = (element, list) => match list
+  | [] -> []
+  | [x] -> [x]
+  | [x, y, ...xs] -> [x, element, ...intersperse(element, [y, ...xs])]
+
 module = {
   map,
   andThen,
@@ -86,5 +91,6 @@ module = {
   first,
   length,
   zip,
-  reverse
+  reverse,
+  intersperse
 }

@@ -12,7 +12,8 @@ import {
 	first,
 	length,
 	zip,
-	reverse
+	reverse,
+	intersperse
 } from 'List'
 import { Just, Nothing } from 'Maybe'
 import { Success, Error } from 'Errable'
@@ -68,5 +69,10 @@ describe('List', [
 		expect(reverse([])).toDeepEqual([]),
 		expect(reverse([1])).toDeepEqual([1]),
 		expect(reverse([1, 2, 3])).toDeepEqual([3, 2, 1])
+	]),
+	test('intersperse', [
+		expect(intersperse('a', [])).toDeepEqual([]),
+		expect(intersperse('a', [1])).toDeepEqual([1]),
+		expect(intersperse('a', [1, 2])).toDeepEqual([1, 'a', 2])
 	])
 ])
