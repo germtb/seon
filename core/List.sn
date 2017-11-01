@@ -1,7 +1,7 @@
 import { Nothing, Just } from 'Maybe'
 import { Error, Success } from 'Errable'
 import { log } from 'Debug'
-import { stringify } from 'InternalCore'
+import { stringify } from 'String'
 
 map = (f, list) => match list
   | [] -> []

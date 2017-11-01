@@ -1,0 +1,5 @@
+import { stringify } from 'InternalCore'
+
+module = {
+  stringify
+}

@@ -19,6 +19,8 @@ const jsLibraries = {
 const nativeLibraries = [
 	'../core/Debug',
 	'../core/Maybe',
+	'../core/Either',
+	'../core/String',
 	'../core/Errable',
 	'../core/List',
 	'../core/Either',
