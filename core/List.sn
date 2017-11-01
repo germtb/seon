@@ -1,6 +1,7 @@
 import { Nothing, Just } from 'Maybe'
 import { Error, Success } from 'Errable'
 import { log } from 'Debug'
+import { stringify } from 'InternalCore'
 
 map = (f, list) => match list
   | [] -> []
@@ -77,9 +78,19 @@ intersperse = (element, list) => match list
   | [x] -> [x]
   | [x, y, ...xs] -> [x, element, ...intersperse(element, [y, ...xs])]
 
+sum = (initialValue, list) => reduce(
+  (acc, x) => acc + x,
+  list,
+  initialValue
+)
+
+join = (element, list) => intersperse(element, list)
+  |> map(stringify)
+  |> sum('')
+
 module = {
   map,
-  andThen,
+  flatMap,
   reduce,
   some,
   head,
@@ -92,5 +103,7 @@ module = {
   length,
   zip,
   reverse,
-  intersperse
+  intersperse,
+  join,
+  sum
 }

@@ -1,6 +1,6 @@
 import { some, all, map } from 'List'
 import { log } from 'Debug'
-import { stringify } from 'Core'
+import { stringify } from 'InternalCore'
 
 test = (message, tests) =>
   match some(e => e.result == 'Failed', tests)

@@ -4,7 +4,7 @@ const toJSString = (x, tabulation = '') => {
 	} else if (x.type === 'Boolean') {
 		return x.value ? 'true' : 'false'
 	} else if (x.type === 'String') {
-		return `'${x.value}'`
+		return `${x.value}`
 	} else if (x.type === 'Function') {
 		return 'Function'
 	} else if (x.type === 'Object') {

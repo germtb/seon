@@ -1,0 +1,8 @@
+import { log } from 'InternalDebug'
+
+pipeLog = x => let _ = log(x) in x
+
+module = {
+  log,
+  pipeLog
+}

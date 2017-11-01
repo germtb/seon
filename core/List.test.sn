@@ -1,6 +1,6 @@
 import {
 	map,
-	andThen,
+	flatMap,
 	reduce,
 	some,
 	head,
@@ -13,7 +13,9 @@ import {
 	length,
 	zip,
 	reverse,
-	intersperse
+	intersperse,
+	join,
+	sum
 } from 'List'
 import { Just, Nothing } from 'Maybe'
 import { Success, Error } from 'Errable'
@@ -24,9 +26,9 @@ describe('List', [
 		expect(map(x => x, [0, 1, 2])).toDeepEqual([0, 1, 2]),
 		expect(map(x => 2 * x, [0, 1, 2])).toDeepEqual([0, 2, 4])
 	]),
-	test('andThen', [
-		expect(andThen(x => [x, x], [0, 1, 2])).toDeepEqual([0, 0, 1, 1, 2, 2]),
-		expect(andThen(x => [2 * x], [0, 1, 2])).toDeepEqual([0, 2, 4])
+	test('flatMap', [
+		expect(flatMap(x => [x, x], [0, 1, 2])).toDeepEqual([0, 0, 1, 1, 2, 2]),
+		expect(flatMap(x => [2 * x], [0, 1, 2])).toDeepEqual([0, 2, 4])
 	]),
 	test('reduce', [
 		expect(reduce((acc, x) => acc + x, [0, 1, 2], 0)).toEqual(3)
@@ -74,5 +76,15 @@ describe('List', [
 		expect(intersperse('a', [])).toDeepEqual([]),
 		expect(intersperse('a', [1])).toDeepEqual([1]),
 		expect(intersperse('a', [1, 2])).toDeepEqual([1, 'a', 2])
+	]),
+	test('sum', [
+		expect(sum(0, [])).toEqual(0),
+		expect(sum(1, [1])).toEqual(2),
+		expect(sum('', ['1', '2'])).toEqual('12')
+	]),
+	test('join', [
+		expect(join('a', [])).toEqual(''),
+		expect(join('a', [1])).toEqual('1'),
+		expect(join('a', [1, 2])).toEqual('1a2')
 	])
 ])

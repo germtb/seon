@@ -1,4 +1,4 @@
-const toJSString = require('./Core').toJSString
+const toJSString = require('./InternalCore').toJSString
 
 exports.log = {
 	type: 'Function',
