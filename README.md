@@ -1,2 +1,2 @@
-# Seon (선) programming language
+# 선 (seon) programming language
 
