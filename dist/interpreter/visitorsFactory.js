@@ -38,7 +38,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			var modules = _ref2.modules;
 
 			var relativeModule = node.path.value[0] === '.';
-			var moduleName = relativeModule ? _path2.default.resolve(get('dirname', scopes), node.path.value + '.ms') : node.path.value;
+			var moduleName = relativeModule ? _path2.default.resolve(get('dirname', scopes), node.path.value + '.sn') : node.path.value;
 
 			var module = void 0;
 

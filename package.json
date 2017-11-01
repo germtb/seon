@@ -1,7 +1,7 @@
 {
-	"name": "miniscript",
+	"name": "seon",
 	"bin": {
-		"miniscript": "./bin/miniscript.js"
+		"seon": "./bin/seon.js"
 	},
 	"version": "1.0.0",
 	"description": "",

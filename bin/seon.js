@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const run = require('../dist/interpreter').run
 
-// Convert js core libraries into miniscript core modules
+// Convert js core libraries into seon core modules
 const Core = require('../core-js/Core')
 const Debug = require('../core-js/Debug')
 
@@ -14,7 +14,7 @@ const jsLibraries = {
 	Debug: { type: 'Object', value: Debug }
 }
 
-// Add miniscript core modules to the internal module system
+// Add seon core modules to the internal module system
 // note: the order of the modules is important
 const nativeLibraries = [
 	'../core/Maybe',
@@ -26,7 +26,7 @@ const nativeLibraries = [
 
 const coreModules = nativeLibraries.reduce((acc, filepath) => {
 	const basename = path.basename(filepath)
-	const filename = path.resolve(__dirname, filepath) + '.ms'
+	const filename = path.resolve(__dirname, filepath) + '.sn'
 	const dirname = path.dirname(filename)
 	const file = fs.readFileSync(filename, 'utf8')
 	const moduleScope = [{ filename, dirname }]

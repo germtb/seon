@@ -19,7 +19,7 @@ export const visitorsFactory = ({
 	ImportDeclaration: (node, scopes, { modules }) => {
 		const relativeModule = node.path.value[0] === '.'
 		const moduleName = relativeModule
-			? path.resolve(get('dirname', scopes), node.path.value + '.ms')
+			? path.resolve(get('dirname', scopes), node.path.value + '.sn')
 			: node.path.value
 
 		let module

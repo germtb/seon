@@ -12,7 +12,7 @@ var createFunctionFactory = exports.createFunctionFactory = function createFunct
 	var createFunction = function createFunction(definitions, body, scopes) {
 		return {
 			call: function call(params) {
-				var hydratedParams = {};
+				var hydratedparams = {};
 				var leftDefinitions = [].concat(_toConsumableArray(definitions));
 
 				var _loop = function _loop(i) {
@@ -26,10 +26,10 @@ var createFunctionFactory = exports.createFunctionFactory = function createFunct
 							return definition.name !== param.name;
 						});
 
-						hydratedParams[definition.name] = param.value;
+						hydratedparams[definition.name] = param.value;
 					} else {
 						var _definition = leftDefinitions.shift();
-						hydratedParams[_definition.name] = param;
+						hydratedparams[_definition.name] = param;
 					}
 				};
 
@@ -38,10 +38,10 @@ var createFunctionFactory = exports.createFunctionFactory = function createFunct
 				}
 
 				if (leftDefinitions.length > 0) {
-					return createFunction(leftDefinitions, body, [].concat(_toConsumableArray(scopes), [hydratedParams]));
+					return createFunction(leftDefinitions, body, [].concat(_toConsumableArray(scopes), [hydratedparams]));
 				}
 
-				return aval(body, [].concat(_toConsumableArray(scopes), [hydratedParams]));
+				return aval(body, [].concat(_toConsumableArray(scopes), [hydratedparams]));
 			},
 			type: 'Function'
 		};

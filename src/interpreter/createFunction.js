@@ -1,7 +1,7 @@
 export const createFunctionFactory = ({ aval }) => {
 	const createFunction = (definitions, body, scopes) => ({
 		call: params => {
-			let hydratedParams = {}
+			let hydratedparams = {}
 			let leftDefinitions = [...definitions]
 
 			for (let i = 0; i < params.length; i++) {
@@ -15,21 +15,21 @@ export const createFunctionFactory = ({ aval }) => {
 						definition => definition.name !== param.name
 					)
 
-					hydratedParams[definition.name] = param.value
+					hydratedparams[definition.name] = param.value
 				} else {
 					const definition = leftDefinitions.shift()
-					hydratedParams[definition.name] = param
+					hydratedparams[definition.name] = param
 				}
 			}
 
 			if (leftDefinitions.length > 0) {
 				return createFunction(leftDefinitions, body, [
 					...scopes,
-					hydratedParams
+					hydratedparams
 				])
 			}
 
-			return aval(body, [...scopes, hydratedParams])
+			return aval(body, [...scopes, hydratedparams])
 		},
 		type: 'Function'
 	})
