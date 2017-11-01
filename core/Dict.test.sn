@@ -1,0 +1,14 @@
+import { get, keys, values, entries } from 'Dict'
+import { Just, Nothing } from 'Maybe'
+import { test, describe, expect } from 'Test'
+
+describe('Dict', () => [
+	test('get', () => [
+		expect(get('hello', { hello: '1234' })).toEqual(Just('1234'))
+		// expect(get('hello', { hello: '1234' })).toEqual('1234')
+	]),
+	test('keys', () => [
+		expect(keys({ hello: '1234' })).toEqual(['hello'])
+		// expect(keys('hello', { hello: '1234' })).toEqual('1234')
+	])
+])

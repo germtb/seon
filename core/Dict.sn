@@ -1,11 +1,17 @@
-import { keys } from 'InternalDict'
+import { internalKeys, internalGet } from 'InternalDict'
 import { map } from 'List'
+import { log, pipeLog } from 'Debug'
 
-values = dict => dict |> keys |> k => dict[k]
+get = (key, dict) => internalGet(key, dict)
 
-entries = dict => dict |> keys |> k => [k, dict[k]]
+keys = dict => internalKeys(dict)
+
+values = dict => dict |> keys |> map(k => get(k, dict))
+
+entries = dict => dict |> keys |> map(k => [k, get(k, dict)])
 
 module = {
+  get,
   keys,
   values,
   entries

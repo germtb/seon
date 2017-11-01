@@ -8,10 +8,12 @@ const run = require('../dist/interpreter').run
 // Convert js core libraries into seon core modules
 const InternalCore = require('../core-js/InternalCore')
 const InternalDebug = require('../core-js/InternalDebug')
+const InternalDict = require('../core-js/InternalDict')
 
 const jsLibraries = {
 	InternalCore: { type: 'Object', value: InternalCore },
-	InternalDebug: { type: 'Object', value: InternalDebug }
+	InternalDebug: { type: 'Object', value: InternalDebug },
+	InternalDict: { type: 'Object', value: InternalDict }
 }
 
 // Add seon core modules to the internal module system
@@ -23,6 +25,7 @@ const nativeLibraries = [
 	'../core/String',
 	'../core/Errable',
 	'../core/List',
+	'../core/Dict',
 	'../core/Either',
 	'../core/Test'
 ]

@@ -17,7 +17,10 @@ equal = (received, expected) =>
     _ = log('but received: ', received)
   in { result: 'Failed' }
 
-deepEqual = (received, expected) => equal(stringify(received), stringify(expected))
+deepEqual = (received, expected) => equal(
+  stringify(received),
+  stringify(expected)
+)
 
 expect = (received) => {
   toDeepEqual: deepEqual(received),
