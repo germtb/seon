@@ -1,8 +1,10 @@
 import { log } from 'InternalDebug'
 
 pipeLog = x => let _ = log(x) in x
+pipefLog = (f, x) => let _ = log(f(x)) in x
 
 module = {
   log,
-  pipeLog
+  pipeLog,
+  pipefLog
 }

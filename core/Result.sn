@@ -1,0 +1,19 @@
+
+Err = (message) => { type: 'Err', message }
+
+Ok = value => { type: 'Ok', value }
+
+map = (f, result) => match result.type
+  | 'Err' -> Err(result.message)
+  | 'Ok' -> Ok(f(result.value))
+
+andThen = (f, result) => match result.type
+  | 'Err' -> Err(result.message)
+  | 'Ok' -> f(result.value)
+
+module = {
+  Err,
+  Ok,
+  map,
+  andThen
+}

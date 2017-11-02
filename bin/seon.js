@@ -23,7 +23,7 @@ const nativeLibraries = [
 	'../core/Maybe',
 	'../core/Either',
 	'../core/String',
-	'../core/Errable',
+	'../core/Result',
 	'../core/List',
 	'../core/Dict',
 	'../core/Either',

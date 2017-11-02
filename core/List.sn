@@ -1,5 +1,5 @@
 import { Nothing, Just } from 'Maybe'
-import { Error, Success } from 'Errable'
+import { Err, Ok } from 'Result'
 import { log } from 'Debug'
 import { stringify } from 'String'
 
@@ -59,6 +59,10 @@ first = (selector, list) => match list
     | false -> first(selector, xs)
   )
 
+range = (start, end) => match (end - start) > 0
+  | false -> []
+  | true  -> [start, ...range(start + 1, end)]
+
 length = list => reduce((acc, _) => acc + 1, list, 0)
 
 unsafeZip = (list1, list2) => match [list1, list2]
@@ -66,8 +70,8 @@ unsafeZip = (list1, list2) => match [list1, list2]
   | [[x, ...xs], [y, ...ys]] -> [[x, y], ...unsafeZip(xs, ys)]
 
 zip = (list1, list2) => match length(list1) == length(list2)
-  | false -> Error('zipped lists differ in length')
-  | true -> Success(unsafeZip(list1, list2))
+  | false -> Err('zipped lists differ in length')
+  | true -> Ok(unsafeZip(list1, list2))
 
 reverse = list => match list
   | [] -> []

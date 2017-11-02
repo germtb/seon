@@ -18,7 +18,7 @@ import {
 	sum
 } from 'List'
 import { Just, Nothing } from 'Maybe'
-import { Success, Error } from 'Errable'
+import { Ok, Err } from 'Result'
 import { test, describe, expect } from 'Test'
 
 describe('List', () => [
@@ -64,10 +64,10 @@ describe('List', () => [
 		expect(first(x => x > 3, [0, 1, 2])).toDeepEqual(Nothing())
 	]),
 	test('zip', () => [
-		expect(zip([], [])).toDeepEqual(Success([])),
-		expect(zip([1], [2])).toDeepEqual(Success([[1, 2]])),
-		expect(zip([], [2])).toDeepEqual(Error('zipped lists differ in length')),
-		expect(zip([1, 2], [3, 4])).toDeepEqual(Success([[1, 3], [2, 4]]))
+		expect(zip([], [])).toDeepEqual(Ok([])),
+		expect(zip([1], [2])).toDeepEqual(Ok([[1, 2]])),
+		expect(zip([], [2])).toDeepEqual(Err('zipped lists differ in length')),
+		expect(zip([1, 2], [3, 4])).toDeepEqual(Ok([[1, 3], [2, 4]]))
 	]),
 	test('reverse', () => [
 		expect(reverse([])).toDeepEqual([]),
