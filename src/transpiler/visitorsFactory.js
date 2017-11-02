@@ -18,7 +18,10 @@ export const visitorsFactory = ({ transpile }) => ({
 		return '"' + node.value + '"'
 	},
 	ArrayExpression: node => {
-		return '[' + node.values.map(transpile).join(', ') + ']'
+		if (node.values.length === 0) {
+			return '[]'
+		}
+		return '[ ' + node.values.map(transpile).join(', ') + ' ]'
 	},
 	ObjectExpression: node => {
 		if (node.properties.length === 0) {
@@ -57,11 +60,9 @@ export const visitorsFactory = ({ transpile }) => ({
 	FunctionExpression: node => {
 		let parameters
 		if (node.parameters.length === 0) {
-			parameters = '()'
-		} else if (node.parameters.length === 1) {
-			parameters = transpile(node.parameters[0])
+			parameters = '[]'
 		} else {
-			parameters = `(${node.parameters.map(transpile).join(', ')})`
+			parameters = `[${node.parameters.map(transpile).join(', ')}]`
 		}
 
 		return `${parameters} => ${transpile(node.body)}`
@@ -78,18 +79,17 @@ export const visitorsFactory = ({ transpile }) => ({
 		// return transpile(node.expression, letScope)
 	},
 	PatternExpression: node => {
-		// const expression = transpile(node.expression, scopes)
-		//
-		// for (let i = 0; i < node.patternCases.length; i++) {
-		// 	const pattern = node.patternCases[i]
-		// 	const matchedScope = {}
-		//
-		// 	if (match(pattern.pattern, expression, matchedScope)) {
-		// 		return transpile(pattern.result, [...scopes, matchedScope])
-		// 	}
-		// }
-		//
-		// throw new Error('PatternExpression did not match')
+		const expression = transpile(node.expression)
+		const patterns = node.patternCases.map(transpile).join(', ')
+		return `match(${expression}, [ ${patterns} ])`
+	},
+	PatternCase: node => {
+		const pattern = transpile(node.pattern)
+		const result = transpile(node.result)
+		return `{ pattern: ${pattern}, result: ${result} }`
+	},
+	NoPattern: () => {
+		return '_'
 	},
 	Declaration: node => {
 		return `const ${transpile(node.declarator)} = ${transpile(node.value)}`

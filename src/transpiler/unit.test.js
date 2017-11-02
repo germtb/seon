@@ -25,10 +25,10 @@ describe('transpile', () => {
 	})
 
 	test('an array', () => {
-		const tokens = tokenizer('[0, 1, 2]')
+		const tokens = tokenizer('[ 0, 1, 2 ]')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('[0, 1, 2]')
+		expect(result).toEqual('[ 0, 1, 2 ]')
 	})
 
 	test('an object', () => {
@@ -63,7 +63,7 @@ describe('transpile', () => {
 		const tokens = tokenizer('x = [1, 2, 3]')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('const x = [1, 2, 3]')
+		expect(result).toEqual('const x = [ 1, 2, 3 ]')
 	})
 
 	test('a declaration #3', () => {
@@ -80,21 +80,18 @@ describe('transpile', () => {
 		expect(result).toEqual('const x = { test: "Hello" }\nconst y = x.test')
 	})
 
-	// test('an array-shape declaration #1', () => {
-	// 	const tokens = tokenizer('[ x ] = [0, 1, 2, 3]')
-	// 	const nodes = parse(tokens)
-	// 	transpile(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 0,
-	// 		type: 'Number'
-	// 	})
-	// })
-
-	test('can spread arrays in arrays', () => {
-		const tokens = tokenizer('x = [1, 2, 3]\ny = [0, ...x]')
+	test('an array-shape declaration #1', () => {
+		const tokens = tokenizer('[ x ] = [ 0, 1, 2, 3 ]')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('const x = [1, 2, 3]\nconst y = [0, ...x]')
+		expect(result).toEqual('const [ x ] = [ 0, 1, 2, 3 ]')
+	})
+
+	test('can spread arrays in arrays', () => {
+		const tokens = tokenizer('x = [ 1, 2, 3 ]\ny = [ 0, ...x ]')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual('const x = [ 1, 2, 3 ]\nconst y = [ 0, ...x ]')
 	})
 
 	test('an object expression #1', () => {
@@ -132,16 +129,16 @@ describe('transpile', () => {
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
-			'const x = "hello"\nconst y = { y1: 10, y2: 20 }\nconst z = { x, ...y, z: [0, 1, 2] }'
+			'const x = "hello"\nconst y = { y1: 10, y2: 20 }\nconst z = { x, ...y, z: [ 0, 1, 2 ] }'
 		)
 	})
 
-	test('a function #1', () => {
-		const tokens = tokenizer('f = x => x\nx = f(10)')
-		const nodes = parse(tokens)
-		const result = transpile(nodes[0])
-		expect(result).toEqual('const f = x => x\nconst x = f(10)')
-	})
+	// test('a function #1', () => {
+	// 	const tokens = tokenizer('f = x => x')
+	// 	const nodes = parse(tokens)
+	// 	const result = transpile(nodes[0])
+	// 	expect(result).toEqual("const f = createFunction(['x'], x => x)")
+	// })
 
 	// test('a function #2 ', () => {
 	// 	const tokens = tokenizer('f = x => x\nx = f(x: 10) ')
@@ -205,7 +202,7 @@ describe('transpile', () => {
 	// 		type: 'Number'
 	// 	})
 	// })
-	//
+
 	// test('Auto currying #1', () => {
 	// 	const tokens = tokenizer(`
 	// 		f = (x, y, z) => x + y + z
@@ -221,83 +218,91 @@ describe('transpile', () => {
 	// 	})
 	// })
 
-	// test('Pattern matching booleans #1', () => {
-	// 	const tokens = tokenizer('match true | true -> 1 | false -> 0')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0].nodes[0])
-	// 	expect(result).toEqual({ value: 1, type: 'Number' })
-	// })
+	test('Pattern matching booleans #1', () => {
+		const tokens = tokenizer('match true | true -> 1 | false -> 0')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			'match(true, [ { pattern: true, result: 1 }, { pattern: false, result: 0 } ])'
+		)
+	})
 
-	// test('Pattern matching booleans #2', () => {
-	// 	const tokens = tokenizer('match false | true -> 1 | false -> 0')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0].nodes[0])
-	// 	expect(result).toEqual({ value: 0, type: 'Number' })
-	// })
-	//
-	// test('Pattern matching no pattern #1', () => {
-	// 	const tokens = tokenizer('match false | true -> 1 | _ -> 0')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0].nodes[0])
-	// 	expect(result).toEqual({ value: 0, type: 'Number' })
-	// })
-	//
-	// test('Pattern matching number pattern #1', () => {
-	// 	const tokens = tokenizer('match 1 | 0 -> 1 | 1 -> 2 | _ -> 3')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0].nodes[0])
-	// 	expect(result).toEqual({ value: 2, type: 'Number' })
-	// })
-	//
+	test('Pattern matching booleans #2', () => {
+		const tokens = tokenizer('match false | true -> 1 | false -> 0')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			'match(false, [ { pattern: true, result: 1 }, { pattern: false, result: 0 } ])'
+		)
+	})
+
+	test('Pattern matching no pattern #1', () => {
+		const tokens = tokenizer('match false | true -> 1 | _ -> 0')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			'match(false, [ { pattern: true, result: 1 }, { pattern: _, result: 0 } ])'
+		)
+	})
+
+	test('Pattern matching number pattern #1', () => {
+		const tokens = tokenizer('match 1 | 0 -> 1 | 1 -> 2 | _ -> 3')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			'match(1, [ { pattern: 0, result: 1 }, { pattern: 1, result: 2 }, { pattern: _, result: 3 } ])'
+		)
+	})
+
 	// test('Pattern matching any pattern #1', () => {
 	// 	const tokens = tokenizer('match 1 | 0 -> 1 | n -> n')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 1, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern #2', () => {
 	// 	const tokens = tokenizer('match [] | [] -> 0 | [x, ...xs] -> x')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 0, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern #3', () => {
 	// 	const tokens = tokenizer('match [ 1 ] | [] -> 0 | [ x ] -> x')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 1, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern #4', () => {
 	// 	const tokens = tokenizer('match [ 1, 2 ] | [] -> 0 | [ x, y ] -> x + y')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 3, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern #5', () => {
 	// 	const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, y ] -> x + y | _ -> 10')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 10, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern with a rest element #1', () => {
 	// 	const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> x')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 1, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern with a rest element #2', () => {
 	// 	const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> x')
 	// 	const nodes = parse(tokens)
 	// 	const result = transpile(nodes[0].nodes[0])
 	// 	expect(result).toEqual({ value: 1, type: 'Number' })
 	// })
-	//
+
 	// test('Pattern matching array pattern with a rest element #3', () => {
 	// 	const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> xs')
 	// 	const nodes = parse(tokens)
@@ -307,7 +312,7 @@ describe('transpile', () => {
 	// 		type: 'Array'
 	// 	})
 	// })
-	//
+
 	// test('Pattern matching object pattern #1', () => {
 	// 	const tokens = tokenizer('match {} | {} -> 0')
 	// 	const nodes = parse(tokens)
@@ -317,7 +322,7 @@ describe('transpile', () => {
 	// 		type: 'Number'
 	// 	})
 	// })
-	//
+
 	// test('Pattern matching object pattern #2', () => {
 	// 	const tokens = tokenizer('match { x: 1 } | {} -> 0 | { x } -> x')
 	// 	const nodes = parse(tokens)
@@ -327,7 +332,7 @@ describe('transpile', () => {
 	// 		type: 'Number'
 	// 	})
 	// })
-	//
+
 	// test('Pattern matching object pattern #3', () => {
 	// 	const tokens = tokenizer(
 	// 		'match { x: 1, y: 10 } | {} -> 0 | { x } -> x | { x, y } -> x + y'
@@ -339,7 +344,7 @@ describe('transpile', () => {
 	// 		type: 'Number'
 	// 	})
 	// })
-	//
+
 	// test('Pattern matching object pattern with a rest element #1', () => {
 	// 	const tokens = tokenizer(
 	// 		'match { x: 1, y: 10 } | {} -> 0 | { x, ...xs } -> xs'
@@ -353,7 +358,7 @@ describe('transpile', () => {
 	// 		type: 'Object'
 	// 	})
 	// })
-	//
+
 	// test('let expression #1', () => {
 	// 	const tokens = tokenizer(`
 	// 		let x = 1
@@ -367,7 +372,7 @@ describe('transpile', () => {
 	// 		type: 'Number'
 	// 	})
 	// })
-	//
+
 	// test('import declaration #1', () => {
 	// 	const tokens = tokenizer("import x from './mock'")
 	// 	const nodes = parse(tokens)
@@ -378,7 +383,7 @@ describe('transpile', () => {
 	// 		type: 'Object'
 	// 	})
 	// })
-	//
+
 	// test('module declaration', () => {
 	// 	const tokens = tokenizer('module = { x: 10 }')
 	// 	const nodes = parse(tokens)

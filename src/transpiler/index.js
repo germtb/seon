@@ -11,11 +11,7 @@ const createEval = () => {
 			return `${type} is not a visitor`
 		}
 
-		try {
-			return visitor(node, scopes)
-		} catch (error) {
-			return error
-		}
+		return visitor(node, scopes)
 	}
 
 	const run = (code, scopes = [{}]) => {
