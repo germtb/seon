@@ -1,8 +1,8 @@
-export const visitorsFactory = ({ transpile }) => ({
+export const visitorsFactory = ({ transpile, createFunction }) => ({
 	File: node => {
 		return node.nodes.map(node => transpile(node)).join('\n')
 	},
-	ImportDeclaration: node => {
+	ImportDeclaration: () => {
 		return ''
 	},
 	IdentifierExpression: node => {
@@ -58,14 +58,7 @@ export const visitorsFactory = ({ transpile }) => ({
 		return transpile(node.operator) + transpile(node.expression)
 	},
 	FunctionExpression: node => {
-		let parameters
-		if (node.parameters.length === 0) {
-			parameters = '[]'
-		} else {
-			parameters = `[${node.parameters.map(transpile).join(', ')}]`
-		}
-
-		return `${parameters} => ${transpile(node.body)}`
+		return createFunction(node)
 	},
 	CallExpression: node => {
 		const parameters = node.parameters.map(transpile).join(', ')

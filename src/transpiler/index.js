@@ -1,9 +1,10 @@
 import tokenizer from '../tokenizer'
 import parse from '../parser'
 import { visitorsFactory } from './visitorsFactory'
+import { createFunctionFactory } from './createFunction'
 
 const createEval = () => {
-	const transpile = (node, scopes = [{}]) => {
+	const transpile = node => {
 		const type = node.type
 		const visitor = visitors[type]
 
@@ -11,7 +12,7 @@ const createEval = () => {
 			return `${type} is not a visitor`
 		}
 
-		return visitor(node, scopes)
+		return visitor(node)
 	}
 
 	const run = (code, scopes = [{}]) => {
@@ -20,9 +21,12 @@ const createEval = () => {
 		return transpile(nodes[0], scopes)
 	}
 
+	const createFunction = createFunctionFactory({ transpile })
+
 	const visitors = visitorsFactory({
 		transpile,
-		run
+		run,
+		createFunction
 	})
 
 	return { transpile, run }

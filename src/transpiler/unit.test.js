@@ -133,12 +133,12 @@ describe('transpile', () => {
 		)
 	})
 
-	// test('a function #1', () => {
-	// 	const tokens = tokenizer('f = x => x')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0])
-	// 	expect(result).toEqual("const f = createFunction(['x'], x => x)")
-	// })
+	test('a function #1', () => {
+		const tokens = tokenizer('x => x')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual("createFunction(['x'], ({ x }) => x)")
+	})
 
 	// test('a function #2 ', () => {
 	// 	const tokens = tokenizer('f = x => x\nx = f(x: 10) ')
