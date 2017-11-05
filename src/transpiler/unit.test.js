@@ -140,83 +140,100 @@ describe('transpile', () => {
 		expect(result).toEqual("createFunction(['x'], ({ x }) => x)")
 	})
 
-	// test('a function #2 ', () => {
-	// 	const tokens = tokenizer('f = x => x\nx = f(x: 10) ')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0])
-	// 	expect(result).toEqual('const f = x => x\nconst x = f(10)')
-	// })
+	test('a function #2 ', () => {
+		const tokens = tokenizer(['f = x => x', 'x = f(x: 10)'].join('\n'))
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				"const f = createFunction(['x'], ({ x }) => x)",
+				"const x = f([{ type: 'NamedParameter', name: 'x', value: 10 }])"
+			].join('\n')
+		)
+	})
 
-	// test('a function #3 ', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y) => x + y
-	// 		x = f(x: 10, y: 20)
-	// 	`)
-	//
-	// 	const nodes = parse(tokens)
-	// 	transpile(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 30,
-	// 		type: 'Number'
-	// 	})
-	// })
-	//
-	// test('a function #4 ', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y) => x / y
-	// 		x = f(y: 2, x: 4)
-	// 	`)
-	//
-	// 	const nodes = parse(tokens)
-	// 	transpile(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 2,
-	// 		type: 'Number'
-	// 	})
-	// })
-	//
-	// test('a function #5', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y) => x / y
-	// 		x = f(y: 2, 4)
-	// 	`)
-	//
-	// 	const nodes = parse(tokens)
-	// 	transpile(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 2,
-	// 		type: 'Number'
-	// 	})
-	// })
-	//
-	// test('a function #6', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y) => x / y
-	// 		x = f(4, y: 2)
-	// 	`)
-	//
-	// 	const nodes = parse(tokens)
-	// 	transpile(nodes[0], scopes)
-	// 	expect(scopes[0].x).toEqual({
-	// 		value: 2,
-	// 		type: 'Number'
-	// 	})
-	// })
+	test('a function #3 ', () => {
+		const tokens = tokenizer(
+			[' f = (x, y) => x + y ', ' x = f(x: 10, y: 20) '].join('\n')
+		)
 
-	// test('Auto currying #1', () => {
-	// 	const tokens = tokenizer(`
-	// 		f = (x, y, z) => x + y + z
-	// 		a = f(y: 10)
-	// 		b = a(z: 100)
-	// 		c = b(1)
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	transpile(nodes[0], scopes)
-	// 	expect(scopes[0].c).toEqual({
-	// 		value: 111,
-	// 		type: 'Number'
-	// 	})
-	// })
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				"const f = createFunction(['x', 'y'], ({ x, y }) => x + y)",
+				"const x = f([{ type: 'NamedParameter', name: 'x', value: 10 }, { type: 'NamedParameter', name: 'y', value: 20 }])"
+			].join('\n')
+		)
+	})
+
+	test('a function #4 ', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x / y
+			x = f(y: 2, x: 4)
+		`)
+
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
+				"const x = f([{ type: 'NamedParameter', name: 'y', value: 2 }, { type: 'NamedParameter', name: 'x', value: 4 }])"
+			].join('\n')
+		)
+	})
+
+	test('a function #5', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x / y
+			x = f(y: 2, 4)
+		`)
+
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
+				"const x = f([{ type: 'NamedParameter', name: 'y', value: 2 }, 4])"
+			].join('\n')
+		)
+	})
+
+	test('a function #6', () => {
+		const tokens = tokenizer(`
+			f = (x, y) => x / y
+			x = f(4, y: 2)
+		`)
+
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
+				"const x = f([4, { type: 'NamedParameter', name: 'y', value: 2 }])"
+			].join('\n')
+		)
+	})
+
+	test('Auto currying #1', () => {
+		const tokens = tokenizer(`
+			f = (x, y, z) => x + y + z
+			a = f(y: 10)
+			b = a(z: 100)
+			c = b(1)
+		`)
+
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				"const f = createFunction(['x', 'y', 'z'], ({ x, y, z }) => x + y + z)",
+				"const a = f([{ type: 'NamedParameter', name: 'y', value: 10 }])",
+				"const b = a([{ type: 'NamedParameter', name: 'z', value: 100 }])",
+				'const c = b([1])'
+			].join('\n')
+		)
+	})
 
 	test('Pattern matching booleans #1', () => {
 		const tokens = tokenizer('match true | true -> 1 | false -> 0')
@@ -247,10 +264,12 @@ describe('transpile', () => {
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
-			'match(false, [ ' +
-				'{ pattern: true, result: 1 }, ' +
-				'{ pattern: _, result: 0 } ' +
+			[
+				'match(false, [',
+				'{ pattern: true, result: 1 },',
+				'{ pattern: _, result: 0 }',
 				'])'
+			].join(' ')
 		)
 	})
 

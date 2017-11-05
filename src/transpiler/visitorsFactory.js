@@ -27,10 +27,29 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		if (node.properties.length === 0) {
 			return '{}'
 		}
-		return ['{', node.properties.map(transpile).join(', '), '}'].join(' ')
+
+		const properties = node.properties.map(p => {
+			const node = p.property
+			if (node.type === 'NamedParameter') {
+				return `${node.name}: ${transpile(node.value)}`
+			} else if (node.type === 'IdentifierExpression') {
+				return node.name
+			} else if (node.type === 'RestElement') {
+				return `...${node.value.name}`
+			}
+
+			throw 'Unrecognised object property'
+		})
+		return ['{', properties.join(', '), '}'].join(' ')
 	},
 	NamedParameter: node => {
-		return `${node.name}: ${transpile(node.value)}`
+		return [
+			'{',
+			"type: 'NamedParameter',",
+			`name: '${node.name}',`,
+			`value: ${transpile(node.value)}`,
+			'}'
+		].join(' ')
 	},
 	RestElement: node => {
 		return `...${transpile(node.value)}`
@@ -62,7 +81,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	},
 	CallExpression: node => {
 		const parameters = node.parameters.map(transpile).join(', ')
-		return `${transpile(node.callee)}(${parameters})`
+		return `${transpile(node.callee)}([${parameters}])`
 	},
 	LetExpression: node => {
 		// const letScope = [...scopes, {}]
