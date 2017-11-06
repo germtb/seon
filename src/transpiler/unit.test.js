@@ -435,19 +435,20 @@ describe('transpile', () => {
 		)
 	})
 
-	// test('let expression #1', () => {
-	// 	const tokens = tokenizer(`
-	// 		let x = 1
-	// 				y = 10
-	// 		in x + y
-	// 	`)
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0].nodes[0])
-	// 	expect(result).toEqual({
-	// 		value: 11,
-	// 		type: 'Number'
-	// 	})
-	// })
+	test('let expression #1', () => {
+		const tokens = tokenizer(`
+			let x = 1
+					y = 10
+			in x + y
+		`)
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0].nodes[0])
+		expect(result).toEqual(
+			['(() => {', 'const x = 1', 'const y = 10', 'return x + y', '})()'].join(
+				'\n'
+			)
+		)
+	})
 
 	// test('import declaration #1', () => {
 	// 	const tokens = tokenizer("import x from './mock'")

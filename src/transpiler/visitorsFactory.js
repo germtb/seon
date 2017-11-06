@@ -99,13 +99,11 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			.join(', ')
 		return `${transpile(node.callee)}([${parameters}])`
 	},
-	// LetExpression: (node, internals) => {
-	// 	// const letScope = [...scopes, {}]
-	// 	// node.declarations.forEach(d => {
-	// 	// 	transpile(d, letScope)
-	// 	// })
-	// 	// return transpile(node.expression, letScope)
-	// },
+	LetExpression: node => {
+		const declarations = node.declarations.map(node => transpile(node))
+		const expression = `return ${transpile(node.expression)}`
+		return ['(() => {', ...declarations, expression, '})()'].join('\n')
+	},
 	PatternExpression: (node, internals) => {
 		const expression = transpile(node.expression)
 		const patterns = node.patternCases
