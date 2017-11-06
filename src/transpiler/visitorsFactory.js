@@ -1,3 +1,20 @@
+import { visitFactory } from '../ast'
+
+const parameterBuilderVisitor = visitFactory({
+	IdentifierExpression: (node, parameters) => {
+		parameters.push(node.name)
+	},
+	ArrayExpression: (node, parameters, visit) => {
+		node.values.forEach(v => visit(v, parameters))
+	},
+	RestElement: (node, parameters) => {
+		parameters.push(node.value.name)
+	},
+	ObjectExpression: (node, parameters, visit) => {
+		node.properties.forEach(p => visit(p.property, parameters))
+	}
+})
+
 export const visitorsFactory = ({ transpile, createFunction }) => ({
 	File: node => {
 		return node.nodes.map(node => transpile(node)).join('\n')
@@ -120,27 +137,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		const result = transpile(node.result)
 		const parameters = []
 
-		const visitors = {
-			IdentifierExpression: node => {
-				parameters.push(node.name)
-			},
-			ArrayExpression: node => {
-				node.values.forEach(v => visit(v))
-			},
-			RestElement: node => {
-				parameters.push(node.value.name)
-			},
-			ObjectExpression: node => {
-				node.properties.forEach(p => visit(p.property))
-			}
-		}
-
-		const visit = node => {
-			const visitor = visitors[node.type]
-			visitor && visitor(node)
-		}
-
-		visit(node.pattern)
+		parameterBuilderVisitor(node.pattern, parameters)
 
 		const transpiledParameters = parameters.length
 			? `{ ${parameters.join(', ')} }`
