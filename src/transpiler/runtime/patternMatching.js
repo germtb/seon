@@ -1,12 +1,12 @@
 export const match = (expression, pattern, matchedParams = {}) => {
 	if (pattern.type === 'NoPattern') {
 		return true
-	} else if (pattern.type === 'BooleanExpression') {
-		return pattern.value === expression
-	} else if (pattern.type === 'NumberExpression') {
-		return pattern.value === expression
-	} else if (pattern.type === 'StringExpression') {
-		return pattern.value === expression
+	} else if (typeof pattern === 'boolean') {
+		return pattern === expression
+	} else if (typeof pattern === 'number') {
+		return pattern === expression
+	} else if (typeof pattern === 'string') {
+		return pattern === expression
 	} else if (pattern.type === 'IdentifierExpression') {
 		matchedParams[pattern.name] = expression
 		return true

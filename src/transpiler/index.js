@@ -4,7 +4,7 @@ import { visitorsFactory } from './visitorsFactory'
 import { createFunctionFactory } from './createFunction'
 
 const createEval = () => {
-	const transpile = node => {
+	const transpile = (node, internals = {}) => {
 		const type = node.type
 		const visitor = visitors[type]
 
@@ -12,7 +12,7 @@ const createEval = () => {
 			return `${type} is not a visitor`
 		}
 
-		return visitor(node)
+		return visitor(node, internals)
 	}
 
 	const run = (code, scopes = [{}]) => {

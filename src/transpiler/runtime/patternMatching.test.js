@@ -1,65 +1,43 @@
 import { match } from './patternMatching'
-
-const typeFactory = type => value => ({
-	type,
-	value
-})
-
-const NoPattern = typeFactory('NoPattern')
-const BooleanExpression = typeFactory('BooleanExpression')
-const NumberExpression = typeFactory('NumberExpression')
-const StringExpression = typeFactory('StringExpression')
-const IdentifierExpression = name => ({
-	type: 'IdentifierExpression',
-	name
-})
-const ArrayExpression = values => ({
-	type: 'ArrayExpression',
-	values
-})
-const RestElement = name => ({
-	type: 'RestElement',
-	value: {
-		name
-	}
-})
-const ObjectExpression = properties => ({
-	type: 'ObjectExpression',
-	properties
-})
+import {
+	IdentifierExpression,
+	ArrayExpression,
+	RestElement,
+	ObjectExpression
+} from './types'
 
 describe('runtime', () => {
 	describe('match', () => {
 		test('no pattern', () => {
-			expect(match(10, NoPattern())).toBeTruthy()
-			expect(match('10', NoPattern())).toBeTruthy()
-			expect(match([], NoPattern())).toBeTruthy()
-			expect(match({}, NoPattern())).toBeTruthy()
-			expect(match(true, NoPattern())).toBeTruthy()
+			expect(match(10, { type: 'NoPattern' })).toBeTruthy()
+			expect(match('10', { type: 'NoPattern' })).toBeTruthy()
+			expect(match([], { type: 'NoPattern' })).toBeTruthy()
+			expect(match({}, { type: 'NoPattern' })).toBeTruthy()
+			expect(match(true, { type: 'NoPattern' })).toBeTruthy()
 		})
 
 		test('boolean', () => {
-			expect(match(10, BooleanExpression(true))).toBeFalsy()
-			expect(match('10', BooleanExpression(true))).toBeFalsy()
-			expect(match([], BooleanExpression(true))).toBeFalsy()
-			expect(match({}, BooleanExpression(true))).toBeFalsy()
-			expect(match(true, BooleanExpression(true))).toBeTruthy()
+			expect(match(10, true)).toBeFalsy()
+			expect(match('10', true)).toBeFalsy()
+			expect(match([], true)).toBeFalsy()
+			expect(match({}, true)).toBeFalsy()
+			expect(match(true, true)).toBeTruthy()
 		})
 
 		test('number', () => {
-			expect(match(10, NumberExpression(10))).toBeTruthy()
-			expect(match('10', NumberExpression(10))).toBeFalsy()
-			expect(match([], NumberExpression(10))).toBeFalsy()
-			expect(match({}, NumberExpression(10))).toBeFalsy()
-			expect(match(true, NumberExpression(10))).toBeFalsy()
+			expect(match(10, 10)).toBeTruthy()
+			expect(match('10', 10)).toBeFalsy()
+			expect(match([], 10)).toBeFalsy()
+			expect(match({}, 10)).toBeFalsy()
+			expect(match(true, 10)).toBeFalsy()
 		})
 
 		test('string', () => {
-			expect(match(10, StringExpression('10'))).toBeFalsy()
-			expect(match('10', StringExpression('10'))).toBeTruthy()
-			expect(match([], StringExpression('10'))).toBeFalsy()
-			expect(match({}, StringExpression('10'))).toBeFalsy()
-			expect(match(true, StringExpression('10'))).toBeFalsy()
+			expect(match(10, '10')).toBeFalsy()
+			expect(match('10', '10')).toBeTruthy()
+			expect(match([], '10')).toBeFalsy()
+			expect(match({}, '10')).toBeFalsy()
+			expect(match(true, '10')).toBeFalsy()
 		})
 
 		test('identifier', () => {
@@ -86,11 +64,11 @@ describe('runtime', () => {
 		})
 
 		test('1-match-number arrays', () => {
-			expect(match('10', ArrayExpression([NumberExpression(1)]))).toBeFalsy()
-			expect(match([1], ArrayExpression([NumberExpression(1)]))).toBeTruthy()
-			expect(match([], ArrayExpression([NumberExpression(1)]))).toBeFalsy()
-			expect(match({}, ArrayExpression([NumberExpression(1)]))).toBeFalsy()
-			expect(match(true, ArrayExpression([NumberExpression(1)]))).toBeFalsy()
+			expect(match('10', ArrayExpression([1]))).toBeFalsy()
+			expect(match([1], ArrayExpression([1]))).toBeTruthy()
+			expect(match([], ArrayExpression([1]))).toBeFalsy()
+			expect(match({}, ArrayExpression([1]))).toBeFalsy()
+			expect(match(true, ArrayExpression([1]))).toBeFalsy()
 		})
 
 		test('1-match-identifier arrays', () => {

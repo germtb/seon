@@ -240,10 +240,12 @@ describe('transpile', () => {
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
-			'match(true, [ ' +
-				'{ pattern: true, result: 1 }, ' +
-				'{ pattern: false, result: 0 } ' +
+			[
+				'match(true, [',
+				'{ pattern: true, result: 1 },',
+				'{ pattern: false, result: 0 }',
 				'])'
+			].join('\n')
 		)
 	})
 
@@ -252,10 +254,12 @@ describe('transpile', () => {
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
-			'match(false, [ ' +
-				'{ pattern: true, result: 1 }, ' +
-				'{ pattern: false, result: 0 } ' +
+			[
+				'match(false, [',
+				'{ pattern: true, result: 1 },',
+				'{ pattern: false, result: 0 }',
 				'])'
+			].join('\n')
 		)
 	})
 
@@ -267,9 +271,9 @@ describe('transpile', () => {
 			[
 				'match(false, [',
 				'{ pattern: true, result: 1 },',
-				'{ pattern: _, result: 0 }',
+				"{ pattern: { type: 'NoPattern' }, result: 0 }",
 				'])'
-			].join(' ')
+			].join('\n')
 		)
 	})
 
@@ -278,22 +282,29 @@ describe('transpile', () => {
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
-			'match(1, [ ' +
-				'{ pattern: 0, result: 1 }, ' +
-				'{ pattern: 1, result: 2 }, ' +
-				'{ pattern: _, result: 3 } ' +
+			[
+				'match(1, [',
+				'{ pattern: 0, result: 1 },',
+				'{ pattern: 1, result: 2 },',
+				"{ pattern: { type: 'NoPattern' }, result: 3 }",
 				'])'
+			].join('\n')
 		)
 	})
 
-	// test('Pattern matching any pattern #1', () => {
-	// 	const tokens = tokenizer('match 1 | 0 -> 1 | n -> n')
-	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0])
-	// 	expect(result).toEqual(
-	// 		'match(1, [ { pattern: 0, result: 1 }, { pattern: 1, result: 2 }, { pattern: _, result: 3 } ])'
-	// 	)
-	// })
+	test('Pattern matching any pattern #1', () => {
+		const tokens = tokenizer('match 1 | 0 -> 1 | n -> n')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			[
+				'match(1, [',
+				'{ pattern: 0, result: 1 },',
+				"{ pattern: { type: 'IdentifierExpression', name: 'n' }, result: n }",
+				'])'
+			].join('\n')
+		)
+	})
 
 	// test('Pattern matching array pattern #2', () => {
 	// 	const tokens = tokenizer('match [] | [] -> 0 | [x, ...xs] -> x')

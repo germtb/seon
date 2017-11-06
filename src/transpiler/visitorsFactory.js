@@ -5,8 +5,10 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	ImportDeclaration: () => {
 		return ''
 	},
-	IdentifierExpression: node => {
-		return node.name
+	IdentifierExpression: (node, { context }) => {
+		return context === 'patternMatching'
+			? `{ type: 'IdentifierExpression', name: '${node.name}' }`
+			: node.name
 	},
 	BooleanExpression: node => {
 		return node.value ? 'true' : 'false'
@@ -15,18 +17,26 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		return node.value
 	},
 	StringExpression: node => {
-		return '"' + node.value + '"'
+		return `"${node.value}"`
 	},
-	ArrayExpression: node => {
-		if (node.values.length === 0) {
-			return '[]'
-		}
-		return '[ ' + node.values.map(transpile).join(', ') + ' ]'
+	ArrayExpression: (node, internals) => {
+		const { context } = internals
+		const type = s =>
+			context === 'patternMatching' ? `ArrayExpression(${s})` : s
+
+		const value =
+			node.values.length === 0
+				? '[]'
+				: `[ ${node.values
+						.map(node => transpile(node, internals))
+						.join(', ')} ]`
+
+		return type(value)
 	},
-	ObjectExpression: node => {
-		if (node.properties.length === 0) {
-			return '{}'
-		}
+	ObjectExpression: (node, internals) => {
+		const { context } = internals
+		const type = s =>
+			context === 'patternMatching' ? `ObjectExpression(${s})` : s
 
 		const properties = node.properties.map(p => {
 			const node = p.property
@@ -40,7 +50,13 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 
 			throw 'Unrecognised object property'
 		})
-		return ['{', properties.join(', '), '}'].join(' ')
+
+		const value =
+			node.properties.length === 0
+				? '{}'
+				: ['{', properties.join(', '), '}'].join(' ')
+
+		return type(value)
 	},
 	NamedParameter: node => {
 		return [
@@ -79,29 +95,37 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	FunctionExpression: node => {
 		return createFunction(node)
 	},
-	CallExpression: node => {
-		const parameters = node.parameters.map(transpile).join(', ')
+	CallExpression: (node, internals) => {
+		const parameters = node.parameters
+			.map(node => transpile(node, internals))
+			.join(', ')
 		return `${transpile(node.callee)}([${parameters}])`
 	},
-	LetExpression: node => {
-		// const letScope = [...scopes, {}]
-		// node.declarations.forEach(d => {
-		// 	transpile(d, letScope)
-		// })
-		// return transpile(node.expression, letScope)
-	},
-	PatternExpression: node => {
+	// LetExpression: (node, internals) => {
+	// 	// const letScope = [...scopes, {}]
+	// 	// node.declarations.forEach(d => {
+	// 	// 	transpile(d, letScope)
+	// 	// })
+	// 	// return transpile(node.expression, letScope)
+	// },
+	PatternExpression: (node, internals) => {
 		const expression = transpile(node.expression)
-		const patterns = node.patternCases.map(transpile).join(', ')
-		return `match(${expression}, [ ${patterns} ])`
+		const patterns = node.patternCases
+			.map(node => transpile(node, internals))
+			.join(',\n')
+
+		return [`match(${expression}, [`, `${patterns}`, '])'].join('\n')
 	},
-	PatternCase: node => {
-		const pattern = transpile(node.pattern)
+	PatternCase: (node, internals) => {
+		const pattern = transpile(node.pattern, {
+			...internals,
+			context: 'patternMatching'
+		})
 		const result = transpile(node.result)
 		return `{ pattern: ${pattern}, result: ${result} }`
 	},
 	NoPattern: () => {
-		return '_'
+		return "{ type: 'NoPattern' }"
 	},
 	Declaration: node => {
 		return `const ${transpile(node.declarator)} = ${transpile(node.value)}`
