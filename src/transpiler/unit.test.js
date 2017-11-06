@@ -241,7 +241,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
 			[
-				'match(true, [',
+				'matchExpression(true, [',
 				'{ pattern: true, result: () => 1 },',
 				'{ pattern: false, result: () => 0 }',
 				'])'
@@ -255,7 +255,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
 			[
-				'match(false, [',
+				'matchExpression(false, [',
 				'{ pattern: true, result: () => 1 },',
 				'{ pattern: false, result: () => 0 }',
 				'])'
@@ -269,7 +269,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
 			[
-				'match(false, [',
+				'matchExpression(false, [',
 				'{ pattern: true, result: () => 1 },',
 				"{ pattern: { type: 'NoPattern' }, result: () => 0 }",
 				'])'
@@ -283,7 +283,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
 			[
-				'match(1, [',
+				'matchExpression(1, [',
 				'{ pattern: 0, result: () => 1 },',
 				'{ pattern: 1, result: () => 2 },',
 				"{ pattern: { type: 'NoPattern' }, result: () => 3 }",
@@ -298,7 +298,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
 			[
-				'match(1, [',
+				'matchExpression(1, [',
 				'{ pattern: 0, result: () => 1 },',
 				"{ pattern: { type: 'IdentifierExpression', name: 'n' }, result: ({ n }) => n }",
 				'])'
@@ -312,7 +312,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
 			[
-				'match([], [',
+				'matchExpression([], [',
 				'{ pattern: [], result: () => 0 },',
 				"{ pattern: [ { type: 'IdentifierExpression', name: 'x' }, { type: 'RestElement', value: { name: 'xs' } } ], result: ({ x, xs }) => x }",
 				'])'
@@ -326,7 +326,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match([ 1 ], [',
+				'matchExpression([ 1 ], [',
 				'{ pattern: [], result: () => 0 },',
 				"{ pattern: [ { type: 'IdentifierExpression', name: 'x' } ], result: ({ x }) => x }",
 				'])'
@@ -340,7 +340,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match([ 1, 2 ], [',
+				'matchExpression([ 1, 2 ], [',
 				'{ pattern: [], result: () => 0 },',
 				"{ pattern: [ { type: 'IdentifierExpression', name: 'x' }, { type: 'IdentifierExpression', name: 'y' } ], result: ({ x, y }) => x + y }",
 				'])'
@@ -354,7 +354,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match([ 1, 2, 3 ], [',
+				'matchExpression([ 1, 2, 3 ], [',
 				"{ pattern: [ { type: 'IdentifierExpression', name: 'x' }, { type: 'IdentifierExpression', name: 'y' } ], result: ({ x, y }) => x + y },",
 				"{ pattern: { type: 'NoPattern' }, result: () => 10 }",
 				'])'
@@ -368,7 +368,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match([ 1, 2, 3 ], [',
+				'matchExpression([ 1, 2, 3 ], [',
 				"{ pattern: [ { type: 'IdentifierExpression', name: 'x' }, { type: 'RestElement', value: { name: 'xs' } } ], result: ({ x, xs }) => x }",
 				'])'
 			].join('\n')
@@ -381,7 +381,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match({}, [',
+				'matchExpression({}, [',
 				'{ pattern: ObjectExpression([]), result: () => 0 }',
 				'])'
 			].join('\n')
@@ -394,7 +394,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match({ x: 1 }, [',
+				'matchExpression({ x: 1 }, [',
 				'{ pattern: ObjectExpression([]), result: () => 0 },',
 				"{ pattern: ObjectExpression([ { type: 'IdentifierExpression', name: 'x' } ]), result: ({ x }) => x }",
 				'])'
@@ -410,7 +410,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match({ x: 1, y: 10 }, [',
+				'matchExpression({ x: 1, y: 10 }, [',
 				'{ pattern: ObjectExpression([]), result: () => 0 },',
 				"{ pattern: ObjectExpression([ { type: 'IdentifierExpression', name: 'x' } ]), result: ({ x }) => x },",
 				"{ pattern: ObjectExpression([ { type: 'IdentifierExpression', name: 'x' }, { type: 'IdentifierExpression', name: 'y' } ]), result: ({ x, y }) => x + y }",
@@ -427,7 +427,7 @@ describe('transpile', () => {
 		const result = transpile(nodes[0].nodes[0])
 		expect(result).toEqual(
 			[
-				'match({ x: 1, y: 10 }, [',
+				'matchExpression({ x: 1, y: 10 }, [',
 				'{ pattern: ObjectExpression([]), result: () => 0 },',
 				"{ pattern: ObjectExpression([ { type: 'IdentifierExpression', name: 'x' }, { type: 'RestElement', value: { name: 'xs' } } ]), result: ({ x, xs }) => xs }",
 				'])'

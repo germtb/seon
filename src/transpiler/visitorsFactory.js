@@ -127,7 +127,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			.map(node => transpile(node, internals))
 			.join(',\n')
 
-		return [`match(${expression}, [`, `${patterns}`, '])'].join('\n')
+		return [`matchExpression(${expression}, [`, `${patterns}`, '])'].join('\n')
 	},
 	PatternCase: (node, internals) => {
 		const pattern = transpile(node.pattern, {

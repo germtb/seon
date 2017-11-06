@@ -85,7 +85,7 @@ var match = exports.match = function match(expression, pattern) {
 				var _p2 = pattern[_i2];
 				var _e2 = expression[_i2];
 
-				if (!_e2 || !match(_e2, _p2, matchedParams)) {
+				if (_e2 === null || _e2 === undefined || !match(_e2, _p2, matchedParams)) {
 					return false;
 				}
 			}
@@ -114,10 +114,10 @@ var matchExpression = exports.matchExpression = function matchExpression(express
 	for (var i = 0; i < cases.length; i++) {
 		var pattern = cases[i].pattern;
 		var matchedParams = {};
-		var matched = match(pattern, expression, matchedParams);
+		var matched = match(expression, pattern, matchedParams);
 
 		if (matched) {
-			return pattern.result(matchedParams);
+			return cases[i].result(matchedParams);
 		}
 	}
 

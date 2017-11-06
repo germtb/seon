@@ -132,7 +132,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 				return transpile(node, internals);
 			}).join(',\n');
 
-			return ['match(' + expression + ', [', '' + patterns, '])'].join('\n');
+			return ['matchExpression(' + expression + ', [', '' + patterns, '])'].join('\n');
 		},
 		PatternCase: function PatternCase(node, internals) {
 			var pattern = transpile(node.pattern, _extends({}, internals, {

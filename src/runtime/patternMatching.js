@@ -75,7 +75,7 @@ export const match = (expression, pattern, matchedParams = {}) => {
 				const p = pattern[i]
 				const e = expression[i]
 
-				if (!e || !match(e, p, matchedParams)) {
+				if (e === null || e === undefined || !match(e, p, matchedParams)) {
 					return false
 				}
 			}
@@ -106,10 +106,10 @@ export const matchExpression = (expression, cases) => {
 	for (let i = 0; i < cases.length; i++) {
 		const pattern = cases[i].pattern
 		const matchedParams = {}
-		const matched = match(pattern, expression, matchedParams)
+		const matched = match(expression, pattern, matchedParams)
 
 		if (matched) {
-			return pattern.result(matchedParams)
+			return cases[i].result(matchedParams)
 		}
 	}
 
