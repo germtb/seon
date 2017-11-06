@@ -15,11 +15,13 @@ var _parser2 = _interopRequireDefault(_parser);
 
 var _visitorsFactory = require('./visitorsFactory');
 
+var _createFunction = require('./createFunction');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createEval = function createEval() {
+var createTranspile = function createTranspile() {
 	var transpile = function transpile(node) {
-		var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
+		var internals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 		var type = node.type;
 		var visitor = visitors[type];
@@ -28,28 +30,29 @@ var createEval = function createEval() {
 			return type + ' is not a visitor';
 		}
 
-		return visitor(node, scopes);
+		return visitor(node, internals);
 	};
 
 	var run = function run(code) {
-		var scopes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [{}];
-
 		var tokens = (0, _tokenizer2.default)(code);
 		var nodes = (0, _parser2.default)(tokens);
-		return transpile(nodes[0], scopes);
+		return transpile(nodes[0]);
 	};
+
+	var createFunction = (0, _createFunction.createFunctionFactory)({ transpile: transpile });
 
 	var visitors = (0, _visitorsFactory.visitorsFactory)({
 		transpile: transpile,
-		run: run
+		run: run,
+		createFunction: createFunction
 	});
 
 	return { transpile: transpile, run: run };
 };
 
-var _createEval = createEval(),
-    transpile = _createEval.transpile,
-    run = _createEval.run;
+var _createTranspile = createTranspile(),
+    transpile = _createTranspile.transpile,
+    run = _createTranspile.run;
 
 exports.transpile = transpile;
 exports.run = run;

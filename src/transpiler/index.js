@@ -3,7 +3,7 @@ import parse from '../parser'
 import { visitorsFactory } from './visitorsFactory'
 import { createFunctionFactory } from './createFunction'
 
-const createEval = () => {
+const createTranspile = () => {
 	const transpile = (node, internals = {}) => {
 		const type = node.type
 		const visitor = visitors[type]
@@ -15,10 +15,10 @@ const createEval = () => {
 		return visitor(node, internals)
 	}
 
-	const run = (code, scopes = [{}]) => {
+	const run = code => {
 		const tokens = tokenizer(code)
 		const nodes = parse(tokens)
-		return transpile(nodes[0], scopes)
+		return transpile(nodes[0])
 	}
 
 	const createFunction = createFunctionFactory({ transpile })
@@ -32,4 +32,4 @@ const createEval = () => {
 	return { transpile, run }
 }
 
-export const { transpile, run } = createEval()
+export const { transpile, run } = createTranspile()
