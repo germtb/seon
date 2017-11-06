@@ -242,8 +242,8 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				'match(true, [',
-				'{ pattern: true, result: 1 },',
-				'{ pattern: false, result: 0 }',
+				'{ pattern: true, result: () => 1 },',
+				'{ pattern: false, result: () => 0 }',
 				'])'
 			].join('\n')
 		)
@@ -256,8 +256,8 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				'match(false, [',
-				'{ pattern: true, result: 1 },',
-				'{ pattern: false, result: 0 }',
+				'{ pattern: true, result: () => 1 },',
+				'{ pattern: false, result: () => 0 }',
 				'])'
 			].join('\n')
 		)
@@ -270,8 +270,8 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				'match(false, [',
-				'{ pattern: true, result: 1 },',
-				"{ pattern: { type: 'NoPattern' }, result: 0 }",
+				'{ pattern: true, result: () => 1 },',
+				"{ pattern: { type: 'NoPattern' }, result: () => 0 }",
 				'])'
 			].join('\n')
 		)
@@ -284,9 +284,9 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				'match(1, [',
-				'{ pattern: 0, result: 1 },',
-				'{ pattern: 1, result: 2 },',
-				"{ pattern: { type: 'NoPattern' }, result: 3 }",
+				'{ pattern: 0, result: () => 1 },',
+				'{ pattern: 1, result: () => 2 },',
+				"{ pattern: { type: 'NoPattern' }, result: () => 3 }",
 				'])'
 			].join('\n')
 		)
@@ -299,8 +299,8 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				'match(1, [',
-				'{ pattern: 0, result: 1 },',
-				"{ pattern: { type: 'IdentifierExpression', name: 'n' }, result: n }",
+				'{ pattern: 0, result: () => 1 },',
+				"{ pattern: { type: 'IdentifierExpression', name: 'n' }, result: ({ n }) => n }",
 				'])'
 			].join('\n')
 		)
@@ -309,8 +309,15 @@ describe('transpile', () => {
 	// test('Pattern matching array pattern #2', () => {
 	// 	const tokens = tokenizer('match [] | [] -> 0 | [x, ...xs] -> x')
 	// 	const nodes = parse(tokens)
-	// 	const result = transpile(nodes[0].nodes[0])
-	// 	expect(result).toEqual({ value: 0, type: 'Number' })
+	// 	const result = transpile(nodes[0])
+	// 	expect(result).toEqual(
+	// 		[
+	// 			'match([], [',
+	// 			'{ pattern: [], result: 0 },',
+	// 			'{ pattern: [], result: x }',
+	// 			'])'
+	// 		].join('\n')
+	// 	)
 	// })
 
 	// test('Pattern matching array pattern #3', () => {

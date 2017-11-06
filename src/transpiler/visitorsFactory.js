@@ -122,7 +122,32 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			context: 'patternMatching'
 		})
 		const result = transpile(node.result)
-		return `{ pattern: ${pattern}, result: ${result} }`
+		const parameters = []
+
+		const visitors = {
+			IdentifierExpression: node => {
+				parameters.push(node.name)
+			},
+			ArrayExpression: node => {
+				console.log('node: ', node)
+			},
+			ObjectExpression: node => {
+				console.log('node: ', node)
+			}
+		}
+
+		const visit = node => {
+			const visitor = visitors[node.type]
+			visitor && visitor(node)
+		}
+
+		visit(node.pattern)
+
+		const transpiledParameters = parameters.length
+			? `{ ${parameters.join(', ')} }`
+			: ''
+
+		return `{ pattern: ${pattern}, result: (${transpiledParameters}) => ${result} }`
 	},
 	NoPattern: () => {
 		return "{ type: 'NoPattern' }"
