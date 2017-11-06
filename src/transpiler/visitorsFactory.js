@@ -20,10 +20,6 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		return `"${node.value}"`
 	},
 	ArrayExpression: (node, internals) => {
-		const { context } = internals
-		const type = s =>
-			context === 'patternMatching' ? `ArrayExpression(${s})` : s
-
 		const value =
 			node.values.length === 0
 				? '[]'
@@ -31,32 +27,32 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 						.map(node => transpile(node, internals))
 						.join(', ')} ]`
 
-		return type(value)
+		return value
 	},
 	ObjectExpression: (node, internals) => {
-		const { context } = internals
-		const type = s =>
-			context === 'patternMatching' ? `ObjectExpression(${s})` : s
-
 		const properties = node.properties.map(p => {
 			const node = p.property
+
 			if (node.type === 'NamedParameter') {
 				return `${node.name}: ${transpile(node.value)}`
 			} else if (node.type === 'IdentifierExpression') {
-				return node.name
+				return transpile(node, internals)
 			} else if (node.type === 'RestElement') {
-				return `...${node.value.name}`
+				return transpile(node, internals)
 			}
 
 			throw 'Unrecognised object property'
 		})
 
-		const value =
-			node.properties.length === 0
-				? '{}'
-				: ['{', properties.join(', '), '}'].join(' ')
+		if (internals.context === 'patternMatching') {
+			return `ObjectExpression(${node.properties.length === 0
+				? '[]'
+				: ['[', properties.join(', '), ']'].join(' ')})`
+		}
 
-		return type(value)
+		return node.properties.length === 0
+			? '{}'
+			: ['{', properties.join(', '), '}'].join(' ')
 	},
 	NamedParameter: node => {
 		return [
@@ -67,8 +63,10 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			'}'
 		].join(' ')
 	},
-	RestElement: node => {
-		return `...${transpile(node.value)}`
+	RestElement: (node, { context }) => {
+		return context === 'patternMatching'
+			? `{ type: 'RestElement', value: { name: '${node.value.name}' } }`
+			: `...${transpile(node.value)}`
 	},
 	ObjectProperty: node => {
 		return transpile(node.property)
@@ -129,10 +127,13 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 				parameters.push(node.name)
 			},
 			ArrayExpression: node => {
-				console.log('node: ', node)
+				node.values.forEach(v => visit(v))
+			},
+			RestElement: node => {
+				parameters.push(node.value.name)
 			},
 			ObjectExpression: node => {
-				console.log('node: ', node)
+				node.properties.forEach(p => visit(p.property))
 			}
 		}
 
