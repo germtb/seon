@@ -35,7 +35,7 @@ x = [0, 1, 2]
 
 // Objects
 foo = { x: 10 }
-bar = { y: 10, ...x }
+bar = { y: 10, ...foo }
 
 // Object access
 foo.x
