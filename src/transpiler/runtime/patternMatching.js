@@ -58,21 +58,21 @@ export const match = (expression, pattern, matchedParams = {}) => {
 
 			return notRestElements.length === Object.keys(expression).length
 		}
-	} else if (pattern.type === 'ArrayExpression') {
+	} else if (Array.isArray(pattern)) {
 		if (!Array.isArray(expression)) {
 			return false
 		}
 
-		if (pattern.values.length === 0) {
+		if (pattern.length === 0) {
 			return expression.length === 0
 		}
 
-		const lastElement = pattern.values[pattern.values.length - 1]
+		const lastElement = pattern[pattern.length - 1]
 		const restElement = lastElement.type === 'RestElement' ? lastElement : false
 
 		if (restElement) {
-			for (let i = 0; i < pattern.values.length - 1; i++) {
-				const p = pattern.values[i]
+			for (let i = 0; i < pattern.length - 1; i++) {
+				const p = pattern[i]
 				const e = expression[i]
 
 				if (!e || !match(e, p, matchedParams)) {
@@ -82,12 +82,12 @@ export const match = (expression, pattern, matchedParams = {}) => {
 
 			matchedParams[restElement.value.name] =
 				matchedParams[restElement.value.name] ||
-				expression.slice(pattern.values.length - 1)
+				expression.slice(pattern.length - 1)
 
 			return true
 		} else {
-			for (let i = 0; i < pattern.values.length; i++) {
-				const p = pattern.values[i]
+			for (let i = 0; i < pattern.length; i++) {
+				const p = pattern[i]
 				const e = expression[i]
 
 				if (!match(e, p, matchedParams)) {
@@ -95,7 +95,7 @@ export const match = (expression, pattern, matchedParams = {}) => {
 				}
 			}
 
-			return pattern.values.length === expression.length
+			return pattern.length === expression.length
 		}
 	}
 

@@ -1,10 +1,5 @@
 import { match } from './patternMatching'
-import {
-	IdentifierExpression,
-	ArrayExpression,
-	RestElement,
-	ObjectExpression
-} from './types'
+import { IdentifierExpression, RestElement, ObjectExpression } from './types'
 
 describe('runtime', () => {
 	describe('match', () => {
@@ -55,76 +50,50 @@ describe('runtime', () => {
 		})
 
 		test('empty arrays', () => {
-			expect(match(10, ArrayExpression([]))).toBeFalsy()
-			expect(match('10', ArrayExpression([]))).toBeFalsy()
-			expect(match([1], ArrayExpression([]))).toBeFalsy()
-			expect(match([], ArrayExpression([]))).toBeTruthy()
-			expect(match({}, ArrayExpression([]))).toBeFalsy()
-			expect(match(true, ArrayExpression([]))).toBeFalsy()
+			expect(match(10, [])).toBeFalsy()
+			expect(match('10', [])).toBeFalsy()
+			expect(match([1], [])).toBeFalsy()
+			expect(match([], [])).toBeTruthy()
+			expect(match({}, [])).toBeFalsy()
+			expect(match(true, [])).toBeFalsy()
 		})
 
 		test('1-match-number arrays', () => {
-			expect(match('10', ArrayExpression([1]))).toBeFalsy()
-			expect(match([1], ArrayExpression([1]))).toBeTruthy()
-			expect(match([], ArrayExpression([1]))).toBeFalsy()
-			expect(match({}, ArrayExpression([1]))).toBeFalsy()
-			expect(match(true, ArrayExpression([1]))).toBeFalsy()
+			expect(match('10', [1])).toBeFalsy()
+			expect(match([1], [1])).toBeTruthy()
+			expect(match([], [1])).toBeFalsy()
+			expect(match({}, [1])).toBeFalsy()
+			expect(match(true, [1])).toBeFalsy()
 		})
 
 		test('1-match-identifier arrays', () => {
 			const matchedScope = {}
-			expect(
-				match('10', ArrayExpression([IdentifierExpression('x')]))
-			).toBeFalsy()
-			expect(
-				match([1], ArrayExpression([IdentifierExpression('x')]), matchedScope)
-			).toBeTruthy()
+			expect(match('10', [IdentifierExpression('x')])).toBeFalsy()
+			expect(match([1], [IdentifierExpression('x')], matchedScope)).toBeTruthy()
 			expect(matchedScope['x']).toEqual(1)
-			expect(
-				match([], ArrayExpression([IdentifierExpression('x')]))
-			).toBeFalsy()
-			expect(
-				match({}, ArrayExpression([IdentifierExpression('x')]))
-			).toBeFalsy()
-			expect(
-				match(true, ArrayExpression([IdentifierExpression('x')]))
-			).toBeFalsy()
+			expect(match([], [IdentifierExpression('x')])).toBeFalsy()
+			expect(match({}, [IdentifierExpression('x')])).toBeFalsy()
+			expect(match(true, [IdentifierExpression('x')])).toBeFalsy()
 		})
 
 		test('n-match-identifier arrays', () => {
 			const matchedScope = {}
 			expect(
-				match(
-					'10',
-					ArrayExpression([IdentifierExpression('x'), RestElement('xs')])
-				)
+				match('10', [IdentifierExpression('x'), RestElement('xs')])
 			).toBeFalsy()
 			expect(
-				match(
-					[1],
-					ArrayExpression([IdentifierExpression('x'), RestElement('xs')]),
-					matchedScope
-				)
+				match([1], [IdentifierExpression('x'), RestElement('xs')], matchedScope)
 			).toBeTruthy()
 			expect(matchedScope['x']).toEqual(1)
 			expect(matchedScope['xs']).toEqual([])
 			expect(
-				match(
-					[],
-					ArrayExpression([IdentifierExpression('x'), RestElement('xs')])
-				)
+				match([], [IdentifierExpression('x'), RestElement('xs')])
 			).toBeFalsy()
 			expect(
-				match(
-					{},
-					ArrayExpression([IdentifierExpression('x'), RestElement('xs')])
-				)
+				match({}, [IdentifierExpression('x'), RestElement('xs')])
 			).toBeFalsy()
 			expect(
-				match(
-					true,
-					ArrayExpression([IdentifierExpression('x'), RestElement('xs')])
-				)
+				match(true, [IdentifierExpression('x'), RestElement('xs')])
 			).toBeFalsy()
 		})
 
