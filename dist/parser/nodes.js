@@ -286,47 +286,17 @@ var FunctionExpression = exports.FunctionExpression = function (_Expression8) {
 	return FunctionExpression;
 }(Expression);
 
-var FunctionBody = exports.FunctionBody = function (_Node11) {
-	_inherits(FunctionBody, _Node11);
-
-	function FunctionBody(nodes) {
-		_classCallCheck(this, FunctionBody);
-
-		var _this19 = _possibleConstructorReturn(this, (FunctionBody.__proto__ || Object.getPrototypeOf(FunctionBody)).call(this, 'FunctionBody'));
-
-		_this19.nodes = nodes;
-		return _this19;
-	}
-
-	return FunctionBody;
-}(Node);
-
-var ReturnStatement = exports.ReturnStatement = function (_Node12) {
-	_inherits(ReturnStatement, _Node12);
-
-	function ReturnStatement(value) {
-		_classCallCheck(this, ReturnStatement);
-
-		var _this20 = _possibleConstructorReturn(this, (ReturnStatement.__proto__ || Object.getPrototypeOf(ReturnStatement)).call(this, 'ReturnStatement'));
-
-		_this20.value = value;
-		return _this20;
-	}
-
-	return ReturnStatement;
-}(Node);
-
 var CallExpression = exports.CallExpression = function (_Expression9) {
 	_inherits(CallExpression, _Expression9);
 
 	function CallExpression(callee, parameters) {
 		_classCallCheck(this, CallExpression);
 
-		var _this21 = _possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this, 'CallExpression'));
+		var _this19 = _possibleConstructorReturn(this, (CallExpression.__proto__ || Object.getPrototypeOf(CallExpression)).call(this, 'CallExpression'));
 
-		_this21.callee = callee;
-		_this21.parameters = parameters;
-		return _this21;
+		_this19.callee = callee;
+		_this19.parameters = parameters;
+		return _this19;
 	}
 
 	return CallExpression;
@@ -344,33 +314,33 @@ var NoPattern = exports.NoPattern = function (_Expression10) {
 	return NoPattern;
 }(Expression);
 
-var PatternCase = exports.PatternCase = function (_Node13) {
-	_inherits(PatternCase, _Node13);
+var PatternCase = exports.PatternCase = function (_Node11) {
+	_inherits(PatternCase, _Node11);
 
 	function PatternCase(pattern, result) {
 		_classCallCheck(this, PatternCase);
 
-		var _this23 = _possibleConstructorReturn(this, (PatternCase.__proto__ || Object.getPrototypeOf(PatternCase)).call(this, 'PatternCase'));
+		var _this21 = _possibleConstructorReturn(this, (PatternCase.__proto__ || Object.getPrototypeOf(PatternCase)).call(this, 'PatternCase'));
 
-		_this23.pattern = pattern;
-		_this23.result = result;
-		return _this23;
+		_this21.pattern = pattern;
+		_this21.result = result;
+		return _this21;
 	}
 
 	return PatternCase;
 }(Node);
 
-var PatternExpression = exports.PatternExpression = function (_Node14) {
-	_inherits(PatternExpression, _Node14);
+var PatternExpression = exports.PatternExpression = function (_Node12) {
+	_inherits(PatternExpression, _Node12);
 
 	function PatternExpression(expression, patternCases) {
 		_classCallCheck(this, PatternExpression);
 
-		var _this24 = _possibleConstructorReturn(this, (PatternExpression.__proto__ || Object.getPrototypeOf(PatternExpression)).call(this, 'PatternExpression'));
+		var _this22 = _possibleConstructorReturn(this, (PatternExpression.__proto__ || Object.getPrototypeOf(PatternExpression)).call(this, 'PatternExpression'));
 
-		_this24.expression = expression;
-		_this24.patternCases = patternCases;
-		return _this24;
+		_this22.expression = expression;
+		_this22.patternCases = patternCases;
+		return _this22;
 	}
 
 	return PatternExpression;
@@ -382,11 +352,11 @@ var Declaration = exports.Declaration = function (_Statement) {
 	function Declaration(declarator, value) {
 		_classCallCheck(this, Declaration);
 
-		var _this25 = _possibleConstructorReturn(this, (Declaration.__proto__ || Object.getPrototypeOf(Declaration)).call(this, 'Declaration'));
+		var _this23 = _possibleConstructorReturn(this, (Declaration.__proto__ || Object.getPrototypeOf(Declaration)).call(this, 'Declaration'));
 
-		_this25.declarator = declarator;
-		_this25.value = value;
-		return _this25;
+		_this23.declarator = declarator;
+		_this23.value = value;
+		return _this23;
 	}
 
 	return Declaration;
@@ -398,11 +368,11 @@ var ImportDeclaration = exports.ImportDeclaration = function (_Statement2) {
 	function ImportDeclaration(declarator, path) {
 		_classCallCheck(this, ImportDeclaration);
 
-		var _this26 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
+		var _this24 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
 
-		_this26.declarator = declarator;
-		_this26.path = path;
-		return _this26;
+		_this24.declarator = declarator;
+		_this24.path = path;
+		return _this24;
 	}
 
 	return ImportDeclaration;
@@ -414,11 +384,11 @@ var LetExpression = exports.LetExpression = function (_Expression11) {
 	function LetExpression(declarations, expression) {
 		_classCallCheck(this, LetExpression);
 
-		var _this27 = _possibleConstructorReturn(this, (LetExpression.__proto__ || Object.getPrototypeOf(LetExpression)).call(this, 'LetExpression'));
+		var _this25 = _possibleConstructorReturn(this, (LetExpression.__proto__ || Object.getPrototypeOf(LetExpression)).call(this, 'LetExpression'));
 
-		_this27.declarations = declarations;
-		_this27.expression = expression;
-		return _this27;
+		_this25.declarations = declarations;
+		_this25.expression = expression;
+		return _this25;
 	}
 
 	return LetExpression;

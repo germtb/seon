@@ -37,7 +37,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 		File: function File(node) {
 			return node.nodes.map(function (node) {
 				return transpile(node);
-			}).join('\n');
+			}).join('\n\n');
 		},
 		ImportDeclaration: function ImportDeclaration() {
 			return '';

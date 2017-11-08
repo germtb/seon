@@ -77,7 +77,7 @@ describe('transpile', () => {
 		const tokens = tokenizer("x = { test: 'Hello' }\ny = x.test")
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('const x = { test: "Hello" }\nconst y = x.test')
+		expect(result).toEqual('const x = { test: "Hello" }\n\nconst y = x.test')
 	})
 
 	test('an array-shape declaration #1', () => {
@@ -91,7 +91,7 @@ describe('transpile', () => {
 		const tokens = tokenizer('x = [ 1, 2, 3 ]\ny = [ 0, ...x ]')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('const x = [ 1, 2, 3 ]\nconst y = [ 0, ...x ]')
+		expect(result).toEqual('const x = [ 1, 2, 3 ]\n\nconst y = [ 0, ...x ]')
 	})
 
 	test('an object expression #1', () => {
@@ -112,14 +112,16 @@ describe('transpile', () => {
 		const tokens = tokenizer('x = 10\ny = { x }')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('const x = 10\nconst y = { x }')
+		expect(result).toEqual(['const x = 10', 'const y = { x }'].join('\n\n'))
 	})
 
 	test('an object expression #4', () => {
 		const tokens = tokenizer('x = { x: 10, y: 20 }\ny = { ...x } ')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
-		expect(result).toEqual('const x = { x: 10, y: 20 }\nconst y = { ...x }')
+		expect(result).toEqual(
+			['const x = { x: 10, y: 20 }', 'const y = { ...x }'].join('\n\n')
+		)
 	})
 
 	test('an object expression #5', () => {
@@ -129,7 +131,11 @@ describe('transpile', () => {
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual(
-			'const x = "hello"\nconst y = { y1: 10, y2: 20 }\nconst z = { x, ...y, z: [ 0, 1, 2 ] }'
+			[
+				'const x = "hello"',
+				'const y = { y1: 10, y2: 20 }',
+				'const z = { x, ...y, z: [ 0, 1, 2 ] }'
+			].join('\n\n')
 		)
 	})
 
@@ -148,7 +154,7 @@ describe('transpile', () => {
 			[
 				"const f = createFunction(['x'], ({ x }) => x)",
 				"const x = f([{ type: 'NamedParameter', name: 'x', value: 10 }])"
-			].join('\n')
+			].join('\n\n')
 		)
 	})
 
@@ -163,7 +169,7 @@ describe('transpile', () => {
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x + y)",
 				"const x = f([{ type: 'NamedParameter', name: 'x', value: 10 }, { type: 'NamedParameter', name: 'y', value: 20 }])"
-			].join('\n')
+			].join('\n\n')
 		)
 	})
 
@@ -179,7 +185,7 @@ describe('transpile', () => {
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
 				"const x = f([{ type: 'NamedParameter', name: 'y', value: 2 }, { type: 'NamedParameter', name: 'x', value: 4 }])"
-			].join('\n')
+			].join('\n\n')
 		)
 	})
 
@@ -195,7 +201,7 @@ describe('transpile', () => {
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
 				"const x = f([{ type: 'NamedParameter', name: 'y', value: 2 }, 4])"
-			].join('\n')
+			].join('\n\n')
 		)
 	})
 
@@ -211,7 +217,7 @@ describe('transpile', () => {
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
 				"const x = f([4, { type: 'NamedParameter', name: 'y', value: 2 }])"
-			].join('\n')
+			].join('\n\n')
 		)
 	})
 
@@ -231,7 +237,7 @@ describe('transpile', () => {
 				"const a = f([{ type: 'NamedParameter', name: 'y', value: 10 }])",
 				"const b = a([{ type: 'NamedParameter', name: 'z', value: 100 }])",
 				'const c = b([1])'
-			].join('\n')
+			].join('\n\n')
 		)
 	})
 

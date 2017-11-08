@@ -2,7 +2,8 @@
 	"name": "seon",
 	"bin": {
 		"seon": "./bin/seon.js",
-		"seon-transpile": "./bin/seon-transpile.js"
+		"seon-transpile": "./bin/seon-transpile.js",
+		"seon-node": "./bin/seon-node.js"
 	},
 	"version": "1.0.0",
 	"description": "",

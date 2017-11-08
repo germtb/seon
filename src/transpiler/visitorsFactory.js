@@ -17,7 +17,7 @@ const parameterBuilderVisitor = visitFactory({
 
 export const visitorsFactory = ({ transpile, createFunction }) => ({
 	File: node => {
-		return node.nodes.map(node => transpile(node)).join('\n')
+		return node.nodes.map(node => transpile(node)).join('\n\n')
 	},
 	ImportDeclaration: () => {
 		return ''

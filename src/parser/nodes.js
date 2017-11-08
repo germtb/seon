@@ -134,20 +134,6 @@ export class FunctionExpression extends Expression {
 	}
 }
 
-export class FunctionBody extends Node {
-	constructor(nodes) {
-		super('FunctionBody')
-		this.nodes = nodes
-	}
-}
-
-export class ReturnStatement extends Node {
-	constructor(value) {
-		super('ReturnStatement')
-		this.value = value
-	}
-}
-
 export class CallExpression extends Expression {
 	constructor(callee, parameters) {
 		super('CallExpression')

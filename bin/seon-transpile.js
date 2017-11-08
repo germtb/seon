@@ -26,7 +26,7 @@ if (!output) {
 	const runtime = runtimeModules.reduce((acc, filepath) => {
 		const filename = path.resolve(__dirname, filepath)
 		const file = fs.readFileSync(filename, 'utf8')
-		return acc + '\n' + file
+		return acc + '\n' + file.replace('export ', '')
 	}, '')
 
 	const fileWithRuntime = runtime + '\n' + transpiledFile
