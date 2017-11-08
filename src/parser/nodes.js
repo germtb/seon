@@ -21,12 +21,20 @@ export class File extends Node {
 		super('File')
 		this.nodes = nodes
 	}
+
+	flatMapChildren(f) {
+		return new File(this.nodes.reduce((acc, node) => [...acc, ...f(node)], []))
+	}
 }
 
 export class IdentifierExpression extends Node {
 	constructor(name) {
 		super('IdentifierExpression')
 		this.name = name
+	}
+
+	flatMapChildren() {
+		return new IdentifierExpression(this.name)
 	}
 }
 
@@ -35,6 +43,10 @@ export class BooleanExpression extends Expression {
 		super('BooleanExpression')
 		this.value = value
 	}
+
+	flatMapChildren() {
+		return new BooleanExpression(this.value)
+	}
 }
 
 export class NumberExpression extends Expression {
@@ -42,12 +54,20 @@ export class NumberExpression extends Expression {
 		super('NumberExpression')
 		this.value = value
 	}
+
+	flatMapChildren() {
+		return new NumberExpression(this.value)
+	}
 }
 
 export class StringExpression extends Expression {
 	constructor(value) {
 		super('StringExpression')
 		this.value = value
+	}
+
+	flatMapChildren() {
+		return new StringExpression(this.value)
 	}
 }
 
@@ -170,6 +190,10 @@ export class Declaration extends Statement {
 		this.declarator = declarator
 		this.value = value
 	}
+
+	flatMapChildren(f) {
+		return new Declaration(...f(this.declarator), ...f(this.value))
+	}
 }
 
 export class ImportDeclaration extends Statement {
@@ -177,6 +201,10 @@ export class ImportDeclaration extends Statement {
 		super('ImportDeclaration')
 		this.declarator = declarator
 		this.path = path
+	}
+
+	flatMapChildren(f) {
+		return new ImportDeclaration(f(this.declarator), this.path)
 	}
 }
 
