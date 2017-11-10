@@ -56,19 +56,19 @@ describe('traverse', () => {
 		expect(ast.nodes[0].value.value).toEqual(10)
 	})
 
-	test('flat maps nodes', () => {
-		const tokens = tokenizer("import x from './foo'")
-		const ast = parse(tokens)[0]
-		const node = traverse(ast, {
-			ImportDeclaration: {
-				flatMap: () => {
-					return [new NumberExpression(0), new NumberExpression(1)]
-				}
-			}
-		})
-
-		expect(node).toEqual([
-			new File([new NumberExpression(0), new NumberExpression(1)])
-		])
-	})
+	// test('flat maps nodes', () => {
+	// 	const tokens = tokenizer("import x from './foo'")
+	// 	const ast = parse(tokens)[0]
+	// 	const node = traverse(ast, {
+	// 		ImportDeclaration: {
+	// 			flatMap: () => {
+	// 				return [new NumberExpression(0), new NumberExpression(1)]
+	// 			}
+	// 		}
+	// 	})
+	//
+	// 	expect(node).toEqual([
+	// 		new File([new NumberExpression(0), new NumberExpression(1)])
+	// 	])
+	// })
 })

@@ -1,19 +1,22 @@
 import { Nothing, Just } from 'Maybe'
 import { Err, Ok } from 'Result'
-import { log } from 'Debug'
 import { stringify } from 'String'
+
+concat = (list1, list2) => match list1
+  | [] -> list2
+  | x :: xs -> x :: concat(xs, list2)
 
 map = (f, list) => match list
   | [] -> []
-  | [ x, ...xs ] -> [ f(x), ... map(f, xs) ]
+  | x :: xs -> f(x) :: map(f, xs)
 
 flatMap = (f, list) => match list
   | [] -> []
-  | [x, ...xs] -> [...f(x), ...flatMap(f, xs)]
+  | x :: xs -> concat(f(x), flatMap(f, xs))
 
 reduce = (f, list, acc) => match list
   | [] -> acc
-  | [ x, ...xs ] -> reduce(f, xs, f(acc, x))
+  | x :: xs -> reduce(f, xs, f(acc, x))
 
 some = (selector, list) => reduce(
   (acc, x) => acc || selector(x),
@@ -23,16 +26,16 @@ some = (selector, list) => reduce(
 
 head = list => match list
   | [] -> Nothing()
-  | [x, ...xs] -> Just(x)
+  | x :: xs -> Just(x)
 
 tail = list => match list
   | [] -> Nothing()
-  | [x, ...xs] -> Just(xs)
+  | x :: xs -> Just(xs)
 
 filter = (selector, list) => match list
   | [] -> []
-  | [x, ...xs] -> (match selector(x)
-    | true -> [x, ...filter(selector, xs)]
+  | x :: xs -> (match selector(x)
+    | true -> x :: filter(selector, xs)
     | false -> filter(selector, xs)
   )
 
@@ -45,29 +48,29 @@ all = (selector, list) => reduce(
 take = (n, list) => match [n, list]
   | [0, _]  -> []
   | [_, []] -> []
-  | [n, [ x, ...xs ]] -> [x, ...take(n - 1, xs)]
+  | [n, x :: xs] -> x :: take(n - 1, xs)
 
 drop = (n, list) => match [n, list]
   | [0, _] -> list
   | [_, []] -> []
-  | [n, [ x, ...xs]] -> [...drop(n - 1, xs)]
+  | [n, x :: xs] -> drop(n - 1, xs)
 
 first = (selector, list) => match list
   | [] -> Nothing()
-  | [x, ...xs] -> (match selector(x)
+  | x :: xs -> (match selector(x)
     | true -> Just(x)
     | false -> first(selector, xs)
   )
 
 range = (start, end) => match (end - start) > 0
   | false -> []
-  | true  -> [start, ...range(start + 1, end)]
+  | true  -> start :: range(start + 1, end)
 
 length = list => reduce((acc, _) => acc + 1, list, 0)
 
 unsafeZip = (list1, list2) => match [list1, list2]
   | [[], []] -> []
-  | [[x, ...xs], [y, ...ys]] -> [[x, y], ...unsafeZip(xs, ys)]
+  | [x :: xs, [y, ...ys]] -> [x, y] :: unsafeZip(xs, ys)
 
 zip = (list1, list2) => match length(list1) == length(list2)
   | false -> Err('zipped lists differ in length')
@@ -75,12 +78,12 @@ zip = (list1, list2) => match length(list1) == length(list2)
 
 reverse = list => match list
   | [] -> []
-  | [x, ...xs] -> [...reverse(xs), x]
+  | x :: xs -> concat(reverse(x), [x])
 
 intersperse = (element, list) => match list
   | [] -> []
   | [x] -> [x]
-  | [x, y, ...xs] -> [x, element, ...intersperse(element, [y, ...xs])]
+  | x :: y :: xs -> x :: element :: interspere(element, y :: xs)
 
 sum = (initialValue, list) => reduce(
   (acc, x) => acc + x,
