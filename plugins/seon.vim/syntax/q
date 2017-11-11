@@ -1,0 +1,37 @@
+
+map = (f, list) => match list
+	| [] -> []
+	| [x, ...xs] -> [f(x), ...map(f, xs)]
+
+match 0
+	| 0 -> true
+	| _ -> false
+
+log()
+
+map(x => x * 2, [0, 1, 2 ,3])
+
+{ x: 10, y: 100 }
+
+// A comment
+
+1 + 1
+1 - 1
+1 * 1
+1 / 1
+1 = 1
+1 ** 1
+1 == 1
+1 != 1
+1 > 1
+1 < 1
+1 >= 1
+1 <= 1
+
+true && false
+true || false
+
+0 |> x => x * 2
+
+'This is a string'
+

@@ -22,12 +22,32 @@ map = (f, list) => match list
 
 keys = obj => match obj
   | {} -> []
-  | { *x, ...xs } -> let [ key ] = x in key::keys(xs)
+  | { *x, ...xs } -> let { key } = x in key::keys(xs)
 
 values = obj => match obj
   | {} -> []
-  | { *x, ...xs } -> let [ _, value ] = x in value::values(xs)
+  | { *x, ...xs } -> let { value } = x in value::values(xs)
 
-head = (list: x::_) => x
+head = (list) => x
 
-tail = (list: _::xs) => xs
+tail = (list) => xs
+
+sum = (list, acc: 0) => match list
+  | [] -> acc
+  | x::xs -> sum(xs, acc + x)
+
+header = (props: { header, title, setState, counter }) =>
+  <div>
+    <h3>{ header }</h3>
+    <div>{ title }</div>
+    <button onClick={ () => setState({ counter: counter + 1 }) }>
+      Click me!
+    </button
+  </div>
+
+withState = (initialState, BaseComponent) =>
+  createClass(
+    getInitialState: () => initialState,
+    render: (this: { props, state, setState }) =>
+      <BaseComponent setState  { ...props } { ...state } />
+  )

@@ -38,7 +38,10 @@ foo = { x: 10 }
 bar = { y: 10, ...foo }
 
 // Object access
-foo.x
+foo.x // 10
+foo.y // throws runtime exception
+foo?x |> map(?y) // Just(10)
+foo?y // Nothing()
 
 // Functions
 x => x
@@ -76,9 +79,10 @@ match x
   | 0 -> 10 * x // Numbers
   | 'some text' -> 'the cake is a lie' // Strings
   | false -> 0 // Booleans
-  | [y] -> y // 1-element Array
-  | [y, z] -> y // 2-element Array
-  | [y, ...ys] -> ys // n-element Array
+  | y::[] -> y // 1-element Array
+  | y::z::[] -> y // 2-element Array
+  | y::ys -> ys // n-element Array
+  | { *y } -> [ y.key, y.value ] // Matches any object with one key value and assign those to an object named y of the shape { key: 'foo', value: 'bar' }
   | { y } -> y // Object with one key named 'y'
   | { y, z } -> [ y, z ] // Object with two keys named 'y' and 'z'
   | { y, ...ys } -> ys // Object with one key named 'y' and any other number of keys
@@ -98,5 +102,19 @@ import [ x, y, z ] from './bar' // any pattern would work
 
 import List from 'List' // absolute imports refer to core modules
 import { map } from 'List' // which of course can also be destructured
+
+// Examples
+
+// Reducer
+counter = (state, action as { type, payload }) => match type
+  | type 'INCREASE' -> state + payload
+  | type 'DECREASE' -> state - payload
+  | _ -> state
+
+createActionCreator = (type, payload) => { type, payload }
+increase = createActionCreator('INCREASE')
+decrease = createActionCreator('DECREASE')
+
+store = (state: {}, reducers)
 
 ```

@@ -4,7 +4,7 @@ export const Node = (value, next) => ({
 	length: 1 + next ? next.length : 0
 })
 
-export const join = (node, next) => {
+export const cons = (node, next) => {
 	if (next === null) {
 		return node
 	}
