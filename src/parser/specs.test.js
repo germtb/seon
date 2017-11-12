@@ -13,6 +13,7 @@ import {
 	ArrayExpression,
 	RestElement,
 	ObjectExpression,
+	ObjectAccessExpression,
 	ObjectProperty,
 	NamedParameter,
 	FunctionExpression,
@@ -25,6 +26,83 @@ import {
 } from './nodes'
 
 describe('parser specs', () => {
+	test('reducer', () => {
+		const tokens = tokenizer(`
+			counter = (state, action) => match [ state, action.type ]
+				| [ { type: 'Nothing' }, _  ] -> 0
+				| [ _, 'INCREASE' ] -> state + 1
+				| [ _, 'DECREASE' ] -> state - 1
+				| _ -> state
+		`)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new Declaration(
+					new IdentifierExpression('counter'),
+					new FunctionExpression(
+						[
+							new IdentifierExpression('state'),
+							new IdentifierExpression('action')
+						],
+						new PatternExpression(
+							new ArrayExpression([
+								new IdentifierExpression('state'),
+								new ObjectAccessExpression(
+									new IdentifierExpression('action'),
+									new IdentifierExpression('type'),
+									{ safe: false, computed: false }
+								)
+							]),
+							[
+								new PatternCase(
+									new ArrayExpression([
+										new ObjectExpression([
+											new ObjectProperty(
+												new NamedParameter(
+													'type',
+													new StringExpression('Nothing'),
+													{ computed: true }
+												)
+											)
+										]),
+										new NoPattern()
+									]),
+									new NumberExpression(0)
+								),
+								new PatternCase(
+									new ArrayExpression([
+										new NoPattern(),
+										new StringExpression('INCREASE')
+									]),
+									new BinaryExpression(
+										new IdentifierExpression('state'),
+										new BinaryOperator('+'),
+										new NumberExpression(1)
+									)
+								),
+								new PatternCase(
+									new ArrayExpression([
+										new NoPattern(),
+										new StringExpression('DECREASE')
+									]),
+									new BinaryExpression(
+										new IdentifierExpression('state'),
+										new BinaryOperator('-'),
+										new NumberExpression(1)
+									)
+								),
+								new PatternCase(
+									new NoPattern(),
+									new IdentifierExpression('state')
+								)
+							]
+						)
+					)
+				)
+			])
+		])
+	})
+
 	test('fibonacci', () => {
 		const tokens = tokenizer(`
 			fib = n => match n
