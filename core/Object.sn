@@ -28,12 +28,6 @@ filter = (selector, object) => match object
     | false -> filter(selector, xs)
   )
 
-counter = (state, action: { type }) = match [  state?.type, type  ]
-  | [ 'Nothing', _  ] -> 0
-  | [ _, 'INCREASE' ] -> state + 1
-  | [ _, 'DECREASE' ] -> state - 1
-  | _ -> state
-
 module = {
   get,
   keys,
