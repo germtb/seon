@@ -92,6 +92,12 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		return `${transpile(node.expression)}.${transpile(node.accessIdentifier)}`
 	},
 	BinaryOperator: node => {
+		if (node.operator === 'and') {
+			return '&&'
+		} else if (node.operator === 'or') {
+			return '||'
+		}
+
 		return node.operator
 	},
 	BinaryExpression: node => {

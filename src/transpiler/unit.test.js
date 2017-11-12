@@ -45,7 +45,21 @@ describe('transpile', () => {
 		expect(result).toEqual('10 + 5')
 	})
 
-	test('a unary expression', () => {
+	test('an and expression', () => {
+		const tokens = tokenizer('true and true')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual('true && true')
+	})
+
+	test('an or expression', () => {
+		const tokens = tokenizer('true or true')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual('true || true')
+	})
+
+	test('a not expression', () => {
 		const tokens = tokenizer('not true')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
