@@ -184,8 +184,35 @@ const grammar = [
 	),
 	new Production(
 		['Expression', '.', 'IdentifierExpression'],
-		(expression, _, identifierExpression) =>
-			new ObjectAccessExpression(expression, identifierExpression)
+		(expression, _, accessor) =>
+			new ObjectAccessExpression(expression, accessor, {
+				safe: false,
+				computed: false
+			})
+	),
+	new Production(
+		['Expression', '#', 'Expression'],
+		(expression, _, accessor) =>
+			new ObjectAccessExpression(expression, accessor, {
+				safe: false,
+				computed: true
+			})
+	),
+	new Production(
+		['Expression', '?', '.', 'IdentifierExpression'],
+		(expression, _1, _2, accessor) =>
+			new ObjectAccessExpression(expression, accessor, {
+				safe: true,
+				computed: false
+			})
+	),
+	new Production(
+		['Expression', '?', '#', 'Expression'],
+		(expression, _1, _2, accessor) =>
+			new ObjectAccessExpression(expression, accessor, {
+				safe: true,
+				computed: true
+			})
 	),
 
 	// NamedParameters
@@ -199,7 +226,7 @@ const grammar = [
 	// RestElement
 	new Production(
 		['...', 'Expression'],
-		(a, identifier) => new RestElement(identifier),
+		(a, expression) => new RestElement(expression),
 		lowestPrecedence
 	),
 
@@ -359,7 +386,7 @@ const parse = tokens => {
 		const peek = i < tokens.length - 1 ? tokens[i + 1] : {}
 		stack.push(token)
 
-		for (let j = 1; j <= Math.min(3, stack.length); j++) {
+		for (let j = 1; j <= Math.min(4, stack.length); j++) {
 			const nodes = stack.slice(stack.length - j)
 			const production = grammar.find(r => r.matches(nodes, peek.type))
 

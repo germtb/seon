@@ -264,14 +264,57 @@ describe('parser', () => {
 		])
 	})
 
-	test('an object access', () => {
+	test('an unsafe object access', () => {
 		const tokens = tokenizer('test.hello')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
 				new ObjectAccessExpression(
 					new IdentifierExpression('test'),
-					new IdentifierExpression('hello')
+					new IdentifierExpression('hello'),
+					{ safe: false, computed: false }
+				)
+			])
+		])
+	})
+
+	test('a safe object access', () => {
+		const tokens = tokenizer('test?.hello')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectAccessExpression(
+					new IdentifierExpression('test'),
+					new IdentifierExpression('hello'),
+					{ safe: true, computed: false }
+				)
+			])
+		])
+	})
+
+	test('an unsafe computed object access', () => {
+		const tokens = tokenizer('test#hello')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectAccessExpression(
+					new IdentifierExpression('test'),
+					new IdentifierExpression('hello'),
+					{ safe: false, computed: true }
+				)
+			])
+		])
+	})
+
+	test('a safe computed object access', () => {
+		const tokens = tokenizer('test?#hello')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectAccessExpression(
+					new IdentifierExpression('test'),
+					new IdentifierExpression('hello'),
+					{ safe: true, computed: true }
 				)
 			])
 		])
