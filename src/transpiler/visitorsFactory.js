@@ -102,6 +102,10 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		].join(' ')
 	},
 	UnaryOperator: node => {
+		if (node.operator === 'not') {
+			return '!'
+		}
+
 		return node.operator
 	},
 	UnaryExpression: node => {

@@ -46,7 +46,7 @@ describe('transpile', () => {
 	})
 
 	test('a unary expression', () => {
-		const tokens = tokenizer('!true')
+		const tokens = tokenizer('not true')
 		const nodes = parse(tokens)
 		const result = transpile(nodes[0])
 		expect(result).toEqual('!true')
