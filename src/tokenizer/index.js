@@ -26,7 +26,9 @@ const simpleTokens = [
 	'|',
 	'.',
 	'>',
-	'<'
+	'<',
+	'#',
+	'?'
 ]
 
 const keywords = {
