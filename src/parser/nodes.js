@@ -86,9 +86,10 @@ export class ObjectExpression extends Expression {
 }
 
 export class ObjectProperty extends Node {
-	constructor(property) {
+	constructor(property, config) {
 		super('ObjectProperty')
 		this.property = property
+		this.config = config
 	}
 }
 

@@ -218,47 +218,72 @@ describe('parser', () => {
 		expect(nodes).toEqual([
 			new File([
 				new ObjectExpression([
-					new ObjectProperty(new IdentifierExpression('x'))
+					new ObjectProperty(new IdentifierExpression('x'), { computed: false })
 				])
 			])
 		])
 	})
 
 	test('a non-empty object #2', () => {
-		const tokens = tokenizer('{ x: 10 }')
+		const tokens = tokenizer('{ x, y }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
 				new ObjectExpression([
-					new ObjectProperty(new NamedParameter('x', new NumberExpression(10)))
+					new ObjectProperty(new IdentifierExpression('x'), {
+						computed: false
+					}),
+					new ObjectProperty(new IdentifierExpression('y'), { computed: false })
 				])
 			])
 		])
 	})
 
 	test('a non-empty object #3', () => {
-		const tokens = tokenizer('{ ...x }')
+		const tokens = tokenizer('{ x: 10 }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
 				new ObjectExpression([
-					new ObjectProperty(new RestElement(new IdentifierExpression('x')))
+					new ObjectProperty(
+						new NamedParameter('x', new NumberExpression(10)),
+						{ computed: false }
+					)
 				])
 			])
 		])
 	})
 
 	test('a non-empty object #4', () => {
+		const tokens = tokenizer('{ ...x }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new RestElement(new IdentifierExpression('x')), {
+						computed: false
+					})
+				])
+			])
+		])
+	})
+
+	test('a non-empty object #5', () => {
 		const tokens = tokenizer('{ x, y: 100, ...z }')
 		const nodes = parse(tokens)
 		expect(nodes).toEqual([
 			new File([
 				new ObjectExpression([
-					new ObjectProperty(new IdentifierExpression('x')),
+					new ObjectProperty(new IdentifierExpression('x'), {
+						computed: false
+					}),
 					new ObjectProperty(
-						new NamedParameter('y', new NumberExpression(100))
+						new NamedParameter('y', new NumberExpression(100)),
+						{ computed: false }
 					),
-					new ObjectProperty(new RestElement(new IdentifierExpression('z')))
+					new ObjectProperty(new RestElement(new IdentifierExpression('z')), {
+						computed: false
+					})
 				])
 			])
 		])
@@ -552,11 +577,16 @@ describe('parser', () => {
 			new File([
 				new PatternCase(
 					new ObjectExpression([
-						new ObjectProperty(new IdentifierExpression('x')),
+						new ObjectProperty(new IdentifierExpression('x'), {
+							computed: false
+						}),
 						new ObjectProperty(
-							new NamedParameter('y', new NumberExpression(10))
+							new NamedParameter('y', new NumberExpression(10)),
+							{ computed: false }
 						),
-						new ObjectProperty(new RestElement(new IdentifierExpression('z')))
+						new ObjectProperty(new RestElement(new IdentifierExpression('z')), {
+							computed: false
+						})
 					]),
 					new NumberExpression(0)
 				)
@@ -613,8 +643,13 @@ describe('parser', () => {
 			new File([
 				new Declaration(
 					new ObjectExpression([
-						new ObjectProperty(new IdentifierExpression('x')),
-						new ObjectProperty(new RestElement(new IdentifierExpression('xs')))
+						new ObjectProperty(new IdentifierExpression('x'), {
+							computed: false
+						}),
+						new ObjectProperty(
+							new RestElement(new IdentifierExpression('xs')),
+							{ computed: false }
+						)
 					]),
 					new NumberExpression(10)
 				)
@@ -791,7 +826,8 @@ describe('parser', () => {
 			new File([
 				new ObjectExpression([
 					new ObjectProperty(
-						new NamedParameter('type', new NumberExpression(10))
+						new NamedParameter('type', new NumberExpression(10)),
+						{ computed: false }
 					)
 				])
 			])
@@ -861,8 +897,12 @@ describe('parser', () => {
 			new File([
 				new ImportDeclaration(
 					new ObjectExpression([
-						new ObjectProperty(new IdentifierExpression('x')),
-						new ObjectProperty(new IdentifierExpression('y'))
+						new ObjectProperty(new IdentifierExpression('x'), {
+							computed: false
+						}),
+						new ObjectProperty(new IdentifierExpression('y'), {
+							computed: false
+						})
 					]),
 					new StringExpression('./somewhere')
 				)

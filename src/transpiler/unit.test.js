@@ -122,6 +122,20 @@ describe('transpile', () => {
 		expect(result).toEqual('{ x: 10 }')
 	})
 
+	test('an object computed expression #1', () => {
+		const tokens = tokenizer('{ #x: 10 }')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual('{ [x]: 10 }')
+	})
+
+	test('an object computed expression #2', () => {
+		const tokens = tokenizer('{ #x: 10, #y: 100 }')
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual('{ [x]: 10, [y]: 100 }')
+	})
+
 	test('an object expression #3', () => {
 		const tokens = tokenizer('x = 10\ny = { x }')
 		const nodes = parse(tokens)

@@ -211,9 +211,23 @@ const grammar = [
 		(expressions, expression) =>
 			new ObjectExpression([
 				...expressions.values,
-				new ObjectProperty(expression)
+				new ObjectProperty(expression, { computed: false })
 			])
 	),
+	new Production(
+		[
+			'[ObjectProperty]',
+			'#',
+			'IdentifierExpression|NamedParameter|RestElement',
+			'}'
+		],
+		(expressions, _, expression) =>
+			new ObjectExpression([
+				...expressions.values,
+				new ObjectProperty(expression, { computed: true })
+			])
+	),
+
 	new Production(
 		['Expression', '.', 'IdentifierExpression'],
 		(expression, _, accessor) =>

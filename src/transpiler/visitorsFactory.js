@@ -49,8 +49,13 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	ObjectExpression: (node, internals) => {
 		const properties = node.properties.map(p => {
 			const node = p.property
+			const computed = p.config.computed
 
 			if (node.type === 'NamedParameter') {
+				if (computed) {
+					return `[${node.name}]: ${transpile(node.value)}`
+				}
+
 				return `${node.name}: ${transpile(node.value)}`
 			} else if (node.type === 'IdentifierExpression') {
 				return transpile(node, internals)

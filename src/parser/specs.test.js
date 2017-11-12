@@ -62,7 +62,8 @@ describe('parser specs', () => {
 													'type',
 													new StringExpression('Nothing'),
 													{ computed: true }
-												)
+												),
+												{ computed: false }
 											)
 										]),
 										new NoPattern()
