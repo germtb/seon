@@ -298,6 +298,18 @@ describe('parser', () => {
 		])
 	})
 
+	test('computed props in objects #3', () => {
+		const tokens = tokenizer('{ #x }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(new IdentifierExpression('x'), { computed: true })
+				])
+			])
+		])
+	})
+
 	test('an unsafe object access', () => {
 		const tokens = tokenizer('test.hello')
 		const nodes = parse(tokens)
