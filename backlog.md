@@ -127,8 +127,6 @@ entries = object => match object
   | {} -> []
   | { #x, ...xs } -> [ x, ...entries(xs) ]
 
-get = (key, object) => object?#key
-
 insert = (key, value, object) => {
   ...object,
   #key: value
@@ -141,8 +139,23 @@ filter = (selector, object) => match object
     | false -> filter(selector, xs)
   )
 
-counter = (state, action: { type }) = match [  state?.type, type  ]
-  | [ 'Nothing', _  ] -> 0
+counter = (state, action) = match [ state, action.type  ]
+  | [ { type: 'Nothing' }, _  ] -> 0
   | [ _, 'INCREASE' ] -> state + 1
   | [ _, 'DECREASE' ] -> state - 1
   | _ -> state
+
+message = (state, action) = match [ state, action.type ]
+  | [ { type: 'Nothing' }, _ ] -> ''
+  | [ _, 'SET' ] -> action.payload
+  | _ -> state
+
+combineReducers = (reducers, state, action) =>
+  reducers |> reduce((acc, entry) =>
+    let key, value } = entry
+    in {
+      ...state,
+      #key: value(state?#key, action)
+    }, state)
+
+reducers = combineReducers({ counter, message })

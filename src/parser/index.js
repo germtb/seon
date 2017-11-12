@@ -151,25 +151,57 @@ const grammar = [
 	new Production(['{', '}'], () => new ObjectExpression([])),
 	new Production(
 		['{', 'IdentifierExpression|NamedParameter|RestElement', '}'],
-		(_, identifier) => new ObjectExpression([new ObjectProperty(identifier)])
+		(_, expression) =>
+			new ObjectExpression([
+				new ObjectProperty(expression, { computed: false })
+			])
+	),
+	new Production(
+		['{', '#', 'IdentifierExpression|NamedParameter|RestElement', '}'],
+		(_1, _2, expression) =>
+			new ObjectExpression([new ObjectProperty(expression, { computed: true })])
 	),
 	new Production(
 		['{', 'IdentifierExpression|NamedParameter|RestElement', ','],
 		(_, expression) =>
-			arrayOf('ObjectProperty', [new ObjectProperty(expression)])
+			arrayOf('ObjectProperty', [
+				new ObjectProperty(expression, { computed: false })
+			])
 	),
+	new Production(
+		['{', '#', 'IdentifierExpression|NamedParameter|RestElement', ','],
+		(_1, _2, expression) =>
+			arrayOf('ObjectProperty', [
+				new ObjectProperty(expression, { computed: true })
+			])
+	),
+
 	new Production(
 		[
 			'[ObjectProperty]',
 			'IdentifierExpression|NamedParameter|RestElement',
 			','
 		],
-		(expressions, expression) =>
+		(properties, expression) =>
 			arrayOf('ObjectProperty', [
-				...expressions.values,
-				new ObjectProperty(expression)
+				...properties.values,
+				new ObjectProperty(expression, { computed: false })
 			])
 	),
+	new Production(
+		[
+			'[ObjectProperty]',
+			'#',
+			'IdentifierExpression|NamedParameter|RestElement',
+			','
+		],
+		(properties, _, expression) =>
+			arrayOf('ObjectProperty', [
+				...properties.values,
+				new ObjectProperty(expression, { computed: true })
+			])
+	),
+
 	new Production(
 		[
 			'[ObjectProperty]',

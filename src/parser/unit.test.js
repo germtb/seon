@@ -264,6 +264,40 @@ describe('parser', () => {
 		])
 	})
 
+	test('computed props in objects #1', () => {
+		const tokens = tokenizer('{ #x: 10 }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(
+						new NamedParameter('x', new NumberExpression(10)),
+						{ computed: true }
+					)
+				])
+			])
+		])
+	})
+
+	test('computed props in objects #2', () => {
+		const tokens = tokenizer('{ #x: 10, y: 100 }')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual([
+			new File([
+				new ObjectExpression([
+					new ObjectProperty(
+						new NamedParameter('x', new NumberExpression(10)),
+						{ computed: true }
+					),
+					new ObjectProperty(
+						new NamedParameter('y', new NumberExpression(100)),
+						{ computed: false }
+					)
+				])
+			])
+		])
+	})
+
 	test('an unsafe object access', () => {
 		const tokens = tokenizer('test.hello')
 		const nodes = parse(tokens)
