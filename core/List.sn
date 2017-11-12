@@ -4,11 +4,16 @@ import { stringify } from 'String'
 
 concat = (list1, list2) => match list1
   | [] -> list2
-  | [x, ...xs] -> x :: concat(xs, list2)
+  | [x, ...xs] -> [x, ...concat(xs, list2)]
 
 map = (f, list) => match list
   | [] -> []
   | [x, ...xs] -> f(x :: map(f, xs)
+
+map2 = (f, list1, list2) => match [list1, list2]
+  | [_, []] -> []
+  | [[], _] -> []
+  | [[x, ...xs], [y, ...ys]] -> [f(x, y), ...map2(f, list1, list2)]
 
 flatMap = (f, list) => match list
   | [] -> []
@@ -68,17 +73,18 @@ range = (start, end) => match (end - start) > 0
 
 length = list => reduce((acc, _) => acc + 1, list, 0)
 
-unsafeZip = (list1, list2) => match [list1, list2]
-  | [[], []] -> []
-  | [[x, ...xs], [y, ...ys]] -> [x, y] :: unsafeZip(xs, ys)
+zip = (list1, list2) => match [list1, list2]
+  | [_, []] -> []
+  | [[], _] -> []
+  | [[x, ...xs], [y, ...ys]] -> [[x, y], ...zip(xs, ys)]
 
-zip = (list1, list2) => match length(list1) == length(list2)
-  | false -> Err('zipped lists differ in length')
-  | true -> Ok(unsafeZip(list1, list2))
+queue = (element, list) => match List
+  | [] -> [element]
+  | [x, ...xs] -> [x, ...queue(element, xs)]
 
 reverse = list => match list
   | [] -> []
-  | [x, ...xs] -> concat(reverse(x), [x])
+  | [x, ...xs] -> queue(reverse(x), x)
 
 intersperse = (element, list) => match list
   | [] -> []
@@ -114,4 +120,3 @@ module = {
   join,
   sum
 }
-
