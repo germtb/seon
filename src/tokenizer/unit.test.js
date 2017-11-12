@@ -186,10 +186,22 @@ describe('tokenizer', () => {
 		])
 	})
 
-	test('produces a && token', () => {
-		expect(tokenizer('&&')).toEqual([
+	test('produces an and token', () => {
+		expect(tokenizer('and')).toEqual([
 			{
-				type: '&&',
+				type: 'and',
+				loc: {
+					start: { column: 0, line: 0 },
+					end: { column: 3, line: 0 }
+				}
+			}
+		])
+	})
+
+	test('produces an or token', () => {
+		expect(tokenizer('or')).toEqual([
+			{
+				type: 'or',
 				loc: {
 					start: { column: 0, line: 0 },
 					end: { column: 2, line: 0 }
@@ -198,13 +210,13 @@ describe('tokenizer', () => {
 		])
 	})
 
-	test('produces a || token', () => {
-		expect(tokenizer('||')).toEqual([
+	test('produces a not token', () => {
+		expect(tokenizer('not')).toEqual([
 			{
-				type: '||',
+				type: 'not',
 				loc: {
 					start: { column: 0, line: 0 },
-					end: { column: 2, line: 0 }
+					end: { column: 3, line: 0 }
 				}
 			}
 		])

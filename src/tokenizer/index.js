@@ -1,7 +1,5 @@
 const simpleTokens = [
 	'**',
-	'&&',
-	'||',
 	'==',
 	'!=',
 	'<=',
@@ -26,7 +24,6 @@ const simpleTokens = [
 	':',
 	'&',
 	'|',
-	'!',
 	'.',
 	'>',
 	'<'
@@ -35,6 +32,15 @@ const simpleTokens = [
 const keywords = {
 	let: {
 		type: 'let'
+	},
+	and: {
+		type: 'and'
+	},
+	not: {
+		type: 'not'
+	},
+	or: {
+		type: 'or'
 	},
 	in: {
 		type: 'in'
