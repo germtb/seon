@@ -40,8 +40,10 @@ bar = { y: 10, ...foo }
 // Object access
 foo.x // 10
 foo.y // throws runtime exception
-foo?x |> map(?y) // Just(10)
-foo?y // Nothing()
+foo?.y // Nothing()
+foo#'x' // 10 computed properties
+foo#'y' // throw runtime exception
+foo?#'y' // Nothing()
 
 // Functions
 x => x
@@ -79,11 +81,11 @@ match x
   | 0 -> 10 * x // Numbers
   | 'some text' -> 'the cake is a lie' // Strings
   | false -> 0 // Booleans
-  | y::[] -> y // 1-element Array
-  | y::z::[] -> y // 2-element Array
-  | y::ys -> ys // n-element Array
-  | { *y } -> [ y.key, y.value ] // Matches any object with one key value and assign those to an object named y of the shape { key: 'foo', value: 'bar' }
+  | [ y ] -> y // 1-element Array
+  | [ y, z ] -> y // 2-element Array
+  | [ y, ...ys ] -> ys // n-element Array
   | { y } -> y // Object with one key named 'y'
+  | { #y } -> [ y.key, y.value ] // Matches any object with one key value and assign those to an object named y of the shape { key: 'foo', value: 'bar' }
   | { y, z } -> [ y, z ] // Object with two keys named 'y' and 'z'
   | { y, ...ys } -> ys // Object with one key named 'y' and any other number of keys
   | _ -> 'Anything works' // No pattern at all. It always matches
@@ -106,15 +108,24 @@ import { map } from 'List' // which of course can also be destructured
 // Examples
 
 // Reducer
-counter = (state, action as { type, payload }) => match type
-  | type 'INCREASE' -> state + payload
-  | type 'DECREASE' -> state - payload
+counter = (state, action) = match [ state, action.type  ]
+  | [ { type: 'Nothing' }, _  ] -> 0
+  | [ _, 'INCREASE' ] -> state + 1
+  | [ _, 'DECREASE' ] -> state - 1
   | _ -> state
 
-createActionCreator = (type, payload) => { type, payload }
-increase = createActionCreator('INCREASE')
-decrease = createActionCreator('DECREASE')
+message = (state, action) = match [ state, action.type ]
+  | [ { type: 'Nothing' }, _ ] -> ''
+  | [ _, 'SET' ] -> action.payload
+  | _ -> state
 
-store = (state: {}, reducers)
+combineReducers = (reducers, state, action) =>
+  reducers |> reduce((acc, entry) =>
+    let key, value } = entry
+    in {
+      ...state,
+      #key: value(state?#key, action)
+    }, state)
 
+reducers = combineReducers({ counter, message })
 ```
