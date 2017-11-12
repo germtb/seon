@@ -58,7 +58,7 @@ describe('interpreter', () => {
 	})
 
 	test('a unary expression', () => {
-		const tokens = tokenizer('!true')
+		const tokens = tokenizer('not true')
 		const nodes = parse(tokens)
 		const result = aval(nodes[0].nodes[0])
 		expect(result).toEqual(false)

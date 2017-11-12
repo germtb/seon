@@ -97,7 +97,7 @@ export const visitorsFactory = ({
 		const expression = aval(node.expression, scopes)
 		const op = node.operator.operator
 
-		if (op === '!') {
+		if (op === 'not') {
 			return !expression
 		} else if (op === 'type') {
 			return expression.type

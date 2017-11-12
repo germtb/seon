@@ -27,7 +27,7 @@ import { Production } from './Production'
 import { arrayOf } from './utils'
 
 const nonOperators = ['[', '{', '=>', '(', 'match', '.']
-const unaryOperators = ['!', '-']
+const unaryOperators = ['not', '-']
 const binaryOperators = [
 	'+',
 	'*',
@@ -41,8 +41,8 @@ const binaryOperators = [
 	'<=',
 	'==',
 	'!=',
-	'&&',
-	'||',
+	'and',
+	'or',
 	'|>'
 ]
 
@@ -55,7 +55,7 @@ const functionExpressionPrecedence = peek =>
 	lowestPrecedence(peek) && peek !== '|'
 
 const unaryOperatorPrecedence = {
-	'!': ['|>', '(', '.'],
+	not: ['|>', '(', '.'],
 	'-': ['|>', '(', '.']
 }
 
@@ -73,8 +73,8 @@ const binaryOperatorPrecedence = {
 	'<=': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
 	'==': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
 	'!=': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'&&': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'||': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-']
+	and: ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	or: ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-']
 }
 
 const grammar = [
