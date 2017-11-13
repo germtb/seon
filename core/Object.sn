@@ -2,31 +2,26 @@ import { map } from 'List'
 import { log, pipeLog } from 'Debug'
 import { Nothing } from 'Debug'
 
-keys = object => match object
-  | {} -> []
-  | { #x, ...xs } -> [ x.key, ...keys(xs) ]
+keys = object => internalKeys(object)
 
-values = object => match object
-  | {} -> []
-  | { #x, ...xs } -> [ x.value, ...values(xs) ]
+values = object => object
+	|> keys
+	|> map(get(object: object))
 
-entries = object => match object
-  | {} -> []
-  | { #x, ...xs } -> [ x, ...entries(xs) ]
+entries = object => object
+	|> keys
+	|> map(k => [k, get(k, object)])
 
-get = (key, object) => object?#key
+get = (key, object) => internalGet(object, key)
+
+contains = (key, object) => match object |> get(key)
+  | { type: 'Nothing' } -> false
+  | _ -> true
 
 insert = (key, value, object) => {
   ...object,
   #key: value
 }
-
-filter = (selector, object) => match object
-  | {} -> {}
-  | { #x, ...xs } -> (match selector(x.key, x.value)
-    | true -> { #x.key: x.value, ...filter(selector, xs) }
-    | false -> filter(selector, xs)
-  )
 
 module = {
   get,

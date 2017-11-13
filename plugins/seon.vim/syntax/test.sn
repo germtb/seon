@@ -28,10 +28,9 @@ map(x => x * 2, [0, 1, 2 ,3])
 1 >= 1
 1 <= 1
 
-true && false
-true || false
+true and false
+true or false
 
 0 |> x => x * 2
 
 'This is a string'
-

@@ -17,7 +17,3 @@ export const cons = (node, next) => {
 export const length = node => {
 	return node.length
 }
-
-// map = (f, list) => match list
-//   | [] -> []
-//   | [ x, ...xs ] -> [ f(x), ... map(f, xs) ]

@@ -24,7 +24,7 @@ reduce = (f, list, acc) => match list
   | [x, ...xs] -> reduce(f, xs, f(acc, x))
 
 some = (selector, list) => reduce(
-  (acc, x) => acc || selector(x),
+  (acc, x) => acc or selector(x),
   list,
   false
 )
@@ -45,7 +45,7 @@ filter = (selector, list) => match list
   )
 
 all = (selector, list) => reduce(
-  (acc, x) => acc && selector(x),
+  (acc, x) => acc and selector(x),
   list,
   true
 )

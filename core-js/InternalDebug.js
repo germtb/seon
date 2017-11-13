@@ -5,5 +5,6 @@ exports.log = {
 	call: params => {
 		// eslint-disable-next-line
 		console.log(...params.map(p => toJSString(p)))
+		return { type: 'Object', value: { type: 'IO' } }
 	}
 }

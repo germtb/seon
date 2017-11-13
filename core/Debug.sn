@@ -1,10 +1,9 @@
-import { log } from 'InternalDebug'
+import InternalDebug from 'InternalDebug'
 
-pipeLog = x => let _ = log(x) in x
-pipefLog = (f, x) => let _ = log(f(x)) in x
+log = x => let _ = InternalDebug.log(x) in x
+fLog = (f, x) => let _ = InternalDebug.log(f(x)) in x
 
 module = {
   log,
-  pipeLog,
-  pipefLog
+  fLog
 }

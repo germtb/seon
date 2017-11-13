@@ -7,7 +7,7 @@ let b:current_syntax = "seon"
 syntax keyword seonBooleans true false
 hi def link seonBooleans Boolean
 
-syntax keyword seonKeyword let in match
+syntax keyword seonKeyword let in match and or
 hi def link seonKeyword Keyword
 
 syntax match seonDelimiter "\v\|"
@@ -50,9 +50,5 @@ syntax match seonNumber /\d\+/
 syntax match seonNumber /\d\+\.\d\+/
 highlight link seonNumber Number
 
-" syntax region seonFunction start=/[a-z]/ skip=/[a-z0-9]/ end=/(/
-" highlight link seonFunction Function
-
 syntax match seonComment /\/\/.*$/
 hi def link seonComment Comment
-

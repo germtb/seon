@@ -109,46 +109,94 @@ describe('runtime', () => {
 		test('1-property objects', () => {
 			const matchedScope = {}
 			expect(
-				match(10, ObjectExpression([{ property: IdentifierExpression('x') }]))
-			).toBeFalsy()
-			expect(
-				match('10', ObjectExpression([{ property: IdentifierExpression('x') }]))
-			).toBeFalsy()
-			expect(
-				match([1], ObjectExpression([{ property: IdentifierExpression('x') }]))
-			).toBeFalsy()
-			expect(
-				match([], ObjectExpression([{ property: IdentifierExpression('x') }]))
-			).toBeFalsy()
-			expect(
-				match({}, ObjectExpression([{ property: IdentifierExpression('x') }]))
-			).toBeFalsy()
-			expect(
 				match(
-					{ x: 10 },
-					ObjectExpression([{ property: IdentifierExpression('x') }]),
-					matchedScope
+					10,
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
 				)
-			).toBeTruthy()
-			expect(matchedScope.x).toEqual(10)
+			).toBeFalsy()
 			expect(
 				match(
-					{ x: 10, y: 20 },
-					ObjectExpression([{ property: IdentifierExpression('x') }])
+					'10',
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
+				)
+			).toBeFalsy()
+			expect(
+				match(
+					[1],
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
+				)
+			).toBeFalsy()
+			expect(
+				match(
+					[],
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
+				)
+			).toBeFalsy()
+			expect(
+				match(
+					{},
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
 				)
 			).toBeFalsy()
 			expect(
 				match(
 					{ x: 10 },
 					ObjectExpression([
-						{ property: IdentifierExpression('x') },
-						{ property: IdentifierExpression('y') }
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					]),
+					matchedScope
+				)
+			).toBeTruthy()
+			expect(matchedScope.x).toEqual(10)
+			expect(
+				match(
+					{ x: 10 },
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: true } }
+					]),
+					matchedScope
+				)
+			).toBeTruthy()
+			expect(matchedScope.x).toEqual({ key: 'x', value: 10 })
+
+			expect(
+				match(
+					{ x: 10, y: 20 },
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
+				)
+			).toBeFalsy()
+			expect(
+				match(
+					{ x: 10 },
+					ObjectExpression([
+						{
+							property: IdentifierExpression('x'),
+							config: { computed: false }
+						},
+						{ property: IdentifierExpression('y'), config: { computed: false } }
 					])
 				)
 			).toBeFalsy()
 
 			expect(
-				match(true, ObjectExpression([{ property: IdentifierExpression('x') }]))
+				match(
+					true,
+					ObjectExpression([
+						{ property: IdentifierExpression('x'), config: { computed: false } }
+					])
+				)
 			).toBeFalsy()
 		})
 
@@ -158,8 +206,11 @@ describe('runtime', () => {
 				match(
 					{ x: 10, y: 20 },
 					ObjectExpression([
-						{ property: new IdentifierExpression('x') },
-						{ property: new RestElement('xs') }
+						{
+							property: IdentifierExpression('x'),
+							config: { computed: false }
+						},
+						{ property: RestElement('xs'), config: { computed: false } }
 					]),
 					matchedScope
 				)

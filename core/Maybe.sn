@@ -11,9 +11,14 @@ andThen = (f, maybe) => match maybe.type
   | 'Nothing' -> Nothing()
   | 'Just' -> f(maybe.value)
 
+withDefault = (value, maybe) => match maybe.type
+  | 'Nothing' -> value
+  | 'Just' -> maybe.value
+
 module = {
   Nothing,
   Just,
   map,
-  andThen
+  andThen,
+  withDefault
 }
