@@ -170,9 +170,9 @@ reducers = combineReducers({ todos })
 
 getTodos = state => state.todos
 
-store = createStore(reducers, state: {
-	todos: []
-})
+getInput = state => state.todos
+
+store = createStore(reducers)
 
 render(
 	<Provider store>
@@ -185,35 +185,47 @@ toggleTodo = id => { type: 'TOGGLE_TODO', id }
 addTodo = text => { type: 'ADD_TODO', text }
 setInput = text => { type: 'SET_INPUT', text }
 
-match state
-	|> .counter
-	|> #foo
-	|> get('counter')
-	|> andThen(get('foo'))
-	|> andThen(get('bar'))
-	|> withDefault(10)
+UnconnectedTodos = (props: { todos, toggleTodo }) =>
+	todos |> map(todo =>
+		<span key={ todo.text |> withDefault('') }>
+			{ todo.text }
+			<button onClick={ () => toggleTodo(todo.text) }>
+				Toggle
+			</button>
+		</span>
+	)
 
-Todos = (props: { todos }) =>
-	todos |> map(todo => <span key={ todo.text }>{ todo.text }</span>)
+Todos = UnconnectedTodos |> connect({
+	state: state => {
+		todos: getTodos(state)
+	},
+	dispatch: dispatch => {
+		toggleTodo: id => dispatch(toggleTodo(id)),
+	}
+})
 
-Form = (props: { toggleTodo, addTodo, input, setInput }) =>
-	<form onSubmit={e => let _ = e.preventDefault() in addTodo(input.value) }>
+UnconnectedForm = (props: {
+	addTodo,
+	input,
+	setInput
+}) =>
+	<form onSubmit={ e => let _ = e.preventDefault() in addTodo(input.value) }>
 		<input value={ input } onChange={e => setInput(e.target.value) } />
 		<button type="submit"> Add Todo </button>
 	</form>
 
-AppView = (props: { todos, toggleTodo, addTodo, input, setInput }) => <ul>
-	<Todos todos />
-	<Form toggleTodo addTodo input setInput />
-</ul>
-
-App = AppView |> connect(
-	state => {
-		todos: getTodos(state)
+Form = UnconnectedForm |> connect({
+	state: state => {
+		input: getInput(state)
 	},
-	dispatch => {
+	dispatch: dispatch => {
 		toggleTodo: id => dispatch(toggleTodo(id)),
 		addTodo: text => dispatch(addTodo(text)),
 		setInput: text => dispatch(setInput(text))
 	}
-)
+})
+
+App = () => <ul>
+	<Todos />
+	<Form />
+</ul>
