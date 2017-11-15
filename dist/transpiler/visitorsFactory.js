@@ -66,8 +66,13 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 		ObjectExpression: function ObjectExpression(node, internals) {
 			var properties = node.properties.map(function (p) {
 				var node = p.property;
+				var computed = p.config.computed;
 
 				if (node.type === 'NamedParameter') {
+					if (computed) {
+						return '[' + node.name + ']: ' + transpile(node.value);
+					}
+
 					return node.name + ': ' + transpile(node.value);
 				} else if (node.type === 'IdentifierExpression') {
 					return transpile(node, internals);
@@ -99,12 +104,26 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			return transpile(node.expression) + '.' + transpile(node.accessIdentifier);
 		},
 		BinaryOperator: function BinaryOperator(node) {
+			if (node.operator === 'and') {
+				return '&&';
+			} else if (node.operator === 'or') {
+				return '||';
+			}
+
 			return node.operator;
 		},
 		BinaryExpression: function BinaryExpression(node) {
+			if (node.operator.operator === '|>') {
+				return [transpile(node.right), '(', transpile(node.left), ')'].join('');
+			}
+
 			return [transpile(node.left), transpile(node.operator), transpile(node.right)].join(' ');
 		},
 		UnaryOperator: function UnaryOperator(node) {
+			if (node.operator === 'not') {
+				return '!';
+			}
+
 			return node.operator;
 		},
 		UnaryExpression: function UnaryExpression(node) {
@@ -117,7 +136,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			var parameters = node.parameters.map(function (node) {
 				return transpile(node, internals);
 			}).join(', ');
-			return transpile(node.callee) + '([' + parameters + '])';
+			return transpile(node.callee) + '(' + parameters + ')';
 		},
 		LetExpression: function LetExpression(node) {
 			var declarations = node.declarations.map(function (node) {

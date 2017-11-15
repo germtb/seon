@@ -8,11 +8,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var simpleTokens = ['**', '&&', '||', '==', '!=', '<=', '>=', '=>', '->', '|>', '[', ']', '{', '}', ')', '(', '=', '+', '-', '_', '*', '/', '%', ',', ':', '&', '|', '!', '.', '>', '<'];
+var simpleTokens = ['**', '==', '!=', '<=', '>=', '=>', '->', '|>', '[', ']', '{', '}', ')', '(', '=', '+', '-', '_', '*', '/', '%', ',', ':', '&', '|', '.', '>', '<', '#'];
 
 var keywords = _defineProperty({
 	let: {
 		type: 'let'
+	},
+	and: {
+		type: 'and'
+	},
+	not: {
+		type: 'not'
+	},
+	or: {
+		type: 'or'
 	},
 	in: {
 		type: 'in'

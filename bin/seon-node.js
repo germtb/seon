@@ -2,7 +2,6 @@
 
 const argv = require('yargs').argv
 const fs = require('fs')
-const exec = require('child_process').exec
 const path = require('path')
 const run = require('../dist/transpiler').run
 
@@ -17,14 +16,18 @@ const runtimeModules = [
 	'../src/runtime/types.js'
 ]
 
+const transpiledFile = run(file)
+
 const runtime = runtimeModules.reduce((acc, filepath) => {
 	const filename = path.resolve(__dirname, filepath)
 	const file = fs.readFileSync(filename, 'utf8')
-	return acc + '\n' + file.replace('export ', '')
+	return acc + '\n' + file
 }, '')
 
-const transpiledFile = run(file)
-const fileWithRuntime = runtime + '\n' + transpiledFile
+const runtimeWithoutExports = runtime.replace(/export/g, '', '')
+const fileWithRuntime = runtimeWithoutExports + '\n' + transpiledFile
+
+const exec = require('child_process').exec
 
 exec(`node -e "${fileWithRuntime}"`, (error, stdout, stderr) => {
 	// eslint-disable-next-line

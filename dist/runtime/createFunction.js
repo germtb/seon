@@ -11,7 +11,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var createFunction = exports.createFunction = function createFunction(definitions, func) {
 	var curriedParams = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-	return function (params) {
+	return function () {
+		for (var _len = arguments.length, params = Array(_len), _key = 0; _key < _len; _key++) {
+			params[_key] = arguments[_key];
+		}
+
 		var leftDefinitions = [].concat(_toConsumableArray(definitions));
 		var hydratedParams = {};
 

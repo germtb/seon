@@ -343,21 +343,7 @@ describe('parser', () => {
 				new ObjectAccessExpression(
 					new IdentifierExpression('test'),
 					new IdentifierExpression('hello'),
-					{ safe: false, computed: false }
-				)
-			])
-		])
-	})
-
-	test('a safe object access', () => {
-		const tokens = tokenizer('test?.hello')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new ObjectAccessExpression(
-					new IdentifierExpression('test'),
-					new IdentifierExpression('hello'),
-					{ safe: true, computed: false }
+					{ computed: false }
 				)
 			])
 		])
@@ -371,21 +357,7 @@ describe('parser', () => {
 				new ObjectAccessExpression(
 					new IdentifierExpression('test'),
 					new IdentifierExpression('hello'),
-					{ safe: false, computed: true }
-				)
-			])
-		])
-	})
-
-	test('a safe computed object access', () => {
-		const tokens = tokenizer('test?#hello')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual([
-			new File([
-				new ObjectAccessExpression(
-					new IdentifierExpression('test'),
-					new IdentifierExpression('hello'),
-					{ safe: true, computed: true }
+					{ computed: true }
 				)
 			])
 		])

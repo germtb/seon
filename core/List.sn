@@ -1,37 +1,37 @@
-import { Nothing, Just } from 'Maybe'
 import { Err, Ok } from 'Result'
 import { stringify } from 'String'
+import { Nothing, Just } from 'Maybe'
+
+map = (f, list) => match list
+  | [] -> []
+  | [x, ...xs] -> [ f(x), ...map(f, xs) ]
+
+flatMap = (f, list) => match list
+  | [] -> []
+  | [x, ...xs] -> concat(f(x), flatMap(f, xs))
+
+head = list => match list
+  | [] -> Nothing()
+  | [x, ...xs] -> Just(x)
+
+reduce = (f, list, acc) => match list
+  | [] -> acc
+  | [x, ...xs] -> reduce(f, xs, f(acc, x))
 
 concat = (list1, list2) => match list1
   | [] -> list2
   | [x, ...xs] -> [x, ...concat(xs, list2)]
-
-map = (f, list) => match list
-  | [] -> []
-  | [x, ...xs] -> f(x :: map(f, xs)
 
 map2 = (f, list1, list2) => match [list1, list2]
   | [_, []] -> []
   | [[], _] -> []
   | [[x, ...xs], [y, ...ys]] -> [f(x, y), ...map2(f, list1, list2)]
 
-flatMap = (f, list) => match list
-  | [] -> []
-  | [x, ...xs] -> concat(f(x), flatMap(f, xs))
-
-reduce = (f, list, acc) => match list
-  | [] -> acc
-  | [x, ...xs] -> reduce(f, xs, f(acc, x))
-
 some = (selector, list) => reduce(
   (acc, x) => acc or selector(x),
   list,
   false
 )
-
-head = list => match list
-  | [] -> Nothing()
-  | [x, ...xs] -> Just(x)
 
 tail = list => match list
   | [] -> Nothing()

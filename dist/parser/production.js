@@ -78,9 +78,7 @@ var matchTable = {
 };
 
 var _matches = function _matches(node, type) {
-	if (type === '||' && node === '||') {
-		return true;
-	} else if (type === '|' && node === '|') {
+	if (type === '|' && node === '|') {
 		return true;
 	} else if (type === '|>' && node === '|>') {
 		return true;

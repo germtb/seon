@@ -1,3 +1,11 @@
+```js
+for (let i = 0; i < str.length; i++) {
+	const char = str[i]
+	const peek = str[i + 1]
+	...
+}
+```
+
 # TODO
 - transpile to something
 - rewrite in itself
@@ -213,6 +221,18 @@ UnconnectedForm = (props: {
 		<input value={ input } onChange={e => setInput(e.target.value) } />
 		<button type="submit"> Add Todo </button>
 	</form>
+
+[ 8, 10 , 9 ]
+	|> sort((x, y) => x > y) // [10, 9, 8]
+	|> head // { type: 'Just', value: 100 }
+	|> Maybe.map(x => 10 * x) // { type: 'Just', value: 100 }
+	|> withDefault('Did not work') // 100
+
+[]
+	|> sort((x, y) => x > y) // []
+	|> head // { type: 'Nothing' }
+	|> Maybe.map(x => 10 * x) // { type: 'Nothing' }
+	|> withDefault('Did not work') // 'Did not work'
 
 Form = UnconnectedForm |> connect({
 	state: state => {

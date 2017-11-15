@@ -9,10 +9,13 @@ var createFunctionFactory = exports.createFunctionFactory = function createFunct
 	var createFunction = function createFunction(node) {
 		var body = node.body;
 
+		var openWrap = body.type === 'ObjectExpression' ? '(' : '';
+		var closeWrap = body.type === 'ObjectExpression' ? ')' : '';
 		var parameters = node.parameters.map(transpile);
+		var params = parameters.length === 0 ? '' : '{ ' + parameters.join(', ') + ' }';
 		return ['createFunction([' + parameters.map(function (p) {
 			return '\'' + p + '\'';
-		}).join(', ') + ']', ', ({ ' + parameters.join(', ') + ' }) => ' + transpile(body), ')'].join('');
+		}).join(', ') + ']', ', (' + params + ') => ' + openWrap + transpile(body) + closeWrap, ')'].join('');
 	};
 
 	return createFunction;

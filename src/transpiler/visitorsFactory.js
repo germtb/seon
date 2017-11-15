@@ -67,9 +67,11 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		})
 
 		if (internals.context === 'patternMatching') {
-			return `ObjectExpression(${node.properties.length === 0
-				? '[]'
-				: ['[', properties.join(', '), ']'].join(' ')})`
+			return `ObjectExpression(${
+				node.properties.length === 0
+					? '[]'
+					: ['[', properties.join(', '), ']'].join(' ')
+			})`
 		}
 
 		return node.properties.length === 0
@@ -106,6 +108,10 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		return node.operator
 	},
 	BinaryExpression: node => {
+		if (node.operator.operator === '|>') {
+			return [transpile(node.right), '(', transpile(node.left), ')'].join('')
+		}
+
 		return [
 			transpile(node.left),
 			transpile(node.operator),
@@ -129,7 +135,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		const parameters = node.parameters
 			.map(node => transpile(node, internals))
 			.join(', ')
-		return `${transpile(node.callee)}([${parameters}])`
+		return `${transpile(node.callee)}(${parameters})`
 	},
 	LetExpression: node => {
 		const declarations = node.declarations.map(node => transpile(node))
@@ -158,7 +164,9 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			? `{ ${parameters.join(', ')} }`
 			: ''
 
-		return `{ pattern: ${pattern}, result: (${transpiledParameters}) => ${result} }`
+		return `{ pattern: ${pattern}, result: (${transpiledParameters}) => ${
+			result
+		} }`
 	},
 	NoPattern: () => {
 		return "{ type: 'NoPattern' }"

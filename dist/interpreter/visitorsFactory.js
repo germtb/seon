@@ -116,7 +116,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			var expression = aval(node.expression, scopes);
 			var op = node.operator.operator;
 
-			if (op === '!') {
+			if (op === 'not') {
 				return !expression;
 			} else if (op === 'type') {
 				return expression.type;

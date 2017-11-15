@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -52,6 +56,15 @@ var File = exports.File = function (_Node3) {
 		return _this3;
 	}
 
+	_createClass(File, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren(f) {
+			return new File(this.nodes.reduce(function (acc, node) {
+				return [].concat(_toConsumableArray(acc), _toConsumableArray(f(node)));
+			}, []));
+		}
+	}]);
+
 	return File;
 }(Node);
 
@@ -66,6 +79,13 @@ var IdentifierExpression = exports.IdentifierExpression = function (_Node4) {
 		_this4.name = name;
 		return _this4;
 	}
+
+	_createClass(IdentifierExpression, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren() {
+			return new IdentifierExpression(this.name);
+		}
+	}]);
 
 	return IdentifierExpression;
 }(Node);
@@ -82,6 +102,13 @@ var BooleanExpression = exports.BooleanExpression = function (_Expression) {
 		return _this5;
 	}
 
+	_createClass(BooleanExpression, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren() {
+			return new BooleanExpression(this.value);
+		}
+	}]);
+
 	return BooleanExpression;
 }(Expression);
 
@@ -97,6 +124,13 @@ var NumberExpression = exports.NumberExpression = function (_Expression2) {
 		return _this6;
 	}
 
+	_createClass(NumberExpression, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren() {
+			return new NumberExpression(this.value);
+		}
+	}]);
+
 	return NumberExpression;
 }(Expression);
 
@@ -111,6 +145,13 @@ var StringExpression = exports.StringExpression = function (_Expression3) {
 		_this7.value = value;
 		return _this7;
 	}
+
+	_createClass(StringExpression, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren() {
+			return new StringExpression(this.value);
+		}
+	}]);
 
 	return StringExpression;
 }(Expression);
@@ -148,12 +189,13 @@ var ObjectExpression = exports.ObjectExpression = function (_Expression5) {
 var ObjectProperty = exports.ObjectProperty = function (_Node5) {
 	_inherits(ObjectProperty, _Node5);
 
-	function ObjectProperty(property) {
+	function ObjectProperty(property, config) {
 		_classCallCheck(this, ObjectProperty);
 
 		var _this10 = _possibleConstructorReturn(this, (ObjectProperty.__proto__ || Object.getPrototypeOf(ObjectProperty)).call(this, 'ObjectProperty'));
 
 		_this10.property = property;
+		_this10.config = config;
 		return _this10;
 	}
 
@@ -359,6 +401,13 @@ var Declaration = exports.Declaration = function (_Statement) {
 		return _this23;
 	}
 
+	_createClass(Declaration, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren(f) {
+			return new (Function.prototype.bind.apply(Declaration, [null].concat(_toConsumableArray(f(this.declarator)), _toConsumableArray(f(this.value)))))();
+		}
+	}]);
+
 	return Declaration;
 }(Statement);
 
@@ -374,6 +423,13 @@ var ImportDeclaration = exports.ImportDeclaration = function (_Statement2) {
 		_this24.path = path;
 		return _this24;
 	}
+
+	_createClass(ImportDeclaration, [{
+		key: 'flatMapChildren',
+		value: function flatMapChildren(f) {
+			return new ImportDeclaration(f(this.declarator), this.path);
+		}
+	}]);
 
 	return ImportDeclaration;
 }(Statement);

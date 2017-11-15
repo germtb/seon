@@ -232,7 +232,6 @@ const grammar = [
 		['Expression', '.', 'IdentifierExpression'],
 		(expression, _, accessor) =>
 			new ObjectAccessExpression(expression, accessor, {
-				safe: false,
 				computed: false
 			})
 	),
@@ -240,23 +239,6 @@ const grammar = [
 		['Expression', '#', 'Expression'],
 		(expression, _, accessor) =>
 			new ObjectAccessExpression(expression, accessor, {
-				safe: false,
-				computed: true
-			})
-	),
-	new Production(
-		['Expression', '?', '.', 'IdentifierExpression'],
-		(expression, _1, _2, accessor) =>
-			new ObjectAccessExpression(expression, accessor, {
-				safe: true,
-				computed: false
-			})
-	),
-	new Production(
-		['Expression', '?', '#', 'Expression'],
-		(expression, _1, _2, accessor) =>
-			new ObjectAccessExpression(expression, accessor, {
-				safe: true,
 				computed: true
 			})
 	),

@@ -1,5 +1,5 @@
 export const createFunction = (definitions, func, curriedParams = {}) => {
-	return params => {
+	return (...params) => {
 		let leftDefinitions = [...definitions]
 		const hydratedParams = {}
 

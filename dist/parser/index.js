@@ -13,8 +13,8 @@ var _utils = require('./utils');
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var nonOperators = ['[', '{', '=>', '(', 'match', '.'];
-var unaryOperators = ['!', '-'];
-var binaryOperators = ['+', '*', '/', '-', '%', '**', '<', '>', '>=', '<=', '==', '!=', '&&', '||', '|>'];
+var unaryOperators = ['not', '-'];
+var binaryOperators = ['+', '*', '/', '-', '%', '**', '<', '>', '>=', '<=', '==', '!=', 'and', 'or', '|>'];
 
 var lowestPrecedence = function lowestPrecedence(peek) {
 	return !nonOperators.includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
@@ -25,26 +25,26 @@ var functionExpressionPrecedence = function functionExpressionPrecedence(peek) {
 };
 
 var unaryOperatorPrecedence = {
-	'!': ['|>', '(', '.'],
+	not: ['|>', '(', '.'],
 	'-': ['|>', '(', '.']
 };
 
 var binaryOperatorPrecedence = {
-	'|>': ['=>', '!', '('],
-	'**': ['=>', '!', '|>', '('],
-	'*': ['=>', '!', '|>', '(', '**'],
-	'/': ['=>', '!', '|>', '(', '**'],
-	'%': ['=>', '!', '|>', '(', '**'],
-	'+': ['=>', '!', '|>', '(', '**', '*', '%', '/'],
-	'-': ['=>', '!', '|>', '(', '**', '*', '%', '/'],
-	'<': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'>': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'>=': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'<=': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'==': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'!=': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'&&': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-'],
-	'||': ['=>', '!', '|>', '(', '**', '*', '%', '/', '+', '-']
+	'|>': ['=>', 'not', '('],
+	'**': ['=>', 'not', '|>', '('],
+	'*': ['=>', 'not', '|>', '(', '**'],
+	'/': ['=>', 'not', '|>', '(', '**'],
+	'%': ['=>', 'not', '|>', '(', '**'],
+	'+': ['=>', 'not', '|>', '(', '**', '*', '%', '/'],
+	'-': ['=>', 'not', '|>', '(', '**', '*', '%', '/'],
+	'<': ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'>': ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'>=': ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'<=': ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'==': ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	'!=': ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	and: ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-'],
+	or: ['=>', 'not', '|>', '(', '**', '*', '%', '/', '+', '-']
 };
 
 var grammar = [].concat(_toConsumableArray(unaryOperators.map(function (o) {
@@ -104,16 +104,30 @@ new _Production.Production(['[', ']'], function () {
 // Obejcts
 new _Production.Production(['{', '}'], function () {
 	return new _nodes.ObjectExpression([]);
-}), new _Production.Production(['{', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (_, identifier) {
-	return new _nodes.ObjectExpression([new _nodes.ObjectProperty(identifier)]);
+}), new _Production.Production(['{', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (_, expression) {
+	return new _nodes.ObjectExpression([new _nodes.ObjectProperty(expression, { computed: false })]);
+}), new _Production.Production(['{', '#', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (_1, _2, expression) {
+	return new _nodes.ObjectExpression([new _nodes.ObjectProperty(expression, { computed: true })]);
 }), new _Production.Production(['{', 'IdentifierExpression|NamedParameter|RestElement', ','], function (_, expression) {
-	return (0, _utils.arrayOf)('ObjectProperty', [new _nodes.ObjectProperty(expression)]);
-}), new _Production.Production(['[ObjectProperty]', 'IdentifierExpression|NamedParameter|RestElement', ','], function (expressions, expression) {
-	return (0, _utils.arrayOf)('ObjectProperty', [].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression)]));
+	return (0, _utils.arrayOf)('ObjectProperty', [new _nodes.ObjectProperty(expression, { computed: false })]);
+}), new _Production.Production(['{', '#', 'IdentifierExpression|NamedParameter|RestElement', ','], function (_1, _2, expression) {
+	return (0, _utils.arrayOf)('ObjectProperty', [new _nodes.ObjectProperty(expression, { computed: true })]);
+}), new _Production.Production(['[ObjectProperty]', 'IdentifierExpression|NamedParameter|RestElement', ','], function (properties, expression) {
+	return (0, _utils.arrayOf)('ObjectProperty', [].concat(_toConsumableArray(properties.values), [new _nodes.ObjectProperty(expression, { computed: false })]));
+}), new _Production.Production(['[ObjectProperty]', '#', 'IdentifierExpression|NamedParameter|RestElement', ','], function (properties, _, expression) {
+	return (0, _utils.arrayOf)('ObjectProperty', [].concat(_toConsumableArray(properties.values), [new _nodes.ObjectProperty(expression, { computed: true })]));
 }), new _Production.Production(['[ObjectProperty]', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (expressions, expression) {
-	return new _nodes.ObjectExpression([].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression)]));
-}), new _Production.Production(['Expression', '.', 'IdentifierExpression'], function (expression, _, identifierExpression) {
-	return new _nodes.ObjectAccessExpression(expression, identifierExpression);
+	return new _nodes.ObjectExpression([].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression, { computed: false })]));
+}), new _Production.Production(['[ObjectProperty]', '#', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (expressions, _, expression) {
+	return new _nodes.ObjectExpression([].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression, { computed: true })]));
+}), new _Production.Production(['Expression', '.', 'IdentifierExpression'], function (expression, _, accessor) {
+	return new _nodes.ObjectAccessExpression(expression, accessor, {
+		computed: false
+	});
+}), new _Production.Production(['Expression', '#', 'Expression'], function (expression, _, accessor) {
+	return new _nodes.ObjectAccessExpression(expression, accessor, {
+		computed: true
+	});
 }),
 
 // NamedParameters
@@ -122,8 +136,8 @@ new _Production.Production(['IdentifierExpression', ':', 'Expression'], function
 }, lowestPrecedence),
 
 // RestElement
-new _Production.Production(['...', 'Expression'], function (a, identifier) {
-	return new _nodes.RestElement(identifier);
+new _Production.Production(['...', 'Expression'], function (a, expression) {
+	return new _nodes.RestElement(expression);
 }, lowestPrecedence),
 
 // PatternExpressions
@@ -243,7 +257,7 @@ var parse = function parse(tokens) {
 			j = _j;
 		};
 
-		for (var j = 1; j <= Math.min(3, stack.length); j++) {
+		for (var j = 1; j <= Math.min(4, stack.length); j++) {
 			_loop2(j);
 		}
 	};

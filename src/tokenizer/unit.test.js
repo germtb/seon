@@ -282,18 +282,6 @@ describe('tokenizer', () => {
 		])
 	})
 
-	test('produces a ? token', () => {
-		expect(tokenizer('?')).toEqual([
-			{
-				type: '?',
-				loc: {
-					start: { column: 0, line: 0 },
-					end: { column: 1, line: 0 }
-				}
-			}
-		])
-	})
-
 	test('produces a |> token', () => {
 		expect(tokenizer('|>')).toEqual([
 			{

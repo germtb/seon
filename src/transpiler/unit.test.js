@@ -181,7 +181,7 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				"const f = createFunction(['x'], ({ x }) => x)",
-				"const x = f([{ type: 'NamedParameter', name: 'x', value: 10 }])"
+				"const x = f({ type: 'NamedParameter', name: 'x', value: 10 })"
 			].join('\n\n')
 		)
 	})
@@ -196,7 +196,7 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x + y)",
-				"const x = f([{ type: 'NamedParameter', name: 'x', value: 10 }, { type: 'NamedParameter', name: 'y', value: 20 }])"
+				"const x = f({ type: 'NamedParameter', name: 'x', value: 10 }, { type: 'NamedParameter', name: 'y', value: 20 })"
 			].join('\n\n')
 		)
 	})
@@ -212,7 +212,7 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
-				"const x = f([{ type: 'NamedParameter', name: 'y', value: 2 }, { type: 'NamedParameter', name: 'x', value: 4 }])"
+				"const x = f({ type: 'NamedParameter', name: 'y', value: 2 }, { type: 'NamedParameter', name: 'x', value: 4 })"
 			].join('\n\n')
 		)
 	})
@@ -228,7 +228,7 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
-				"const x = f([{ type: 'NamedParameter', name: 'y', value: 2 }, 4])"
+				"const x = f({ type: 'NamedParameter', name: 'y', value: 2 }, 4)"
 			].join('\n\n')
 		)
 	})
@@ -244,8 +244,19 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				"const f = createFunction(['x', 'y'], ({ x, y }) => x / y)",
-				"const x = f([4, { type: 'NamedParameter', name: 'y', value: 2 }])"
+				"const x = f(4, { type: 'NamedParameter', name: 'y', value: 2 })"
 			].join('\n\n')
+		)
+	})
+
+	test('a function #7', () => {
+		const tokens = tokenizer(`
+		f = (x, y) => { x, y }
+	`)
+		const nodes = parse(tokens)
+		const result = transpile(nodes[0])
+		expect(result).toEqual(
+			"const f = createFunction(['x', 'y'], ({ x, y }) => ({ x, y }))"
 		)
 	})
 
@@ -262,9 +273,9 @@ describe('transpile', () => {
 		expect(result).toEqual(
 			[
 				"const f = createFunction(['x', 'y', 'z'], ({ x, y, z }) => x + y + z)",
-				"const a = f([{ type: 'NamedParameter', name: 'y', value: 10 }])",
-				"const b = a([{ type: 'NamedParameter', name: 'z', value: 100 }])",
-				'const c = b([1])'
+				"const a = f({ type: 'NamedParameter', name: 'y', value: 10 })",
+				"const b = a({ type: 'NamedParameter', name: 'z', value: 100 })",
+				'const c = b(1)'
 			].join('\n\n')
 		)
 	})
