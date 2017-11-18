@@ -431,7 +431,7 @@ const parse = tokens => {
 		throw new Error('Parsing error')
 	}
 
-	return stack
+	return stack[0]
 }
 
 export default parse

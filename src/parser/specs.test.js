@@ -35,7 +35,7 @@ describe('parser specs', () => {
 				| _ -> state
 		`)
 		const nodes = parse(tokens)
-		expect(nodes).toEqual([
+		expect(nodes).toEqual(
 			new File([
 				new Declaration(
 					new IdentifierExpression('counter'),
@@ -101,7 +101,7 @@ describe('parser specs', () => {
 					)
 				)
 			])
-		])
+		)
 	})
 
 	test('fibonacci', () => {
@@ -112,7 +112,7 @@ describe('parser specs', () => {
 				| _ -> fib(n - 1) + fib(n - 2)
 		`)
 		const nodes = parse(tokens)
-		expect(nodes).toEqual([
+		expect(nodes).toEqual(
 			new File([
 				new Declaration(
 					new IdentifierExpression('fib'),
@@ -145,7 +145,7 @@ describe('parser specs', () => {
 					)
 				)
 			])
-		])
+		)
 	})
 
 	test('includes', () => {
@@ -155,7 +155,7 @@ describe('parser specs', () => {
 				| [ x,...xs ] -> (match selector(x) | true -> true | false -> includes(selector, xs))
 		`)
 		const nodes = parse(tokens)
-		expect(nodes).toEqual([
+		expect(nodes).toEqual(
 			new File([
 				new Declaration(
 					new IdentifierExpression('includes'),
@@ -197,7 +197,7 @@ describe('parser specs', () => {
 					)
 				)
 			])
-		])
+		)
 	})
 
 	test('map', () => {
@@ -207,7 +207,7 @@ describe('parser specs', () => {
 				| [x, ...xs] -> [f(x), ...map(f, xs)]
 		`)
 		const nodes = parse(tokens)
-		expect(nodes).toEqual([
+		expect(nodes).toEqual(
 			new File([
 				new Declaration(
 					new IdentifierExpression('map'),
@@ -236,6 +236,6 @@ describe('parser specs', () => {
 					)
 				)
 			])
-		])
+		)
 	})
 })

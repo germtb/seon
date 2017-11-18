@@ -31,7 +31,7 @@ describe('parser', () => {
 				| true -> (match 0 | 0 -> 0 | _ -> 1)
 		`)
 		const nodes = parse(tokens)
-		expect(nodes).toEqual([
+		expect(nodes).toEqual(
 			new File([
 				new PatternExpression(new BooleanExpression(true), [
 					new PatternCase(
@@ -43,6 +43,6 @@ describe('parser', () => {
 					)
 				])
 			])
-		])
+		)
 	})
 })

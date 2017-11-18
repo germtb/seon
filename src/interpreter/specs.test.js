@@ -16,7 +16,7 @@ describe('interpreter', () => {
 			x = map(x => x, [])
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: [],
 			type: 'Array'
@@ -31,7 +31,7 @@ describe('interpreter', () => {
 			x = map(x => x, [1])
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: [{ type: 'Number', value: 1 }],
 			type: 'Array'
@@ -46,7 +46,7 @@ describe('interpreter', () => {
 		x = reduce((acc, x) => acc + 1, [], 0)
 	`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 0,
 			type: 'Number'
@@ -61,7 +61,7 @@ describe('interpreter', () => {
 			x = reduce((acc, x) => acc + 1, [1, 2, 3], 0)
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 3,
 			type: 'Number'

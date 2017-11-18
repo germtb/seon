@@ -5,7 +5,7 @@ import parse from '../parser'
 describe('traverse', () => {
 	test('enters nodes', () => {
 		const tokens = tokenizer('x = 0 y = 1')
-		const ast = parse(tokens)[0]
+		const ast = parse(tokens)
 		const acc = []
 		traverse(
 			ast,
@@ -24,7 +24,7 @@ describe('traverse', () => {
 
 	test('exits nodes', () => {
 		const tokens = tokenizer('x = 0 y = 1')
-		const ast = parse(tokens)[0]
+		const ast = parse(tokens)
 		const acc = []
 		traverse(
 			ast,
@@ -43,7 +43,7 @@ describe('traverse', () => {
 
 	test('modifies nodes', () => {
 		const tokens = tokenizer('x = 1')
-		const ast = parse(tokens)[0]
+		const ast = parse(tokens)
 		traverse(ast, {
 			NumberExpression: {
 				enter: node => {

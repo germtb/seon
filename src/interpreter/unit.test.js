@@ -11,28 +11,28 @@ describe('interpreter', () => {
 	test('a boolean', () => {
 		const tokens = tokenizer('true')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: true, type: 'Boolean' })
 	})
 
 	test('a number', () => {
 		const tokens = tokenizer('1234')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 1234, type: 'Number' })
 	})
 
 	test('a string', () => {
 		const tokens = tokenizer("'1234'")
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: '1234', type: 'String' })
 	})
 
 	test('an array', () => {
 		const tokens = tokenizer('[0, 1, 2]')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: [
 				{ value: 0, type: 'Number' },
@@ -46,35 +46,35 @@ describe('interpreter', () => {
 	test('a binary expression', () => {
 		const tokens = tokenizer('10 + 5')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 15, type: 'Number' })
 	})
 
 	test('a pipe expression', () => {
 		const tokens = tokenizer('10 |> x => x')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 10, type: 'Number' })
 	})
 
 	test('a unary expression', () => {
 		const tokens = tokenizer('not true')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual(false)
 	})
 
 	test('a declaration #1', () => {
 		const tokens = tokenizer('x = 10')
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({ value: 10, type: 'Number' })
 	})
 
 	test('a declaration #2', () => {
 		const tokens = tokenizer('x = [1, 2, 3]')
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: [
 				{ value: 1, type: 'Number' },
@@ -88,7 +88,7 @@ describe('interpreter', () => {
 	test('a declaration #3', () => {
 		const tokens = tokenizer("x = 'Hello'")
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 'Hello',
 			type: 'String'
@@ -101,7 +101,7 @@ describe('interpreter', () => {
 			y = x.test
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].y).toEqual({
 			value: 'Hello',
 			type: 'String'
@@ -111,7 +111,7 @@ describe('interpreter', () => {
 	test('an array-shape declaration #1', () => {
 		const tokens = tokenizer('[ x ] = [0, 1, 2, 3]')
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 0,
 			type: 'Number'
@@ -124,7 +124,7 @@ describe('interpreter', () => {
 			y = [0, ...x]
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].y).toEqual({
 			value: [
 				{ value: 0, type: 'Number' },
@@ -139,14 +139,14 @@ describe('interpreter', () => {
 	test('an object expression #1', () => {
 		const tokens = tokenizer('{}')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: {}, type: 'Object' })
 	})
 
 	test('an object expression #2', () => {
 		const tokens = tokenizer('{ x: 10 }')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: {
 				x: { value: 10, type: 'Number' }
@@ -161,7 +161,7 @@ describe('interpreter', () => {
 			y = { x }
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].y).toEqual({
 			value: {
 				x: { value: 10, type: 'Number' }
@@ -176,7 +176,7 @@ describe('interpreter', () => {
 			y = { ...x }
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].y).toEqual({
 			value: {
 				x: { value: 10, type: 'Number' },
@@ -193,7 +193,7 @@ describe('interpreter', () => {
 			z = { x, ...y, z: [ 0, 1, 2 ] }
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].z).toEqual({
 			value: {
 				x: { value: 'hello', type: 'String' },
@@ -218,7 +218,7 @@ describe('interpreter', () => {
 			x = f(10)
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 10,
 			type: 'Number'
@@ -231,7 +231,7 @@ describe('interpreter', () => {
 		x = f(x: 10)
 	`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 10,
 			type: 'Number'
@@ -245,7 +245,7 @@ describe('interpreter', () => {
 		`)
 
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 30,
 			type: 'Number'
@@ -259,7 +259,7 @@ describe('interpreter', () => {
 		`)
 
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 2,
 			type: 'Number'
@@ -273,7 +273,7 @@ describe('interpreter', () => {
 		`)
 
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 2,
 			type: 'Number'
@@ -287,7 +287,7 @@ describe('interpreter', () => {
 		`)
 
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			value: 2,
 			type: 'Number'
@@ -302,7 +302,7 @@ describe('interpreter', () => {
 			c = b(1)
 		`)
 		const nodes = parse(tokens)
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].c).toEqual({
 			value: 111,
 			type: 'Number'
@@ -312,84 +312,84 @@ describe('interpreter', () => {
 	test('Pattern matching booleans #1', () => {
 		const tokens = tokenizer('match true | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching booleans #2', () => {
 		const tokens = tokenizer('match false | true -> 1 | false -> 0')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching no pattern #1', () => {
 		const tokens = tokenizer('match false | true -> 1 | _ -> 0')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching number pattern #1', () => {
 		const tokens = tokenizer('match 1 | 0 -> 1 | 1 -> 2 | _ -> 3')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 2, type: 'Number' })
 	})
 
 	test('Pattern matching any pattern #1', () => {
 		const tokens = tokenizer('match 1 | 0 -> 1 | n -> n')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #2', () => {
 		const tokens = tokenizer('match [] | [] -> 0 | [x, ...xs] -> x')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 0, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #3', () => {
 		const tokens = tokenizer('match [ 1 ] | [] -> 0 | [ x ] -> x')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #4', () => {
 		const tokens = tokenizer('match [ 1, 2 ] | [] -> 0 | [ x, y ] -> x + y')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 3, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern #5', () => {
 		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, y ] -> x + y | _ -> 10')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 10, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern with a rest element #1', () => {
 		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> x')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern with a rest element #2', () => {
 		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> x')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({ value: 1, type: 'Number' })
 	})
 
 	test('Pattern matching array pattern with a rest element #3', () => {
 		const tokens = tokenizer('match [ 1, 2, 3 ] | [ x, ...xs ] -> xs')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: [{ value: 2, type: 'Number' }, { value: 3, type: 'Number' }],
 			type: 'Array'
@@ -399,7 +399,7 @@ describe('interpreter', () => {
 	test('Pattern matching object pattern #1', () => {
 		const tokens = tokenizer('match {} | {} -> 0')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: 0,
 			type: 'Number'
@@ -409,7 +409,7 @@ describe('interpreter', () => {
 	test('Pattern matching object pattern #2', () => {
 		const tokens = tokenizer('match { x: 1 } | {} -> 0 | { x } -> x')
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: 1,
 			type: 'Number'
@@ -421,7 +421,7 @@ describe('interpreter', () => {
 			'match { x: 1, y: 10 } | {} -> 0 | { x } -> x | { x, y } -> x + y'
 		)
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: 11,
 			type: 'Number'
@@ -433,7 +433,7 @@ describe('interpreter', () => {
 			'match { x: 1, y: 10 } | {} -> 0 | { x, ...xs } -> xs'
 		)
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: {
 				y: { value: 10, type: 'Number' }
@@ -446,7 +446,7 @@ describe('interpreter', () => {
 		const tokens = tokenizer('{ x } = { x: 10 }')
 		const nodes = parse(tokens)
 		const scopes = [{}]
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			type: 'Number',
 			value: 10
@@ -457,7 +457,7 @@ describe('interpreter', () => {
 		const tokens = tokenizer('{ x, y } = { x: 10, y: 20 }')
 		const nodes = parse(tokens)
 		const scopes = [{}]
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			type: 'Number',
 			value: 10
@@ -472,7 +472,7 @@ describe('interpreter', () => {
 		const tokens = tokenizer('{ y, x } = { x: 10, y: 20 }')
 		const nodes = parse(tokens)
 		const scopes = [{}]
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].x).toEqual({
 			type: 'Number',
 			value: 10
@@ -490,29 +490,29 @@ describe('interpreter', () => {
 			in x + y
 		`)
 		const nodes = parse(tokens)
-		const result = aval(nodes[0].nodes[0])
+		const result = aval(nodes.nodes[0])
 		expect(result).toEqual({
 			value: 11,
 			type: 'Number'
 		})
 	})
 
-	test('import declaration #1', () => {
-		const tokens = tokenizer("import x from './mock'")
-		const nodes = parse(tokens)
-		const scopes = [{ filename: __filename, dirname: __dirname }]
-		aval(nodes[0], scopes)
-		expect(scopes[0].x).toEqual({
-			value: { x: { value: 10, type: 'Number' } },
-			type: 'Object'
-		})
-	})
+	// test('import declaration #1', () => {
+	// 	const tokens = tokenizer("import x from './mock'")
+	// 	const nodes = parse(tokens)
+	// 	const scopes = [{ filename: __filename, dirname: __dirname }]
+	// 	aval(nodes, scopes)
+	// 	expect(scopes[0].x).toEqual({
+	// 		value: { x: { value: 10, type: 'Number' } },
+	// 		type: 'Object'
+	// 	})
+	// })
 
 	test('module declaration', () => {
 		const tokens = tokenizer('module = { x: 10 }')
 		const nodes = parse(tokens)
 		const scopes = [{}]
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].module).toEqual({
 			value: {
 				x: { value: 10, type: 'Number' }
@@ -528,7 +528,7 @@ describe('interpreter', () => {
 		`)
 		const nodes = parse(tokens)
 		const scopes = [{}]
-		aval(nodes[0], scopes)
+		aval(nodes, scopes)
 		expect(scopes[0].y).toEqual({ value: 1, type: 'Number' })
 	})
 })
