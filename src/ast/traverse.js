@@ -11,24 +11,3 @@ export const traverse = (node, visitors, acc) => {
 		visitor.exit(node, acc)
 	}
 }
-
-const visitorFactory = visitors => {
-	const visit = node => {
-		const visitor = visitors[node.type]
-		if (visitor) {
-			node.accept(visitor)
-		}
-	}
-
-	return { visit }
-}
-
-// const visit = (visitors, node, acc) => {
-// 	const visitor = visitor[node.type]
-//
-// 	if (visitor) {
-// 		node.accept(visitor)
-// 	}
-//
-// 	return acc
-// }

@@ -6,10 +6,6 @@ export class Node {
 	getChildren() {
 		return []
 	}
-
-	accept(visitor) {
-		visitor.visit(this)
-	}
 }
 
 export class Expression extends Node {
@@ -32,10 +28,6 @@ export class File extends Node {
 
 	getChildren() {
 		return this.nodes
-	}
-
-	accept(visitor) {
-		visitor.visit(this)
 	}
 }
 

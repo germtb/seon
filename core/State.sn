@@ -1,0 +1,19 @@
+import { Err, Ok } from 'Result'
+import { stringify } from 'String'
+import { Nothing, Just } from 'Maybe'
+
+State = (value) => {
+  type: 'State',
+  state: {},
+  value
+}
+
+map = (f, state) => State(f(state.value))
+
+andThen = (f, state) => f(state.value)
+
+module = {
+  State,
+  map,
+  andThen
+}
