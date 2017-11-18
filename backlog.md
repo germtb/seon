@@ -1,11 +1,3 @@
-```js
-for (let i = 0; i < str.length; i++) {
-	const char = str[i]
-	const peek = str[i + 1]
-	...
-}
-```
-
 # TODO
 - transpile to something
 - rewrite in itself

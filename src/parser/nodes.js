@@ -2,6 +2,14 @@ export class Node {
 	constructor(type) {
 		this.type = type
 	}
+
+	getChildren() {
+		return []
+	}
+
+	accept(visitor) {
+		visitor.visit(this)
+	}
 }
 
 export class Expression extends Node {
@@ -22,8 +30,12 @@ export class File extends Node {
 		this.nodes = nodes
 	}
 
-	flatMapChildren(f) {
-		return new File(this.nodes.reduce((acc, node) => [...acc, ...f(node)], []))
+	getChildren() {
+		return this.nodes
+	}
+
+	accept(visitor) {
+		visitor.visit(this)
 	}
 }
 
@@ -32,20 +44,12 @@ export class IdentifierExpression extends Node {
 		super('IdentifierExpression')
 		this.name = name
 	}
-
-	flatMapChildren() {
-		return new IdentifierExpression(this.name)
-	}
 }
 
 export class BooleanExpression extends Expression {
 	constructor(value) {
 		super('BooleanExpression')
 		this.value = value
-	}
-
-	flatMapChildren() {
-		return new BooleanExpression(this.value)
 	}
 }
 
@@ -54,20 +58,12 @@ export class NumberExpression extends Expression {
 		super('NumberExpression')
 		this.value = value
 	}
-
-	flatMapChildren() {
-		return new NumberExpression(this.value)
-	}
 }
 
 export class StringExpression extends Expression {
 	constructor(value) {
 		super('StringExpression')
 		this.value = value
-	}
-
-	flatMapChildren() {
-		return new StringExpression(this.value)
 	}
 }
 
@@ -76,12 +72,20 @@ export class ArrayExpression extends Expression {
 		super('ArrayExpression')
 		this.values = values
 	}
+
+	getChildren() {
+		return this.values
+	}
 }
 
 export class ObjectExpression extends Expression {
 	constructor(properties) {
 		super('ObjectExpression')
 		this.properties = properties
+	}
+
+	getChildren() {
+		return this.properties
 	}
 }
 
@@ -91,6 +95,10 @@ export class ObjectProperty extends Node {
 		this.property = property
 		this.config = config
 	}
+
+	getChildren() {
+		return [this.property]
+	}
 }
 
 export class ObjectAccessExpression extends Node {
@@ -98,6 +106,10 @@ export class ObjectAccessExpression extends Node {
 		super('ObjectAccessExpression')
 		this.expression = expression
 		this.accessIdentifier = accessIdentifier
+	}
+
+	getChildren() {
+		return [this.expression, this.accessIdentifier]
 	}
 }
 
@@ -115,6 +127,10 @@ export class BinaryExpression extends Expression {
 		this.operator = operator
 		this.right = right
 	}
+
+	getChildren() {
+		return [this.left, this.operator, this.right]
+	}
 }
 
 export class UnaryOperator extends Node {
@@ -130,12 +146,20 @@ export class UnaryExpression extends Expression {
 		this.operator = operator
 		this.expression = expression
 	}
+
+	getChildren() {
+		return [this.operator, this.expression]
+	}
 }
 
 export class RestElement extends Node {
 	constructor(value) {
 		super('RestElement')
 		this.value = value
+	}
+
+	getChildren() {
+		return this.value
 	}
 }
 
@@ -145,6 +169,10 @@ export class NamedParameter extends Node {
 		this.name = name
 		this.value = value
 	}
+
+	getChildren() {
+		return [this.name, this.value]
+	}
 }
 
 export class FunctionExpression extends Expression {
@@ -153,6 +181,10 @@ export class FunctionExpression extends Expression {
 		this.parameters = parameters
 		this.body = body
 	}
+
+	getChildren() {
+		return [this.parameters, this.body]
+	}
 }
 
 export class CallExpression extends Expression {
@@ -160,6 +192,10 @@ export class CallExpression extends Expression {
 		super('CallExpression')
 		this.callee = callee
 		this.parameters = parameters
+	}
+
+	getChildren() {
+		return [this.callee, ...this.parameters]
 	}
 }
 
@@ -175,6 +211,10 @@ export class PatternCase extends Node {
 		this.pattern = pattern
 		this.result = result
 	}
+
+	getChildren() {
+		return [this.pattern, this.result]
+	}
 }
 
 export class PatternExpression extends Node {
@@ -182,6 +222,10 @@ export class PatternExpression extends Node {
 		super('PatternExpression')
 		this.expression = expression
 		this.patternCases = patternCases
+	}
+
+	getChildren() {
+		return [this.expression, ...this.patternCases]
 	}
 }
 
@@ -192,8 +236,8 @@ export class Declaration extends Statement {
 		this.value = value
 	}
 
-	flatMapChildren(f) {
-		return new Declaration(...f(this.declarator), ...f(this.value))
+	getChildren() {
+		return [this.declarator, this.value]
 	}
 }
 
@@ -204,8 +248,8 @@ export class ImportDeclaration extends Statement {
 		this.path = path
 	}
 
-	flatMapChildren(f) {
-		return new ImportDeclaration(f(this.declarator), this.path)
+	getChildren() {
+		return [this.declarator, this.path]
 	}
 }
 
@@ -214,5 +258,9 @@ export class LetExpression extends Expression {
 		super('LetExpression')
 		this.declarations = declarations
 		this.expression = expression
+	}
+
+	getChildren() {
+		return [...this.declarations, this.expression]
 	}
 }
