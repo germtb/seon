@@ -40,10 +40,8 @@ bar = { y: 10, ...foo }
 // Object access
 foo.x // 10
 foo.y // throws runtime exception
-foo?.y // Nothing()
 foo#'x' // 10 computed properties
 foo#'y' // throw runtime exception
-foo?#'y' // Nothing()
 
 // Functions
 x => x
@@ -85,7 +83,6 @@ match x
   | [ y, z ] -> y // 2-element Array
   | [ y, ...ys ] -> ys // n-element Array
   | { y } -> y // Object with one key named 'y'
-  | { #y } -> [ y.key, y.value ] // Matches any object with one key value and assign those to an object named y of the shape { key: 'foo', value: 'bar' }
   | { y, z } -> [ y, z ] // Object with two keys named 'y' and 'z'
   | { y, ...ys } -> ys // Object with one key named 'y' and any other number of keys
   | _ -> 'Anything works' // No pattern at all. It always matches
@@ -124,7 +121,7 @@ combineReducers = (reducers, state, action) =>
     let key, value } = entry
     in {
       ...state,
-      #key: value(state?#key, action)
+      #key: value(state |> get(key), action)
     }, state)
 
 reducers = combineReducers({ counter, message })
