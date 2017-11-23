@@ -83,7 +83,6 @@ match x
   | [ y, z ] -> y // 2-element Array
   | [ y, ...ys ] -> ys // n-element Array
   | { y } -> y // Object with one key named 'y'
-key: 'foo', value: 'bar' }
   | { y, z } -> [ y, z ] // Object with two keys named 'y' and 'z'
   | { y, ...ys } -> ys // Object with one key named 'y' and any other number of keys
   | _ -> 'Anything works' // No pattern at all. It always matches
@@ -122,7 +121,7 @@ combineReducers = (reducers, state, action) =>
     let key, value } = entry
     in {
       ...state,
-      #key: value(state?#key, action)
+      #key: value(state |> get(key), action)
     }, state)
 
 reducers = combineReducers({ counter, message })
