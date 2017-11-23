@@ -1,6 +1,7 @@
 import { traverse } from '../traverse'
 // import path from 'path'
 // import fs from 'fs'
+import { Declaration } from '../../parser/nodes'
 
 export const resolveImports = (ast, modules) => {
 	traverse(ast, {
@@ -8,7 +9,11 @@ export const resolveImports = (ast, modules) => {
 			enter: file => {
 				file.nodes = file.nodes.map(node => {
 					if (node.type === 'ImportDeclaration') {
-						return node
+						const importedModule = modules.core[node.path.value]
+						const module = importedModule.nodes.find(x => {
+							return x.type === 'Declaration' && x.declarator.name === 'module'
+						})
+						return new Declaration(node.declarator, module.value)
 					}
 
 					return node

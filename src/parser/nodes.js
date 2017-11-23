@@ -163,7 +163,7 @@ export class NamedParameter extends Node {
 	}
 
 	getChildren() {
-		return [this.name, this.value]
+		return [this.value]
 	}
 }
 
