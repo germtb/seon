@@ -1,0 +1,3 @@
+import foo from './MockModule'
+
+module = { x: 10 }

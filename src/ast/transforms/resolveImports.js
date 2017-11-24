@@ -1,15 +1,48 @@
 import { traverse } from '../traverse'
-// import path from 'path'
-// import fs from 'fs'
+import path from 'path'
+import fs from 'fs'
+import tokenizer from '../../tokenizer'
+import parse from '../../parser'
 import { Declaration } from '../../parser/nodes'
 
-export const resolveImports = (ast, modules) => {
+const getModule = (modulePath, root, modules) => {
+	if (modulePath[0] === '.') {
+		return getRelativeModule(modulePath, root, modules)
+	} else {
+		return getCoreModule(modulePath, root, modules)
+	}
+}
+
+const getRelativeModule = (modulePath, root, modules) => {
+	if (modules.local[modulePath]) {
+		return modules.local[modulePath]
+	}
+
+	const filename = path.resolve(root, modulePath) + '.sn'
+	const dirname = path.dirname(filename)
+	const file = fs.readFileSync(filename, 'utf8')
+	const fileAST = parse(tokenizer(file))
+	resolveImports(fileAST, dirname, modules)
+
+	modules.local[modulePath] = fileAST
+	return fileAST
+}
+
+const getCoreModule = (modulePath, root, modules) => {
+	return modules.core[modulePath]
+}
+
+export const resolveImports = (
+	ast,
+	root,
+	modules = { local: {}, core: {} }
+) => {
 	traverse(ast, {
 		File: {
 			enter: file => {
 				file.nodes = file.nodes.map(node => {
 					if (node.type === 'ImportDeclaration') {
-						const importedModule = modules.core[node.path.value]
+						const importedModule = getModule(node.path.value, root, modules)
 						const module = importedModule.nodes.find(x => {
 							return x.type === 'Declaration' && x.declarator.name === 'module'
 						})
