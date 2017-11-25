@@ -806,6 +806,28 @@ describe('parser', () => {
 		)
 	})
 
+	test('bug #6', () => {
+		const code = 'foo = 1\n{ x } = 1'
+		const tokens = tokenizer(code)
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(
+			new File([
+				new Declaration(
+					new IdentifierExpression('foo'),
+					new NumberExpression(1)
+				),
+				new Declaration(
+					new ObjectExpression([
+						new ObjectProperty(new IdentifierExpression('x'), {
+							computed: false
+						})
+					]),
+					new NumberExpression(1)
+				)
+			])
+		)
+	})
+
 	test('throws an exception when the parsing is not correct', () => {
 		const tokens = tokenizer('=>')
 		expect(() => parse(tokens)).toThrow('Parsing error')

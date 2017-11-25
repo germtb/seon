@@ -3,8 +3,8 @@ export class Node {
 		this.type = type
 	}
 
-	getChildren() {
-		return []
+	mapChildren() {
+		return this
 	}
 }
 
@@ -26,8 +26,8 @@ export class File extends Node {
 		this.nodes = nodes
 	}
 
-	getChildren() {
-		return this.nodes
+	mapChildren(f, acc) {
+		return new File(this.nodes.map(node => f(node, acc)))
 	}
 }
 
@@ -65,8 +65,8 @@ export class ArrayExpression extends Expression {
 		this.values = values
 	}
 
-	getChildren() {
-		return this.values
+	mapChildren(f, acc) {
+		return new ArrayExpression(this.values.map(node => f(node, acc)))
 	}
 }
 
@@ -76,8 +76,8 @@ export class ObjectExpression extends Expression {
 		this.properties = properties
 	}
 
-	getChildren() {
-		return this.properties
+	mapChildren(f, acc) {
+		return new ObjectExpression(this.properties.map(node => f(node, acc)))
 	}
 }
 
@@ -88,8 +88,8 @@ export class ObjectProperty extends Node {
 		this.config = config
 	}
 
-	getChildren() {
-		return [this.property]
+	mapChildren(f, acc) {
+		return new ObjectProperty(f(this.property, acc), this.config)
 	}
 }
 
@@ -100,8 +100,11 @@ export class ObjectAccessExpression extends Node {
 		this.accessIdentifier = accessIdentifier
 	}
 
-	getChildren() {
-		return [this.expression, this.accessIdentifier]
+	mapChildren(f, acc) {
+		return new ObjectAccessExpression(
+			f(this.expression, acc),
+			f(this.accessIdentifier, acc)
+		)
 	}
 }
 
@@ -120,8 +123,12 @@ export class BinaryExpression extends Expression {
 		this.right = right
 	}
 
-	getChildren() {
-		return [this.left, this.operator, this.right]
+	mapChildren(f, acc) {
+		return new BinaryExpression(
+			f(this.left, acc),
+			f(this.operator, acc),
+			f(this.right, acc)
+		)
 	}
 }
 
@@ -139,8 +146,8 @@ export class UnaryExpression extends Expression {
 		this.expression = expression
 	}
 
-	getChildren() {
-		return [this.operator, this.expression]
+	mapChildren(f, acc) {
+		return new UnaryExpression(f(this.operator, acc), f(this.expression, acc))
 	}
 }
 
@@ -150,8 +157,8 @@ export class RestElement extends Node {
 		this.value = value
 	}
 
-	getChildren() {
-		return this.value
+	mapChildren(f, acc) {
+		return new RestElement(f(this.value, acc))
 	}
 }
 
@@ -162,8 +169,8 @@ export class NamedParameter extends Node {
 		this.value = value
 	}
 
-	getChildren() {
-		return [this.value]
+	mapChildren(f, acc) {
+		return new NamedParameter(this.name, f(this.value, acc))
 	}
 }
 
@@ -174,8 +181,11 @@ export class FunctionExpression extends Expression {
 		this.body = body
 	}
 
-	getChildren() {
-		return [this.parameters, this.body]
+	mapChildren(f, acc) {
+		return new FunctionExpression(
+			this.parameters.map(p => f(p, acc)),
+			f(this.body, acc)
+		)
 	}
 }
 
@@ -186,8 +196,12 @@ export class CallExpression extends Expression {
 		this.parameters = parameters
 	}
 
-	getChildren() {
-		return [this.callee, ...this.parameters]
+	mapChildren(f, acc) {
+		return new CallExpression(
+			f(this.callee, acc),
+			this.parameters.map(p => f(p, acc)),
+			f(this.body, acc)
+		)
 	}
 }
 
@@ -204,8 +218,8 @@ export class PatternCase extends Node {
 		this.result = result
 	}
 
-	getChildren() {
-		return [this.pattern, this.result]
+	mapChildren(f, acc) {
+		return new PatternCase(f(this.pattern, acc), f(this.result, acc))
 	}
 }
 
@@ -216,8 +230,11 @@ export class PatternExpression extends Node {
 		this.patternCases = patternCases
 	}
 
-	getChildren() {
-		return [this.expression, ...this.patternCases]
+	mapChildren(f, acc) {
+		return new PatternExpression(
+			f(this.expression, acc),
+			this.patternCases.map(p => f(p, acc))
+		)
 	}
 }
 
@@ -228,8 +245,8 @@ export class Declaration extends Statement {
 		this.value = value
 	}
 
-	getChildren() {
-		return [this.declarator, this.value]
+	mapChildren(f, acc) {
+		return new Declaration(f(this.declarator, acc), f(this.value, acc))
 	}
 }
 
@@ -240,8 +257,8 @@ export class ImportDeclaration extends Statement {
 		this.path = path
 	}
 
-	getChildren() {
-		return [this.declarator, this.path]
+	mapChildren(f, acc) {
+		return new Declaration(f(this.declarator, acc), f(this.path, acc))
 	}
 }
 
@@ -252,7 +269,10 @@ export class LetExpression extends Expression {
 		this.expression = expression
 	}
 
-	getChildren() {
-		return [...this.declarations, this.expression]
+	mapChildren(f, acc) {
+		return new Declaration(
+			this.declarations.map(d => f(d, acc)),
+			f(this.expression, acc)
+		)
 	}
 }

@@ -215,12 +215,7 @@ const grammar = [
 			])
 	),
 	new Production(
-		[
-			'[ObjectProperty]',
-			'#',
-			'IdentifierExpression|NamedParameter|RestElement',
-			'}'
-		],
+		['[ObjectProperty]', '#', 'IdentifierExpression|NamedParameter', '}'],
 		(expressions, _, expression) =>
 			new ObjectExpression([
 				...expressions.values,
@@ -375,7 +370,10 @@ const grammar = [
 			'Expression'
 		],
 		(array, _, expression) => new Declaration(array, expression),
-		lowestPrecedence
+		peek =>
+			!['=>', '(', '.'].includes(peek) &&
+			!unaryOperators.includes(peek) &&
+			!binaryOperators.includes(peek)
 	),
 
 	// File
