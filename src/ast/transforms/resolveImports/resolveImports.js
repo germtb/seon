@@ -1,9 +1,9 @@
-import { traverse } from '../traverse'
+import { traverse } from '../../traverse'
 import path from 'path'
 import fs from 'fs'
-import tokenizer from '../../tokenizer'
-import parse from '../../parser'
-import { File, Declaration } from '../../parser/nodes'
+import tokenizer from '../../../tokenizer'
+import parse from '../../../parser'
+import { File, Declaration } from '../../../parser/nodes'
 
 export const resolveImports = (
 	ast,

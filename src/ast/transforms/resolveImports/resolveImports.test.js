@@ -1,6 +1,6 @@
 import { resolveImports } from './resolveImports'
-import tokenizer from '../../tokenizer'
-import parse from '../../parser'
+import tokenizer from '../../../tokenizer'
+import parse from '../../../parser'
 
 const bin = '.'
 
