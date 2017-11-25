@@ -6,19 +6,28 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Node = exports.Node = function Node(type) {
-	_classCallCheck(this, Node);
+var Node = exports.Node = function () {
+	function Node(type) {
+		_classCallCheck(this, Node);
 
-	this.type = type;
-};
+		this.type = type;
+	}
+
+	_createClass(Node, [{
+		key: 'mapChildren',
+		value: function mapChildren() {
+			return this;
+		}
+	}]);
+
+	return Node;
+}();
 
 var Expression = exports.Expression = function (_Node) {
 	_inherits(Expression, _Node);
@@ -57,11 +66,11 @@ var File = exports.File = function (_Node3) {
 	}
 
 	_createClass(File, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren(f) {
-			return new File(this.nodes.reduce(function (acc, node) {
-				return [].concat(_toConsumableArray(acc), _toConsumableArray(f(node)));
-			}, []));
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new File(this.nodes.map(function (node) {
+				return f(node, acc);
+			}));
 		}
 	}]);
 
@@ -80,13 +89,6 @@ var IdentifierExpression = exports.IdentifierExpression = function (_Node4) {
 		return _this4;
 	}
 
-	_createClass(IdentifierExpression, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren() {
-			return new IdentifierExpression(this.name);
-		}
-	}]);
-
 	return IdentifierExpression;
 }(Node);
 
@@ -101,13 +103,6 @@ var BooleanExpression = exports.BooleanExpression = function (_Expression) {
 		_this5.value = value;
 		return _this5;
 	}
-
-	_createClass(BooleanExpression, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren() {
-			return new BooleanExpression(this.value);
-		}
-	}]);
 
 	return BooleanExpression;
 }(Expression);
@@ -124,13 +119,6 @@ var NumberExpression = exports.NumberExpression = function (_Expression2) {
 		return _this6;
 	}
 
-	_createClass(NumberExpression, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren() {
-			return new NumberExpression(this.value);
-		}
-	}]);
-
 	return NumberExpression;
 }(Expression);
 
@@ -145,13 +133,6 @@ var StringExpression = exports.StringExpression = function (_Expression3) {
 		_this7.value = value;
 		return _this7;
 	}
-
-	_createClass(StringExpression, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren() {
-			return new StringExpression(this.value);
-		}
-	}]);
 
 	return StringExpression;
 }(Expression);
@@ -168,6 +149,15 @@ var ArrayExpression = exports.ArrayExpression = function (_Expression4) {
 		return _this8;
 	}
 
+	_createClass(ArrayExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new ArrayExpression(this.values.map(function (node) {
+				return f(node, acc);
+			}));
+		}
+	}]);
+
 	return ArrayExpression;
 }(Expression);
 
@@ -182,6 +172,15 @@ var ObjectExpression = exports.ObjectExpression = function (_Expression5) {
 		_this9.properties = properties;
 		return _this9;
 	}
+
+	_createClass(ObjectExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new ObjectExpression(this.properties.map(function (node) {
+				return f(node, acc);
+			}));
+		}
+	}]);
 
 	return ObjectExpression;
 }(Expression);
@@ -199,6 +198,13 @@ var ObjectProperty = exports.ObjectProperty = function (_Node5) {
 		return _this10;
 	}
 
+	_createClass(ObjectProperty, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new ObjectProperty(f(this.property, acc), this.config);
+		}
+	}]);
+
 	return ObjectProperty;
 }(Node);
 
@@ -214,6 +220,13 @@ var ObjectAccessExpression = exports.ObjectAccessExpression = function (_Node6) 
 		_this11.accessIdentifier = accessIdentifier;
 		return _this11;
 	}
+
+	_createClass(ObjectAccessExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new ObjectAccessExpression(f(this.expression, acc), f(this.accessIdentifier, acc));
+		}
+	}]);
 
 	return ObjectAccessExpression;
 }(Node);
@@ -247,6 +260,13 @@ var BinaryExpression = exports.BinaryExpression = function (_Expression6) {
 		return _this13;
 	}
 
+	_createClass(BinaryExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new BinaryExpression(f(this.left, acc), f(this.operator, acc), f(this.right, acc));
+		}
+	}]);
+
 	return BinaryExpression;
 }(Expression);
 
@@ -278,6 +298,13 @@ var UnaryExpression = exports.UnaryExpression = function (_Expression7) {
 		return _this15;
 	}
 
+	_createClass(UnaryExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new UnaryExpression(f(this.operator, acc), f(this.expression, acc));
+		}
+	}]);
+
 	return UnaryExpression;
 }(Expression);
 
@@ -292,6 +319,13 @@ var RestElement = exports.RestElement = function (_Node9) {
 		_this16.value = value;
 		return _this16;
 	}
+
+	_createClass(RestElement, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new RestElement(f(this.value, acc));
+		}
+	}]);
 
 	return RestElement;
 }(Node);
@@ -309,6 +343,13 @@ var NamedParameter = exports.NamedParameter = function (_Node10) {
 		return _this17;
 	}
 
+	_createClass(NamedParameter, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new NamedParameter(this.name, f(this.value, acc));
+		}
+	}]);
+
 	return NamedParameter;
 }(Node);
 
@@ -325,6 +366,15 @@ var FunctionExpression = exports.FunctionExpression = function (_Expression8) {
 		return _this18;
 	}
 
+	_createClass(FunctionExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new FunctionExpression(this.parameters.map(function (p) {
+				return f(p, acc);
+			}), f(this.body, acc));
+		}
+	}]);
+
 	return FunctionExpression;
 }(Expression);
 
@@ -340,6 +390,15 @@ var CallExpression = exports.CallExpression = function (_Expression9) {
 		_this19.parameters = parameters;
 		return _this19;
 	}
+
+	_createClass(CallExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new CallExpression(f(this.callee, acc), this.parameters.map(function (p) {
+				return f(p, acc);
+			}), f(this.body, acc));
+		}
+	}]);
 
 	return CallExpression;
 }(Expression);
@@ -369,6 +428,13 @@ var PatternCase = exports.PatternCase = function (_Node11) {
 		return _this21;
 	}
 
+	_createClass(PatternCase, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new PatternCase(f(this.pattern, acc), f(this.result, acc));
+		}
+	}]);
+
 	return PatternCase;
 }(Node);
 
@@ -384,6 +450,15 @@ var PatternExpression = exports.PatternExpression = function (_Node12) {
 		_this22.patternCases = patternCases;
 		return _this22;
 	}
+
+	_createClass(PatternExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new PatternExpression(f(this.expression, acc), this.patternCases.map(function (p) {
+				return f(p, acc);
+			}));
+		}
+	}]);
 
 	return PatternExpression;
 }(Node);
@@ -402,9 +477,9 @@ var Declaration = exports.Declaration = function (_Statement) {
 	}
 
 	_createClass(Declaration, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren(f) {
-			return new (Function.prototype.bind.apply(Declaration, [null].concat(_toConsumableArray(f(this.declarator)), _toConsumableArray(f(this.value)))))();
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new Declaration(f(this.declarator, acc), f(this.value, acc));
 		}
 	}]);
 
@@ -425,9 +500,9 @@ var ImportDeclaration = exports.ImportDeclaration = function (_Statement2) {
 	}
 
 	_createClass(ImportDeclaration, [{
-		key: 'flatMapChildren',
-		value: function flatMapChildren(f) {
-			return new ImportDeclaration(f(this.declarator), this.path);
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new Declaration(f(this.declarator, acc), f(this.path, acc));
 		}
 	}]);
 
@@ -446,6 +521,15 @@ var LetExpression = exports.LetExpression = function (_Expression11) {
 		_this25.expression = expression;
 		return _this25;
 	}
+
+	_createClass(LetExpression, [{
+		key: 'mapChildren',
+		value: function mapChildren(f, acc) {
+			return new Declaration(this.declarations.map(function (d) {
+				return f(d, acc);
+			}), f(this.expression, acc));
+		}
+	}]);
 
 	return LetExpression;
 }(Expression);

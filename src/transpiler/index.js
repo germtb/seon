@@ -1,5 +1,6 @@
 import tokenizer from '../tokenizer'
 import parse from '../parser'
+import { resolveImports } from '../ast/transforms/resolveImports/resolveImports'
 import { visitorsFactory } from './visitorsFactory'
 import { createFunctionFactory } from './createFunction'
 
@@ -15,10 +16,11 @@ const createTranspile = () => {
 		return visitor(node, internals)
 	}
 
-	const run = code => {
+	const run = (code, pwd) => {
 		const tokens = tokenizer(code)
-		const nodes = parse(tokens)
-		return transpile(nodes[0])
+		const ast = parse(tokens)
+		const resolvedAST = resolveImports(ast, pwd, '../../core')
+		return transpile(resolvedAST)
 	}
 
 	const createFunction = createFunctionFactory({ transpile })

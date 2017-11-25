@@ -53,7 +53,7 @@ all = (selector, list) => reduce(
 take = (n, list) => match [n, list]
   | [0, _]  -> []
   | [_, []] -> []
-  | [n, [x, ...xs]] -> x :: take(n - 1, xs)
+  | [n, [x, ...xs]] -> [ x, ...take(n - 1, xs) ]
 
 drop = (n, list) => match [n, list]
   | [0, _] -> list
@@ -69,7 +69,7 @@ first = (selector, list) => match list
 
 range = (start, end) => match (end - start) > 0
   | false -> []
-  | true  -> start :: range(start + 1, end)
+  | true  -> [ start, ...range(start + 1, end) ]
 
 length = list => reduce((acc, _) => acc + 1, list, 0)
 
@@ -89,7 +89,7 @@ reverse = list => match list
 intersperse = (element, list) => match list
   | [] -> []
   | [x] -> [x]
-  | [x, y, ...xs] -> x :: element :: interspere(element, y :: xs)
+  | [x, y, ...xs] -> [ x, element, interspere(element, [y, ...xs]) ]
 
 sum = (initialValue, list) => reduce(
   (acc, x) => acc + x,

@@ -1,1 +1,3 @@
-export { resolveImports as default } from './resolveImports'
+import { resolveImports } from './resolveImports'
+
+export default resolveImports

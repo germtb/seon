@@ -118,7 +118,7 @@ new _Production.Production(['{', '}'], function () {
 	return (0, _utils.arrayOf)('ObjectProperty', [].concat(_toConsumableArray(properties.values), [new _nodes.ObjectProperty(expression, { computed: true })]));
 }), new _Production.Production(['[ObjectProperty]', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (expressions, expression) {
 	return new _nodes.ObjectExpression([].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression, { computed: false })]));
-}), new _Production.Production(['[ObjectProperty]', '#', 'IdentifierExpression|NamedParameter|RestElement', '}'], function (expressions, _, expression) {
+}), new _Production.Production(['[ObjectProperty]', '#', 'IdentifierExpression|NamedParameter', '}'], function (expressions, _, expression) {
 	return new _nodes.ObjectExpression([].concat(_toConsumableArray(expressions.values), [new _nodes.ObjectProperty(expression, { computed: true })]));
 }), new _Production.Production(['Expression', '.', 'IdentifierExpression'], function (expression, _, accessor) {
 	return new _nodes.ObjectAccessExpression(expression, accessor, {
@@ -209,7 +209,9 @@ new _Production.Production(['import', 'NoPattern|ArrayExpression|IdentifierExpre
 	return new _nodes.ImportDeclaration(openImport.expression, path);
 }), new _Production.Production(['NoPattern|ArrayExpression|IdentifierExpression|ObjectExpression', '=', 'Expression'], function (array, _, expression) {
 	return new _nodes.Declaration(array, expression);
-}, lowestPrecedence),
+}, function (peek) {
+	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
+}),
 
 // File
 new _Production.Production(['Node', '$'], function (statement) {
@@ -270,7 +272,7 @@ var parse = function parse(tokens) {
 		throw new Error('Parsing error');
 	}
 
-	return stack;
+	return stack[0];
 };
 
 exports.default = parse;

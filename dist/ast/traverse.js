@@ -6,9 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 var traverse = exports.traverse = function traverse(node, visitors, acc) {
 	var visitor = visitors[node.type];
 
-	if (visitor && visitor.flatMap) {
-		return { array: true, values: visitor.flatMap(node, acc) };
-	} else if (visitor && visitor.map) {
+	if (visitor && visitor.map) {
 		return visitor.map(node, acc);
 	}
 
@@ -16,13 +14,13 @@ var traverse = exports.traverse = function traverse(node, visitors, acc) {
 		visitor.enter(node, acc);
 	}
 
-	var result = node.flatMapChildren(function (c) {
-		return traverse(c, visitors, acc);
+	var finalNode = node.mapChildren(function (node) {
+		return traverse(node, visitors, acc);
 	});
 
 	if (visitor && visitor.exit) {
 		visitor.exit(node, acc);
 	}
 
-	return [result];
+	return finalNode;
 };

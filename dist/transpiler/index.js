@@ -13,6 +13,8 @@ var _parser = require('../parser');
 
 var _parser2 = _interopRequireDefault(_parser);
 
+var _resolveImports = require('../ast/transforms/resolveImports/resolveImports');
+
 var _visitorsFactory = require('./visitorsFactory');
 
 var _createFunction = require('./createFunction');
@@ -33,10 +35,11 @@ var createTranspile = function createTranspile() {
 		return visitor(node, internals);
 	};
 
-	var run = function run(code) {
+	var run = function run(code, pwd) {
 		var tokens = (0, _tokenizer2.default)(code);
-		var nodes = (0, _parser2.default)(tokens);
-		return transpile(nodes[0]);
+		var ast = (0, _parser2.default)(tokens);
+		var resolvedAST = (0, _resolveImports.resolveImports)(ast, pwd, '../../core');
+		return transpile(resolvedAST);
 	};
 
 	var createFunction = (0, _createFunction.createFunctionFactory)({ transpile: transpile });

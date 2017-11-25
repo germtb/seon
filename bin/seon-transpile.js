@@ -8,6 +8,7 @@ const run = require('../dist/transpiler').run
 const pwd = process.env.PWD
 
 const filename = path.resolve(pwd, argv._[0])
+const dirname = path.dirname(filename)
 const file = fs.readFileSync(filename, 'utf8')
 
 const runtimeModules = [
@@ -16,7 +17,7 @@ const runtimeModules = [
 	'../src/runtime/types.js'
 ]
 
-const transpiledFile = run(file)
+const transpiledFile = run(file, dirname)
 const output = argv.o
 
 if (!output) {
