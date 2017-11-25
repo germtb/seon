@@ -54,4 +54,18 @@ describe('traverse', () => {
 
 		expect(ast.nodes[0].value.value).toEqual(10)
 	})
+
+	test('maps nodes', () => {
+		const tokens = tokenizer('x = 1')
+		const ast = parse(tokens)
+		const traversedAST = traverse(ast, {
+			NumberExpression: {
+				map: node => {
+					return { type: 'StringExpression', value: node.value.toString() }
+				}
+			}
+		})
+
+		expect(traversedAST.nodes[0].value.value).toEqual('1')
+	})
 })
