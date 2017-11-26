@@ -1,4 +1,4 @@
-const toJSString = (x, tabulation = '') => {
+const internalToJSString = (x, tabulation = '') => {
 	if (x.type === 'Number') {
 		return x.value
 	} else if (x.type === 'Boolean') {
@@ -12,14 +12,14 @@ const toJSString = (x, tabulation = '') => {
 		if (keys.length === 0) {
 			return '{}'
 		} else if (keys.length === 1) {
-			return `{ ${keys[0]}: ${toJSString(x.value[keys[0]])} }`
+			return `{ ${keys[0]}: ${internalToJSString(x.value[keys[0]])} }`
 		}
 
 		return (
 			'{\n' +
 			keys
 				.map(key => {
-					return `${tabulation + '  '}${key}: ${toJSString(
+					return `${tabulation + '  '}${key}: ${internalToJSString(
 						x.value[key],
 						tabulation + '  '
 					)}`
@@ -28,23 +28,21 @@ const toJSString = (x, tabulation = '') => {
 			'\n}'
 		)
 	} else if (x.type === 'Array') {
-		return '[' + x.value.map(toJSString).join(', ') + ']'
+		return '[' + x.value.map(internalToJSString).join(', ') + ']'
 	}
 
 	return ''
 }
 
-exports.toJSString = toJSString
-
-exports.stringify = {
+export const internalStringify = {
 	type: 'Function',
 	call: params => ({
 		type: 'String',
-		value: params.map(p => toJSString(p)).join(' ')
+		value: params.map(p => internalToJSString(p)).join(' ')
 	})
 }
 
-exports.type = {
+export const internalType = {
 	type: 'Function',
 	call: params => ({
 		type: 'String',

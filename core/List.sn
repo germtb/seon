@@ -71,7 +71,7 @@ range = (start, end) => match (end - start) > 0
   | false -> []
   | true  -> [ start, ...range(start + 1, end) ]
 
-length = list => reduce((acc, _) => acc + 1, list, 0)
+length = list => reduce(acc => acc + 1, list, 0)
 
 zip = (list1, list2) => match [list1, list2]
   | [_, []] -> []

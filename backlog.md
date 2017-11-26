@@ -1,11 +1,14 @@
 # TODO
-- transpile to something
+- make differnt parts of the bundle not collide
+- underscore bug when used in as a function parameter
+- interop with javascript
 - rewrite in itself
 - Implement core libraries
-- Create syntax theme
 - Better parsing errors
+- Create syntax theme
 
 # MAYBE DO
+- hoisting?
 - Build imports into the AST?
 - pattern match with 1 | 2 | 3 ...
 - Default function parameters
@@ -22,7 +25,7 @@ concat = (list1, list2) => match list1
 
 map = (f, list) => match list
 	| [] -> []
-	| [x, ...xs] -> f(x :: map(f, xs)
+	| [x, ...xs] -> [f(x), ...map(f, xs)]
 
 map2 = (f, list1, list2) => match [list1, list2]
 	| [_, []] -> []
@@ -67,7 +70,7 @@ all = (selector, list) => reduce(
 take = (n, list) => match [n, list]
 	| [0, _]  -> []
 	| [_, []] -> []
-	| [n, [x, ...xs]] -> x :: take(n - 1, xs)
+	| [n, [x, ...xs]] -> [ x, ...take(n - 1, xs) ]
 
 drop = (n, list) => match [n, list]
 	| [0, _] -> list
@@ -83,7 +86,7 @@ first = (selector, list) => match list
 
 range = (start, end) => match (end - start) > 0
 	| false -> []
-	| true  -> start :: range(start + 1, end)
+	| true  -> [ start, ...range(start + 1, end) ]
 
 length = list => reduce((acc, _) => acc + 1, list, 0)
 

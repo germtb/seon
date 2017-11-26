@@ -30,7 +30,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var resolveImports = exports.resolveImports = function resolveImports(ast, pwd, bin) {
-	var modules = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : { local: {}, core: {} };
+	var modules = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 	return (0, _traverse.traverse)(ast, {
 		File: {
 			map: function map(file) {

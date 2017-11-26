@@ -12,6 +12,9 @@ const dirname = path.dirname(filename)
 const file = fs.readFileSync(filename, 'utf8')
 
 const runtimeModules = [
+	'../src/runtime/core.js',
+	'../src/runtime/debug.js',
+	'../src/runtime/dict.js',
 	'../src/runtime/createFunction.js',
 	'../src/runtime/patternMatching.js',
 	'../src/runtime/types.js'

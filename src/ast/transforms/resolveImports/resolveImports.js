@@ -5,12 +5,7 @@ import tokenizer from '../../../tokenizer'
 import parse from '../../../parser'
 import { File, Declaration } from '../../../parser/nodes'
 
-export const resolveImports = (
-	ast,
-	pwd,
-	bin,
-	modules = { local: {}, core: {} }
-) =>
+export const resolveImports = (ast, pwd, bin, modules = {}) =>
 	traverse(ast, {
 		File: {
 			map: file => {

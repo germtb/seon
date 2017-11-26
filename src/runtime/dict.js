@@ -1,11 +1,11 @@
-exports.internalKeys = {
+export const internalKeys = {
 	type: 'Function',
 	call: params => {
 		return { type: 'Array', values: Object.keys(params[0]) }
 	}
 }
 
-exports.internalGet = {
+export const internalGet = {
 	type: 'Function',
 	call: params => {
 		const key = params[0].value

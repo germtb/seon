@@ -1,4 +1,4 @@
-import { stringify } from 'InternalCore'
+stringify = x => internalStringify(x)
 
 module = {
   stringify
