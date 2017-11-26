@@ -211,6 +211,10 @@ new _Production.Production(['import', 'NoPattern|ArrayExpression|IdentifierExpre
 	return new _nodes.Declaration(array, expression);
 }, function (peek) {
 	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
+}), new _Production.Production(['external', 'IdentifierExpression'], function (_, identifier) {
+	return new _nodes.ExternalDeclaration(identifier.name);
+}, function (peek) {
+	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
 }),
 
 // File

@@ -22,6 +22,7 @@ import {
 	PatternCase,
 	PatternExpression,
 	Declaration,
+	ExternalDeclaration,
 	ImportDeclaration,
 	LetExpression
 } from './nodes'
@@ -635,6 +636,12 @@ describe('parser', () => {
 		expect(nodes).toEqual(
 			new File([new Declaration(new NoPattern(), new NumberExpression(10))])
 		)
+	})
+
+	test('an external declaration', () => {
+		const tokens = tokenizer('external React')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(new File([new ExternalDeclaration('React')]))
 	})
 
 	test('a function declaration', () => {

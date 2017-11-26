@@ -190,7 +190,7 @@ setInput = text => { type: 'SET_INPUT', text }
 
 UnconnectedTodos = (props: { todos, toggleTodo }) =>
 	todos |> map(todo =>
-		<span key={ todo.text |> withDefault('') }>
+		<span key={ todo.text }>
 			{ todo.text }
 			<button onClick={ () => toggleTodo(todo.text) }>
 				Toggle

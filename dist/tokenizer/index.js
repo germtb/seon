@@ -26,6 +26,9 @@ var keywords = _defineProperty({
 	in: {
 		type: 'in'
 	},
+	external: {
+		type: 'external'
+	},
 	true: {
 		type: 'Boolean',
 		value: true

@@ -46,6 +46,9 @@ const keywords = {
 	in: {
 		type: 'in'
 	},
+	external: {
+		type: 'external'
+	},
 	true: {
 		type: 'Boolean',
 		value: true

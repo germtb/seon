@@ -486,17 +486,32 @@ var Declaration = exports.Declaration = function (_Statement) {
 	return Declaration;
 }(Statement);
 
-var ImportDeclaration = exports.ImportDeclaration = function (_Statement2) {
-	_inherits(ImportDeclaration, _Statement2);
+var ExternalDeclaration = exports.ExternalDeclaration = function (_Statement2) {
+	_inherits(ExternalDeclaration, _Statement2);
+
+	function ExternalDeclaration(name) {
+		_classCallCheck(this, ExternalDeclaration);
+
+		var _this24 = _possibleConstructorReturn(this, (ExternalDeclaration.__proto__ || Object.getPrototypeOf(ExternalDeclaration)).call(this, 'ExternalDeclaration'));
+
+		_this24.name = name;
+		return _this24;
+	}
+
+	return ExternalDeclaration;
+}(Statement);
+
+var ImportDeclaration = exports.ImportDeclaration = function (_Statement3) {
+	_inherits(ImportDeclaration, _Statement3);
 
 	function ImportDeclaration(declarator, path) {
 		_classCallCheck(this, ImportDeclaration);
 
-		var _this24 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
+		var _this25 = _possibleConstructorReturn(this, (ImportDeclaration.__proto__ || Object.getPrototypeOf(ImportDeclaration)).call(this, 'ImportDeclaration'));
 
-		_this24.declarator = declarator;
-		_this24.path = path;
-		return _this24;
+		_this25.declarator = declarator;
+		_this25.path = path;
+		return _this25;
 	}
 
 	_createClass(ImportDeclaration, [{
@@ -515,11 +530,11 @@ var LetExpression = exports.LetExpression = function (_Expression11) {
 	function LetExpression(declarations, expression) {
 		_classCallCheck(this, LetExpression);
 
-		var _this25 = _possibleConstructorReturn(this, (LetExpression.__proto__ || Object.getPrototypeOf(LetExpression)).call(this, 'LetExpression'));
+		var _this26 = _possibleConstructorReturn(this, (LetExpression.__proto__ || Object.getPrototypeOf(LetExpression)).call(this, 'LetExpression'));
 
-		_this25.declarations = declarations;
-		_this25.expression = expression;
-		return _this25;
+		_this26.declarations = declarations;
+		_this26.expression = expression;
+		return _this26;
 	}
 
 	_createClass(LetExpression, [{

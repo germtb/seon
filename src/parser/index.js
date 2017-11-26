@@ -20,6 +20,7 @@ import {
 	PatternCase,
 	PatternExpression,
 	Declaration,
+	ExternalDeclaration,
 	ImportDeclaration,
 	LetExpression
 } from './nodes'
@@ -370,6 +371,15 @@ const grammar = [
 			'Expression'
 		],
 		(array, _, expression) => new Declaration(array, expression),
+		peek =>
+			!['=>', '(', '.'].includes(peek) &&
+			!unaryOperators.includes(peek) &&
+			!binaryOperators.includes(peek)
+	),
+
+	new Production(
+		['external', 'IdentifierExpression'],
+		(_, identifier) => new ExternalDeclaration(identifier.name),
 		peek =>
 			!['=>', '(', '.'].includes(peek) &&
 			!unaryOperators.includes(peek) &&

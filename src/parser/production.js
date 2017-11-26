@@ -36,6 +36,7 @@ const matchTable = {
 	// Statements
 	Statement: ['Statement', 'Node'],
 	Declaration: ['Declaration', 'Statement', 'Node'],
+	ExternalDeclaration: ['ExternalDeclaration', 'Statement', 'Node'],
 	ImportDeclaration: ['ImportDeclaration', 'Statement', 'Node'],
 
 	// Expressions

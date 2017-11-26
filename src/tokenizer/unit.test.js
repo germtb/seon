@@ -66,6 +66,18 @@ describe('tokenizer', () => {
 		])
 	})
 
+	test('produces an external token', () => {
+		expect(tokenizer('external')).toEqual([
+			{
+				type: 'external',
+				loc: {
+					start: { line: 0, column: 0 },
+					end: { line: 0, column: 8 }
+				}
+			}
+		])
+	})
+
 	test('produces a == token', () => {
 		expect(tokenizer('==')).toEqual([
 			{

@@ -250,6 +250,13 @@ export class Declaration extends Statement {
 	}
 }
 
+export class ExternalDeclaration extends Statement {
+	constructor(name) {
+		super('ExternalDeclaration')
+		this.name = name
+	}
+}
+
 export class ImportDeclaration extends Statement {
 	constructor(declarator, path) {
 		super('ImportDeclaration')
