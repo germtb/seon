@@ -31,6 +31,17 @@ export class File extends Node {
 	}
 }
 
+export class Bundle extends Node {
+	constructor(files) {
+		super('Bundle')
+		this.files = files
+	}
+
+	mapChildren(f, acc) {
+		return new Bundle(this.files.map(file => f(file, acc)))
+	}
+}
+
 export class IdentifierExpression extends Node {
 	constructor(name) {
 		super('IdentifierExpression')

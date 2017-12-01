@@ -1,16 +1,20 @@
 # TODO
+- add a scope analyser. With proper renaming abilities, it would be possible to make variable names not collide in bundles
 - make differnt parts of the bundle not collide
+- use custom implementation of array (linked list)
 - underscore bug when used in as a function parameter
 - interop with javascript
+- implement core libraries
+- build loc into parser nodes (instead of just the tokenizer)
+- better parsing errors
+- create syntax theme
 - rewrite in itself
-- Implement core libraries
-- Better parsing errors
-- Create syntax theme
 
 # MAYBE DO
+- guards?
 - hoisting?
-- Build imports into the AST?
-- pattern match with 1 | 2 | 3 ...
+- build imports into the AST?
+- pattern match with or 1 | 2 | 3 ...
 - Default function parameters
 - Computed props
 - Create bindings for node libraries

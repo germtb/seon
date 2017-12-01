@@ -379,7 +379,7 @@ const grammar = [
 
 	new Production(
 		['external', 'IdentifierExpression'],
-		(_, identifier) => new ExternalDeclaration(identifier.name),
+		(_, identifier) => new ExternalDeclaration(identifier.value),
 		peek =>
 			!['=>', '(', '.'].includes(peek) &&
 			!unaryOperators.includes(peek) &&

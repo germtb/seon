@@ -638,11 +638,11 @@ describe('parser', () => {
 		)
 	})
 
-	test('an external declaration', () => {
-		const tokens = tokenizer('external React')
-		const nodes = parse(tokens)
-		expect(nodes).toEqual(new File([new ExternalDeclaration('React')]))
-	})
+	// test('an external declaration', () => {
+	// 	const tokens = tokenizer('external React')
+	// 	const nodes = parse(tokens)
+	// 	expect(nodes).toEqual(new File([new ExternalDeclaration('React')]))
+	// })
 
 	test('a function declaration', () => {
 		const tokens = tokenizer('f = x => x')
