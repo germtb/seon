@@ -27,26 +27,28 @@ var _nodes = require('../../../parser/nodes');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var resolveImports = exports.resolveImports = function resolveImports(ast, pwd) {
-	var modules = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-	var moduleIds = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+var resolveImports = exports.resolveImports = function resolveImports(ast, pwd, bin) {
+	var modules = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+	var moduleIds = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
+	console.log('bin: ', bin);
+	console.log('pwd: ', pwd);
 	(0, _traverse.traverse)(ast, {
 		File: {
 			enter: function enter(file) {
 				var resolvedFile = new _nodes.File(file.nodes.map(function (node) {
 					if (node.type === 'ImportDeclaration') {
 						var modulePath = node.path.value;
-						var filename = _path2.default.resolve(pwd, modulePath) + '.sn';
+						var filename = modulePath[0] === '.' ? _path2.default.resolve(pwd, modulePath) + '.sn' : _path2.default.resolve(bin, modulePath) + '.sn';
 						var moduleId = void 0;
 
-						if (moduleIds[filename]) {
+						if (moduleIds[filename] !== undefined) {
 							moduleId = moduleIds[filename];
 						} else {
 							var dirname = _path2.default.dirname(filename);
 							var _file = _fs2.default.readFileSync(filename, 'utf8');
 							var fileAST = (0, _parser2.default)((0, _tokenizer2.default)(_file));
-							resolveImports(fileAST, dirname, modules, moduleIds);
+							resolveImports(fileAST, dirname, bin, modules, moduleIds);
 							moduleId = Object.keys(moduleIds).length;
 							moduleIds[filename] = moduleId;
 						}

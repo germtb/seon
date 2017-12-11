@@ -20,7 +20,8 @@ const runtimeModules = [
 	'../src/runtime/types.js'
 ]
 
-const transpiledFile = run(file, dirname)
+const bin = path.resolve(__dirname, '../core')
+const transpiledFile = run(file, dirname, bin)
 const output = argv.o
 
 if (!output) {

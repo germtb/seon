@@ -17,10 +17,10 @@ const createTranspile = () => {
 		return visitor(node, internals)
 	}
 
-	const run = (code, pwd) => {
+	const run = (code, pwd, bin) => {
 		const tokens = tokenizer(code)
 		const ast = parse(tokens)
-		const resolvedAST = resolveImports(ast, pwd)
+		const resolvedAST = resolveImports(ast, pwd, bin)
 		const transpiledCode = transpile(resolvedAST)
 		return format(transpiledCode, {
 			semi: false

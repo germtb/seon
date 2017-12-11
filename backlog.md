@@ -1,9 +1,9 @@
 # TODO
-- add a scope analyser. With proper renaming abilities, it would be possible to make variable names not collide in bundles
-- make differnt parts of the bundle not collide
+- add support for js-module import
+- add support for export to js
+- add a scope analyser. With proper renaming abilities
 - use custom implementation of array (linked list)
 - underscore bug when used in as a function parameter
-- interop with javascript
 - implement core libraries
 - build loc into parser nodes (instead of just the tokenizer)
 - better parsing errors

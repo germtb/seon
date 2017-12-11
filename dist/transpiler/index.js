@@ -37,10 +37,10 @@ var createTranspile = function createTranspile() {
 		return visitor(node, internals);
 	};
 
-	var run = function run(code, pwd) {
+	var run = function run(code, pwd, bin) {
 		var tokens = (0, _tokenizer2.default)(code);
 		var ast = (0, _parser2.default)(tokens);
-		var resolvedAST = (0, _resolveImports.resolveImports)(ast, pwd);
+		var resolvedAST = (0, _resolveImports.resolveImports)(ast, pwd, bin);
 		var transpiledCode = transpile(resolvedAST);
 		return (0, _prettier.format)(transpiledCode, {
 			semi: false

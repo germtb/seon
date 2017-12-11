@@ -12,7 +12,9 @@ import {
 	NumberExpression
 } from '../../../parser/nodes'
 
-export const resolveImports = (ast, pwd, modules = [], moduleIds = {}) => {
+export const resolveImports = (ast, pwd, bin, modules = [], moduleIds = {}) => {
+	console.log('bin: ', bin)
+	console.log('pwd: ', pwd)
 	traverse(ast, {
 		File: {
 			enter: file => {
@@ -20,16 +22,19 @@ export const resolveImports = (ast, pwd, modules = [], moduleIds = {}) => {
 					file.nodes.map(node => {
 						if (node.type === 'ImportDeclaration') {
 							const modulePath = node.path.value
-							const filename = path.resolve(pwd, modulePath) + '.sn'
+							const filename =
+								modulePath[0] === '.'
+									? path.resolve(pwd, modulePath) + '.sn'
+									: path.resolve(bin, modulePath) + '.sn'
 							let moduleId
 
-							if (moduleIds[filename]) {
+							if (moduleIds[filename] !== undefined) {
 								moduleId = moduleIds[filename]
 							} else {
 								const dirname = path.dirname(filename)
 								const file = fs.readFileSync(filename, 'utf8')
 								const fileAST = parse(tokenizer(file))
-								resolveImports(fileAST, dirname, modules, moduleIds)
+								resolveImports(fileAST, dirname, bin, modules, moduleIds)
 								moduleId = Object.keys(moduleIds).length
 								moduleIds[filename] = moduleId
 							}
