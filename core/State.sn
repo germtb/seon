@@ -1,5 +1,3 @@
-import { Err, Ok } from 'Result'
-import { stringify } from 'String'
 import { Nothing, Just } from 'Maybe'
 
 State = (value) => {

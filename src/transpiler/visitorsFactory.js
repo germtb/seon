@@ -16,6 +16,12 @@ const parameterBuilderVisitor = visitFactory({
 })
 
 export const visitorsFactory = ({ transpile, createFunction }) => ({
+	Bundle: node => {
+		const modules = node.files
+			.map(node => `(getModule) => {${transpile(node)}}`)
+			.join(',\n')
+		return `createBundle([${modules}])`
+	},
 	File: node => {
 		return node.nodes.map(node => transpile(node)).join('\n\n')
 	},
@@ -164,9 +170,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			? `{ ${parameters.join(', ')} }`
 			: ''
 
-		return `{ pattern: ${pattern}, result: (${transpiledParameters}) => ${
-			result
-		} }`
+		return `{ pattern: ${pattern}, result: (${transpiledParameters}) => ${result} }`
 	},
 	NoPattern: () => {
 		return "{ type: 'NoPattern' }"

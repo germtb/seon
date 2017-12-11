@@ -212,7 +212,7 @@ new _Production.Production(['import', 'NoPattern|ArrayExpression|IdentifierExpre
 }, function (peek) {
 	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
 }), new _Production.Production(['external', 'IdentifierExpression'], function (_, identifier) {
-	return new _nodes.ExternalDeclaration(identifier.name);
+	return new _nodes.ExternalDeclaration(identifier.value);
 }, function (peek) {
 	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
 }),

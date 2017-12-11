@@ -34,6 +34,12 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 	var transpile = _ref.transpile,
 	    createFunction = _ref.createFunction;
 	return {
+		Bundle: function Bundle(node) {
+			var modules = node.files.map(function (node) {
+				return '(getModule) => {' + transpile(node) + '}';
+			}).join(',\n');
+			return 'createBundle([' + modules + '])';
+		},
 		File: function File(node) {
 			return node.nodes.map(function (node) {
 				return transpile(node);

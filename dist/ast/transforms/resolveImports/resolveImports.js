@@ -27,42 +27,40 @@ var _nodes = require('../../../parser/nodes');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var resolveImports = exports.resolveImports = function resolveImports(ast, pwd) {
+	var modules = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+	var moduleIds = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-var resolveImports = exports.resolveImports = function resolveImports(ast, pwd, bin) {
-	var modules = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-	return (0, _traverse.traverse)(ast, {
+	(0, _traverse.traverse)(ast, {
 		File: {
-			map: function map(file) {
-				return new _nodes.File(file.nodes.reduce(function (acc, node) {
+			enter: function enter(file) {
+				var resolvedFile = new _nodes.File(file.nodes.map(function (node) {
 					if (node.type === 'ImportDeclaration') {
 						var modulePath = node.path.value;
 						var filename = _path2.default.resolve(pwd, modulePath) + '.sn';
+						var moduleId = void 0;
 
-						if (modules[filename]) {
-							var importedModule = modules[filename];
-							var module = importedModule.nodes.find(function (n) {
-								return n.type === 'Declaration' && n.declarator.name === 'module';
-							});
-							acc.push(new _nodes.Declaration(node.declarator, module.value));
+						if (moduleIds[filename]) {
+							moduleId = moduleIds[filename];
 						} else {
 							var dirname = _path2.default.dirname(filename);
 							var _file = _fs2.default.readFileSync(filename, 'utf8');
 							var fileAST = (0, _parser2.default)((0, _tokenizer2.default)(_file));
-							var _importedModule = resolveImports(fileAST, dirname, modules);
-							modules[filename] = _importedModule;
-
-							acc.push.apply(acc, _toConsumableArray(_importedModule.nodes.map(function (n) {
-								return n.type === 'Declaration' && n.declarator.name === 'module' ? new _nodes.Declaration(node.declarator, n.value) : n;
-							})));
+							resolveImports(fileAST, dirname, modules, moduleIds);
+							moduleId = Object.keys(moduleIds).length;
+							moduleIds[filename] = moduleId;
 						}
-					} else {
-						acc.push(node);
-					}
 
-					return acc;
-				}, []));
+						return new _nodes.Declaration(node.declarator, new _nodes.CallExpression(new _nodes.IdentifierExpression('getModule'), [new _nodes.NumberExpression(moduleId)]));
+					} else {
+						return node;
+					}
+				}));
+
+				modules.push(resolvedFile);
 			}
 		}
 	});
+
+	return new _nodes.Bundle(modules);
 };

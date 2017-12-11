@@ -3,57 +3,53 @@ import path from 'path'
 import fs from 'fs'
 import tokenizer from '../../../tokenizer'
 import parse from '../../../parser'
-import { Bundle, File, Declaration } from '../../../parser/nodes'
+import {
+	Bundle,
+	File,
+	Declaration,
+	CallExpression,
+	IdentifierExpression,
+	NumberExpression
+} from '../../../parser/nodes'
 
-export const resolveImports = (ast, pwd, bin, modules = {}) =>
+export const resolveImports = (ast, pwd, modules = [], moduleIds = {}) => {
 	traverse(ast, {
 		File: {
-			map: file => {
-				const files = [
-					new File(
-						file.nodes.reduce((acc, node) => {
-							if (node.type === 'ImportDeclaration') {
-								const modulePath = node.path.value
-								const filename = path.resolve(pwd, modulePath) + '.sn'
+			enter: file => {
+				const resolvedFile = new File(
+					file.nodes.map(node => {
+						if (node.type === 'ImportDeclaration') {
+							const modulePath = node.path.value
+							const filename = path.resolve(pwd, modulePath) + '.sn'
+							let moduleId
 
-								if (modules[filename]) {
-									const importedModule = modules[filename]
-									const module = importedModule.nodes.find(
-										n =>
-											n.type === 'Declaration' && n.declarator.name === 'module'
-									)
-									acc.push(new Declaration(node.declarator, module.value))
-								} else {
-									const dirname = path.dirname(filename)
-									const file = fs.readFileSync(filename, 'utf8')
-									const fileAST = parse(tokenizer(file))
-									const importedModule = resolveImports(
-										fileAST,
-										dirname,
-										modules
-									).files[0]
-									modules[filename] = importedModule
-
-									acc.push(
-										...importedModule.nodes.map(
-											n =>
-												n.type === 'Declaration' &&
-												n.declarator.name === 'module'
-													? new Declaration(node.declarator, n.value)
-													: n
-										)
-									)
-								}
+							if (moduleIds[filename]) {
+								moduleId = moduleIds[filename]
 							} else {
-								acc.push(node)
+								const dirname = path.dirname(filename)
+								const file = fs.readFileSync(filename, 'utf8')
+								const fileAST = parse(tokenizer(file))
+								resolveImports(fileAST, dirname, modules, moduleIds)
+								moduleId = Object.keys(moduleIds).length
+								moduleIds[filename] = moduleId
 							}
 
-							return acc
-						}, [])
-					)
-				]
+							return new Declaration(
+								node.declarator,
+								new CallExpression(new IdentifierExpression('getModule'), [
+									new NumberExpression(moduleId)
+								])
+							)
+						} else {
+							return node
+						}
+					})
+				)
 
-				return new Bundle(files)
+				modules.push(resolvedFile)
 			}
 		}
 	})
+
+	return new Bundle(modules)
+}

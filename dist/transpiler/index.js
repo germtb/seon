@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.run = exports.transpile = undefined;
 
+var _prettier = require('prettier');
+
 var _tokenizer = require('../tokenizer');
 
 var _tokenizer2 = _interopRequireDefault(_tokenizer);
@@ -38,8 +40,11 @@ var createTranspile = function createTranspile() {
 	var run = function run(code, pwd) {
 		var tokens = (0, _tokenizer2.default)(code);
 		var ast = (0, _parser2.default)(tokens);
-		var resolvedAST = (0, _resolveImports.resolveImports)(ast, pwd, '../../core');
-		return transpile(resolvedAST);
+		var resolvedAST = (0, _resolveImports.resolveImports)(ast, pwd);
+		var transpiledCode = transpile(resolvedAST);
+		return (0, _prettier.format)(transpiledCode, {
+			semi: false
+		});
 	};
 
 	var createFunction = (0, _createFunction.createFunctionFactory)({ transpile: transpile });

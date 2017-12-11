@@ -44,6 +44,7 @@ var matchTable = {
 	// Nodes
 	Node: ['Node'],
 	File: ['File', 'Node'],
+	Bundle: ['Bundle', 'Node'],
 	ObjectProperty: ['ObjectProperty', 'Node'],
 	BinaryOperator: ['BinaryOperator', 'Node'],
 	UnaryOperator: ['UnaryOperator', 'Node'],

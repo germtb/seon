@@ -1,3 +1,4 @@
+import { format } from 'prettier'
 import tokenizer from '../tokenizer'
 import parse from '../parser'
 import { resolveImports } from '../ast/transforms/resolveImports/resolveImports'
@@ -19,8 +20,11 @@ const createTranspile = () => {
 	const run = (code, pwd) => {
 		const tokens = tokenizer(code)
 		const ast = parse(tokens)
-		const resolvedAST = resolveImports(ast, pwd, '../../core')
-		return transpile(resolvedAST)
+		const resolvedAST = resolveImports(ast, pwd)
+		const transpiledCode = transpile(resolvedAST)
+		return format(transpiledCode, {
+			semi: false
+		})
 	}
 
 	const createFunction = createFunctionFactory({ transpile })
