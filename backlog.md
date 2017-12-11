@@ -1,6 +1,7 @@
 # TODO
 - add support for js-module import
 - add support for export to js
+- dead code elimination
 - add a scope analyser. With proper renaming abilities
 - use custom implementation of array (linked list)
 - underscore bug when used in as a function parameter
@@ -248,3 +249,4 @@ App = () => <ul>
 	<Todos />
 	<Form />
 </ul>
+

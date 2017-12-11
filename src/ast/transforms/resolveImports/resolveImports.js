@@ -13,13 +13,11 @@ import {
 } from '../../../parser/nodes'
 
 export const resolveImports = (ast, pwd, bin, modules = [], moduleIds = {}) => {
-	console.log('bin: ', bin)
-	console.log('pwd: ', pwd)
 	traverse(ast, {
 		File: {
 			enter: file => {
-				const resolvedFile = new File(
-					file.nodes.map(node => {
+				const resolvedFile = new File([
+					...file.nodes.map(node => {
 						if (node.type === 'ImportDeclaration') {
 							const modulePath = node.path.value
 							const filename =
@@ -48,8 +46,9 @@ export const resolveImports = (ast, pwd, bin, modules = [], moduleIds = {}) => {
 						} else {
 							return node
 						}
-					})
-				)
+					}),
+					new IdentifierExpression('return module')
+				])
 
 				modules.push(resolvedFile)
 			}

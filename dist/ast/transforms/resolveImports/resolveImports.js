@@ -27,16 +27,16 @@ var _nodes = require('../../../parser/nodes');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var resolveImports = exports.resolveImports = function resolveImports(ast, pwd, bin) {
 	var modules = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
 	var moduleIds = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
-	console.log('bin: ', bin);
-	console.log('pwd: ', pwd);
 	(0, _traverse.traverse)(ast, {
 		File: {
 			enter: function enter(file) {
-				var resolvedFile = new _nodes.File(file.nodes.map(function (node) {
+				var resolvedFile = new _nodes.File([].concat(_toConsumableArray(file.nodes.map(function (node) {
 					if (node.type === 'ImportDeclaration') {
 						var modulePath = node.path.value;
 						var filename = modulePath[0] === '.' ? _path2.default.resolve(pwd, modulePath) + '.sn' : _path2.default.resolve(bin, modulePath) + '.sn';
@@ -57,7 +57,7 @@ var resolveImports = exports.resolveImports = function resolveImports(ast, pwd, 
 					} else {
 						return node;
 					}
-				}));
+				})), [new _nodes.IdentifierExpression('return module')]));
 
 				modules.push(resolvedFile);
 			}

@@ -3,6 +3,18 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var createBundle = exports.createBundle = function createBundle(modules) {
+	var modulesCache = {};
+	var getModule = function getModule(index) {
+		if (modulesCache[index] === undefined) {
+			modulesCache[index] = modules[index](getModule);
+		}
+		return modulesCache[index];
+	};
+
+	return modules[modules.length - 1](getModule);
+};
+
 var internalToJSString = function internalToJSString(x) {
 	var tabulation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 

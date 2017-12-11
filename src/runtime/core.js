@@ -1,3 +1,15 @@
+export const createBundle = modules => {
+	const modulesCache = {}
+	const getModule = index => {
+		if (modulesCache[index] === undefined) {
+			modulesCache[index] = modules[index](getModule)
+		}
+		return modulesCache[index]
+	}
+
+	return modules[modules.length - 1](getModule)
+}
+
 const internalToJSString = (x, tabulation = '') => {
 	if (x.type === 'Number') {
 		return x.value
