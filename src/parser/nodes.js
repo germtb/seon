@@ -210,8 +210,7 @@ export class CallExpression extends Expression {
 	mapChildren(f, acc) {
 		return new CallExpression(
 			f(this.callee, acc),
-			this.parameters.map(p => f(p, acc)),
-			f(this.body, acc)
+			this.parameters.map(p => f(p, acc))
 		)
 	}
 }

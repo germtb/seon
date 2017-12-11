@@ -420,7 +420,7 @@ var CallExpression = exports.CallExpression = function (_Expression9) {
 		value: function mapChildren(f, acc) {
 			return new CallExpression(f(this.callee, acc), this.parameters.map(function (p) {
 				return f(p, acc);
-			}), f(this.body, acc));
+			}));
 		}
 	}]);
 
