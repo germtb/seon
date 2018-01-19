@@ -46,8 +46,7 @@ export const resolveImports = (ast, pwd, bin, modules = [], moduleIds = {}) => {
 						} else {
 							return node
 						}
-					}),
-					new IdentifierExpression('return module')
+					})
 				])
 
 				modules.push(resolvedFile)

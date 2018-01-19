@@ -18,7 +18,7 @@ const parameterBuilderVisitor = visitFactory({
 export const visitorsFactory = ({ transpile, createFunction }) => ({
 	Bundle: node => {
 		const modules = node.files
-			.map(node => `(getModule) => {${transpile(node)}}`)
+			.map(node => `(getModule) => {${transpile(node)}\n\nreturn module}`)
 			.join(',\n')
 		return `createBundle([${modules}])`
 	},
