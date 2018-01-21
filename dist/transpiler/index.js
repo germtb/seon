@@ -31,7 +31,7 @@ var createTranspile = function createTranspile() {
 		var visitor = visitors[type];
 
 		if (!visitor) {
-			return type + ' is not a visitor';
+			throw type + ' is not a visitor';
 		}
 
 		return visitor(node, internals);

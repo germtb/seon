@@ -17,13 +17,13 @@ const runtimeModules = [
 	'../src/runtime/dict.js',
 	'../src/runtime/createFunction.js',
 	'../src/runtime/patternMatching.js',
-	'../src/runtime/safeguard.js',
-	'../src/runtime/types.js'
+	'../src/runtime/types.js',
+	'../src/runtime/safeguard.js'
 ]
 
 const bin = path.resolve(__dirname, '../core')
 const transpiledFile = run(file, dirname, bin)
-const output = argv.o || path.basename(filename) + '.js'
+const output = argv.o || path.basename(filename) + '.html'
 
 const runtime = runtimeModules.reduce((acc, filepath) => {
 	const filename = path.resolve(__dirname, filepath)
@@ -31,10 +31,22 @@ const runtime = runtimeModules.reduce((acc, filepath) => {
 	return acc + '\n' + file
 }, '')
 
-const runtimeWithoutExports = runtime.replace(/^export\s*/g, '', '')
+const runtimeWithoutExports = runtime.replace(/export/g, '', '')
 const fileWithRuntime = runtimeWithoutExports + '\n' + transpiledFile
+const html = `
+	<DOCTYPE! html>
+	<html>
+		<script>
+			window.onload = () => {
+				${fileWithRuntime}
+			}
+		</script>
+		<header></header>
+		<body></body>
+	</html>
+	`
 
-fs.writeFileSync(output, fileWithRuntime, error => {
+fs.writeFileSync(output, html, error => {
 	if (error) {
 		return console.error(error)
 	}

@@ -11,7 +11,7 @@ const createTranspile = () => {
 		const visitor = visitors[type]
 
 		if (!visitor) {
-			return `${type} is not a visitor`
+			throw `${type} is not a visitor`
 		}
 
 		return visitor(node, internals)

@@ -28,6 +28,9 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	ImportDeclaration: () => {
 		return ''
 	},
+	ExternalDeclaration: node => {
+		return `const ${node.name} = safeguard(${node.name})`
+	},
 	IdentifierExpression: (node, { context }) => {
 		return context === 'patternMatching'
 			? `{ type: 'IdentifierExpression', name: '${node.name}' }`

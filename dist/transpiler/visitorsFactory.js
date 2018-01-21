@@ -36,7 +36,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 	return {
 		Bundle: function Bundle(node) {
 			var modules = node.files.map(function (node) {
-				return '(getModule) => {' + transpile(node) + '}';
+				return '(getModule) => {' + transpile(node) + '\n\nreturn module}';
 			}).join(',\n');
 			return 'createBundle([' + modules + '])';
 		},
@@ -47,6 +47,9 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 		},
 		ImportDeclaration: function ImportDeclaration() {
 			return '';
+		},
+		ExternalDeclaration: function ExternalDeclaration(node) {
+			return 'const ' + node.name + ' = safeguard(' + node.name + ')';
 		},
 		IdentifierExpression: function IdentifierExpression(node, _ref2) {
 			var context = _ref2.context;
