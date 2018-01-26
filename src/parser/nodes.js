@@ -8,6 +8,12 @@ export class Node {
 	}
 }
 
+export class NullNode extends Node {
+	constructor() {
+		super('NullNode')
+	}
+}
+
 export class Expression extends Node {
 	constructor(type) {
 		super(type)

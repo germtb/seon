@@ -1,28 +1,29 @@
 import {
-	File,
-	UnaryOperator,
-	UnaryExpression,
-	BinaryOperator,
-	BinaryExpression,
-	IdentifierExpression,
-	BooleanExpression,
-	NumberExpression,
-	StringExpression,
 	ArrayExpression,
-	RestElement,
-	ObjectExpression,
-	ObjectProperty,
-	ObjectAccessExpression,
-	NamedParameter,
-	FunctionExpression,
+	BinaryExpression,
+	BinaryOperator,
+	BooleanExpression,
 	CallExpression,
-	NoPattern,
-	PatternCase,
-	PatternExpression,
 	Declaration,
 	ExternalDeclaration,
+	File,
+	FunctionExpression,
+	IdentifierExpression,
 	ImportDeclaration,
-	LetExpression
+	LetExpression,
+	NamedParameter,
+	NoPattern,
+	NullNode,
+	NumberExpression,
+	ObjectAccessExpression,
+	ObjectExpression,
+	ObjectProperty,
+	PatternCase,
+	PatternExpression,
+	RestElement,
+	StringExpression,
+	UnaryExpression,
+	UnaryOperator
 } from './nodes'
 import { Production } from './Production'
 import { arrayOf } from './utils'
@@ -82,7 +83,7 @@ const grammar = [
 	// Terminals
 	...unaryOperators.map(o => new Production([o], () => new UnaryOperator(o))),
 	...binaryOperators.map(o => new Production([o], () => new BinaryOperator(o))),
-	new Production(['Comment'], () => []),
+	new Production(['Comment'], () => new NullNode()),
 	new Production(
 		['Identifier'],
 		identifier => new IdentifierExpression(identifier.value)

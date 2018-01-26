@@ -1,31 +1,32 @@
-import tokenizer from '../tokenizer'
-import parse from './index'
 import {
-	File,
-	UnaryOperator,
-	UnaryExpression,
-	BinaryOperator,
-	BinaryExpression,
-	IdentifierExpression,
-	BooleanExpression,
-	NumberExpression,
-	StringExpression,
 	ArrayExpression,
-	RestElement,
-	ObjectExpression,
-	ObjectProperty,
-	ObjectAccessExpression,
-	NamedParameter,
-	FunctionExpression,
+	BinaryExpression,
+	BinaryOperator,
+	BooleanExpression,
 	CallExpression,
-	NoPattern,
-	PatternCase,
-	PatternExpression,
 	Declaration,
 	ExternalDeclaration,
+	File,
+	FunctionExpression,
+	IdentifierExpression,
 	ImportDeclaration,
-	LetExpression
+	LetExpression,
+	NamedParameter,
+	NoPattern,
+	NullNode,
+	NumberExpression,
+	ObjectAccessExpression,
+	ObjectExpression,
+	ObjectProperty,
+	PatternCase,
+	PatternExpression,
+	RestElement,
+	StringExpression,
+	UnaryExpression,
+	UnaryOperator
 } from './nodes'
+import parse from './index'
+import tokenizer from '../tokenizer'
 
 describe('parser', () => {
 	test('an identifier', () => {
@@ -50,6 +51,12 @@ describe('parser', () => {
 		const tokens = tokenizer("'1234'")
 		const nodes = parse(tokens)
 		expect(nodes).toEqual(new File([new StringExpression('1234')]))
+	})
+
+	test('a comment', () => {
+		const tokens = tokenizer('// Hello I am a comment')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(new File([new NullNode()]))
 	})
 
 	test('a binary opertor', () => {

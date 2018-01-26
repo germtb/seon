@@ -45,6 +45,9 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	StringExpression: node => {
 		return `"${node.value}"`
 	},
+	NullNode: () => {
+		return ''
+	},
 	ArrayExpression: (node, internals) => {
 		const value =
 			node.values.length === 0

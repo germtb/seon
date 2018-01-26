@@ -24,6 +24,13 @@ describe('transpile', () => {
 		expect(result).toEqual('"1234"')
 	})
 
+	test('a null node', () => {
+		const tokens = tokenizer('// Hello I am a comment')
+		const nodes = parse(tokens)
+		const result = transpile(nodes)
+		expect(result).toEqual('')
+	})
+
 	test('an array', () => {
 		const tokens = tokenizer('[ 0, 1, 2 ]')
 		const nodes = parse(tokens)

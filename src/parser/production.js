@@ -21,6 +21,7 @@ export class Production {
 const matchTable = {
 	// Nodes
 	Node: ['Node'],
+	NullNode: ['NullNode', 'Node'],
 	File: ['File', 'Node'],
 	Bundle: ['Bundle', 'Node'],
 	ObjectProperty: ['ObjectProperty', 'Node'],
