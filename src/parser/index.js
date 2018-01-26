@@ -415,7 +415,12 @@ const grammar = [
 ]
 
 const parse = tokens => {
+	if (tokens.length === 0) {
+		return new File([])
+	}
+
 	tokens.push({ type: '$' })
+
 	const stack = []
 
 	for (let i = 0; i < tokens.length; i++) {

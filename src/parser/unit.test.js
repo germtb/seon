@@ -59,6 +59,12 @@ describe('parser', () => {
 		expect(nodes).toEqual(new File([new NullNode()]))
 	})
 
+	test('an empty string', () => {
+		const tokens = tokenizer('')
+		const nodes = parse(tokens)
+		expect(nodes).toEqual(new File([]))
+	})
+
 	test('a binary opertor', () => {
 		const tokens = tokenizer('+')
 		const nodes = parse(tokens)
