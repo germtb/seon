@@ -24,9 +24,9 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	},
 	File: node => {
 		return [
-			// "import { createFunction, matchExpression } from 'core.js'",
-			...node.nodes.map(node => transpile(node))
-			// 'export default module'
+			"import Seon from 'seon'",
+			...node.nodes.map(node => transpile(node)),
+			'export default module'
 		].join('\n\n')
 	},
 	ImportDeclaration: node => {

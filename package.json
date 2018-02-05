@@ -3,19 +3,18 @@
 	"bin": {
 		"seon": "./bin/seon.js",
 		"seon-transpile": "./bin/seon-transpile.js",
-		"seon-node": "./bin/seon-node.js",
-		"seon-make": "./bin/seon-make.js"
+		"seon-node": "./bin/seon-node.js"
 	},
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"version": "0.0.0",
+	"description": "A minimal functional language that compiles to javascript",
+	"main": "dist/runtime/seon.js",
 	"scripts": {
 		"test": "jest",
 		"build": "babel src --out-dir dist --ignore *.test.js",
 		"test-core": "node ./bin/seon.js ./core/*.test.sn"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": ["language"],
+	"author": "Gerard Moreno-Torres Bertran",
 	"license": "ISC",
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
