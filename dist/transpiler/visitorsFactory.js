@@ -41,9 +41,9 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			return 'createBundle([' + modules + '])';
 		},
 		File: function File(node) {
-			return [].concat(_toConsumableArray(node.nodes.map(function (node) {
+			return ["import Seon from 'seon'"].concat(_toConsumableArray(node.nodes.map(function (node) {
 				return transpile(node);
-			}))).join('\n\n');
+			})), ['export default module']).join('\n\n');
 		},
 		ImportDeclaration: function ImportDeclaration(node) {
 			return 'import ' + transpile(node.declarator) + ' from \'' + node.path.value + '\'';

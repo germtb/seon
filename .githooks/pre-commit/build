@@ -1,0 +1,4 @@
+#!/bin/bash 
+babel src --out-dir dist --ignore *.test.js
+git add
+

@@ -22,6 +22,7 @@
 		"babel-preset-env": "^1.6.0",
 		"eslint": "^4.9.0",
 		"eslint-plugin-jest": "^21.2.0",
+		"git-hooks": "^1.1.9",
 		"jest": "^21.2.1",
 		"jest-cli": "^22.1.4",
 		"prettier": "^1.9.1"
