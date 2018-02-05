@@ -43,6 +43,7 @@ var Production = exports.Production = function () {
 var matchTable = {
 	// Nodes
 	Node: ['Node'],
+	NullNode: ['NullNode', 'Node'],
 	File: ['File', 'Node'],
 	Bundle: ['Bundle', 'Node'],
 	ObjectProperty: ['ObjectProperty', 'Node'],
@@ -58,6 +59,8 @@ var matchTable = {
 
 	// Statements
 	Statement: ['Statement', 'Node'],
+
+	// Declarations
 	Declaration: ['Declaration', 'Statement', 'Node'],
 	ExternalDeclaration: ['ExternalDeclaration', 'Statement', 'Node'],
 	ImportDeclaration: ['ImportDeclaration', 'Statement', 'Node'],

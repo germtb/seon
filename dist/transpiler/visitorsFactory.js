@@ -41,12 +41,12 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			return 'createBundle([' + modules + '])';
 		},
 		File: function File(node) {
-			return node.nodes.map(function (node) {
+			return ["import { createFunction, matchExpression } from 'core.js'"].concat(_toConsumableArray(node.nodes.map(function (node) {
 				return transpile(node);
-			}).join('\n\n');
+			})), ['export default module']).join('\n\n');
 		},
-		ImportDeclaration: function ImportDeclaration() {
-			return '';
+		ImportDeclaration: function ImportDeclaration(node) {
+			return 'import ' + transpile(node.declarator) + ' from \'' + node.path.value + '\'';
 		},
 		ExternalDeclaration: function ExternalDeclaration(node) {
 			return 'const ' + node.name + ' = safeguard(' + node.name + ')';
@@ -64,6 +64,9 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 		},
 		StringExpression: function StringExpression(node) {
 			return '"' + node.value + '"';
+		},
+		NullNode: function NullNode() {
+			return '';
 		},
 		ArrayExpression: function ArrayExpression(node, internals) {
 			var value = node.values.length === 0 ? '[]' : '[ ' + node.values.map(function (node) {

@@ -1,6 +1,5 @@
-import { Err, Ok } from 'Result'
-import { stringify } from 'String'
-import { Nothing, Just } from 'Maybe'
+import { stringify } from './String'
+import { Nothing, Just } from './Maybe'
 
 map = (f, list) => match list
   | [] -> []
@@ -12,7 +11,7 @@ flatMap = (f, list) => match list
 
 head = list => match list
   | [] -> Nothing()
-  | [x, ...xs] -> Just(x)
+  | [x] -> Just(x)
 
 reduce = (f, list, acc) => match list
   | [] -> acc
@@ -25,7 +24,7 @@ concat = (list1, list2) => match list1
 map2 = (f, list1, list2) => match [list1, list2]
   | [_, []] -> []
   | [[], _] -> []
-  | [[x, ...xs], [y, ...ys]] -> [f(x, y), ...map2(f, list1, list2)]
+  | [[x, ...xs], [y, ...ys]] -> [f(x, y), ...map2(f, xs, ys)]
 
 some = (selector, list) => reduce(
   (acc, x) => acc or selector(x),
@@ -35,7 +34,7 @@ some = (selector, list) => reduce(
 
 tail = list => match list
   | [] -> Nothing()
-  | [x, ...xs] -> Just(xs)
+  | [_, ...xs] -> Just(xs)
 
 filter = (selector, list) => match list
   | [] -> []
@@ -58,7 +57,7 @@ take = (n, list) => match [n, list]
 drop = (n, list) => match [n, list]
   | [0, _] -> list
   | [_, []] -> []
-  | [n, [x, ...xs]] -> drop(n - 1, xs)
+  | [n, [_, ...xs]] -> drop(n - 1, xs)
 
 first = (selector, list) => match list
   | [] -> Nothing()
@@ -78,18 +77,14 @@ zip = (list1, list2) => match [list1, list2]
   | [[], _] -> []
   | [[x, ...xs], [y, ...ys]] -> [[x, y], ...zip(xs, ys)]
 
-queue = (element, list) => match List
-  | [] -> [element]
-  | [x, ...xs] -> [x, ...queue(element, xs)]
-
 reverse = list => match list
   | [] -> []
-  | [x, ...xs] -> queue(reverse(x), x)
+  | [x, ...xs] -> [...reverse(xs), x]
 
 intersperse = (element, list) => match list
   | [] -> []
   | [x] -> [x]
-  | [x, y, ...xs] -> [ x, element, interspere(element, [y, ...xs]) ]
+  | [x, y, ...xs] -> [ x, element, intersperse(element, [y, ...xs]) ]
 
 sum = (initialValue, list) => reduce(
   (acc, x) => acc + x,

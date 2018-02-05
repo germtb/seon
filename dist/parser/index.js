@@ -56,7 +56,7 @@ var grammar = [].concat(_toConsumableArray(unaryOperators.map(function (o) {
 		return new _nodes.BinaryOperator(o);
 	});
 })), [new _Production.Production(['Comment'], function () {
-	return [];
+	return new _nodes.NullNode();
 }), new _Production.Production(['Identifier'], function (identifier) {
 	return new _nodes.IdentifierExpression(identifier.value);
 }), new _Production.Production(['Boolean'], function (expression) {
@@ -212,7 +212,7 @@ new _Production.Production(['import', 'NoPattern|ArrayExpression|IdentifierExpre
 }, function (peek) {
 	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
 }), new _Production.Production(['external', 'IdentifierExpression'], function (_, identifier) {
-	return new _nodes.ExternalDeclaration(identifier.value);
+	return new _nodes.ExternalDeclaration(identifier.name);
 }, function (peek) {
 	return !['=>', '(', '.'].includes(peek) && !unaryOperators.includes(peek) && !binaryOperators.includes(peek);
 }),
@@ -240,7 +240,12 @@ new _Production.Production(['let', 'Declaration'], function (_, declaration) {
 }, lowestPrecedence)]);
 
 var parse = function parse(tokens) {
+	if (tokens.length === 0) {
+		return new _nodes.File([]);
+	}
+
 	tokens.push({ type: '$' });
+
 	var stack = [];
 
 	var _loop = function _loop(i) {

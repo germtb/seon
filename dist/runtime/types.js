@@ -9,6 +9,7 @@ var IdentifierExpression = exports.IdentifierExpression = function IdentifierExp
 		name: name
 	};
 };
+
 var RestElement = exports.RestElement = function RestElement(name) {
 	return {
 		type: 'RestElement',
@@ -17,6 +18,7 @@ var RestElement = exports.RestElement = function RestElement(name) {
 		}
 	};
 };
+
 var ObjectExpression = exports.ObjectExpression = function ObjectExpression(properties) {
 	return {
 		type: 'ObjectExpression',

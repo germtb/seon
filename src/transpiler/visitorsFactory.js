@@ -23,10 +23,14 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 		return `createBundle([${modules}])`
 	},
 	File: node => {
-		return node.nodes.map(node => transpile(node)).join('\n\n')
+		return [
+			"import { createFunction, matchExpression } from 'core.js'",
+			...node.nodes.map(node => transpile(node)),
+			'export default module'
+		].join('\n\n')
 	},
-	ImportDeclaration: () => {
-		return ''
+	ImportDeclaration: node => {
+		return `import ${transpile(node.declarator)} from '${node.path.value}'`
 	},
 	ExternalDeclaration: node => {
 		return `const ${node.name} = safeguard(${node.name})`

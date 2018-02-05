@@ -57,7 +57,7 @@ var resolveImports = exports.resolveImports = function resolveImports(ast, pwd, 
 					} else {
 						return node;
 					}
-				})), [new _nodes.IdentifierExpression('return module')]));
+				}))));
 
 				modules.push(resolvedFile);
 			}

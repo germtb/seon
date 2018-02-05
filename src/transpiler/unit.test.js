@@ -503,7 +503,7 @@ describe('transpile', () => {
 	})
 
 	test('external declaration', () => {
-		const tokens = tokenizer(`external document`)
+		const tokens = tokenizer('external document')
 		const nodes = parse(tokens)
 		const result = transpile(nodes.nodes[0])
 		expect(result).toEqual(['const document = safeguard(document)'].join('\n'))
