@@ -509,6 +509,27 @@ describe('transpile', () => {
 		expect(result).toEqual(['const document = safeguard(document)'].join('\n'))
 	})
 
+	test('a no-pattern declaration', () => {
+		const tokens = tokenizer('_ = Foo()')
+		const nodes = parse(tokens)
+		const result = transpile(nodes.nodes[0])
+		expect(result).toEqual('Foo()')
+	})
+
+	test('a no-pattern nested declaration', () => {
+		const tokens = tokenizer('[ x, _, _, y ] = foo')
+		const nodes = parse(tokens)
+		const result = transpile(nodes.nodes[0])
+		expect(result).toEqual('const [ x, _1, _2, y ] = foo')
+	})
+
+	test('a no-pattern import declaration', () => {
+		const tokens = tokenizer("import _ from 'react'")
+		const nodes = parse(tokens)
+		const result = transpile(nodes.nodes[0])
+		expect(result).toEqual("import _1 from 'react'")
+	})
+
 	// test('import declaration #1', () => {
 	// 	const tokens = tokenizer("import x from './mock'")
 	// 	const nodes = parse(tokens)

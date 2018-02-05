@@ -41,9 +41,9 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			return 'createBundle([' + modules + '])';
 		},
 		File: function File(node) {
-			return ["import { createFunction, matchExpression } from 'core.js'"].concat(_toConsumableArray(node.nodes.map(function (node) {
+			return [].concat(_toConsumableArray(node.nodes.map(function (node) {
 				return transpile(node);
-			})), ['export default module']).join('\n\n');
+			}))).join('\n\n');
 		},
 		ImportDeclaration: function ImportDeclaration(node) {
 			return 'import ' + transpile(node.declarator) + ' from \'' + node.path.value + '\'';
@@ -126,7 +126,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 		},
 		BinaryExpression: function BinaryExpression(node) {
 			if (node.operator.operator === '|>') {
-				return [transpile(node.right), '(', transpile(node.left), ')'].join('');
+				return transpile(node.right) + '(' + transpile(node.left) + ')}';
 			}
 
 			return [transpile(node.left), transpile(node.operator), transpile(node.right)].join(' ');
@@ -169,7 +169,7 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 			var pattern = transpile(node.pattern, _extends({}, internals, {
 				context: 'patternMatching'
 			}));
-			var result = transpile(node.result);
+			var result = transpile(node.result, internals);
 			var parameters = [];
 
 			parameterBuilderVisitor(node.pattern, parameters);
@@ -178,11 +178,25 @@ var visitorsFactory = exports.visitorsFactory = function visitorsFactory(_ref) {
 
 			return '{ pattern: ' + pattern + ', result: (' + transpiledParameters + ') => ' + result + ' }';
 		},
-		NoPattern: function NoPattern() {
-			return "{ type: 'NoPattern' }";
+		NoPattern: function NoPattern(node, internals) {
+			if (internals.context === 'patternMatching') {
+				return "{ type: 'NoPattern' }";
+			}
+
+			if (!internals.noPatternCount) {
+				internals.noPatternCount = 1;
+			} else {
+				internals.noPatternCount += 1;
+			}
+
+			return '_' + internals.noPatternCount;
 		},
-		Declaration: function Declaration(node) {
-			return 'const ' + transpile(node.declarator) + ' = ' + transpile(node.value);
+		Declaration: function Declaration(node, internals) {
+			if (node.declarator.type === 'NoPattern') {
+				return transpile(node.value, internals);
+			}
+
+			return 'const ' + transpile(node.declarator, internals) + ' = ' + transpile(node.value, internals);
 		}
 	};
 };

@@ -24,9 +24,9 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	},
 	File: node => {
 		return [
-			"import { createFunction, matchExpression } from 'core.js'",
-			...node.nodes.map(node => transpile(node)),
-			'export default module'
+			// "import { createFunction, matchExpression } from 'core.js'",
+			...node.nodes.map(node => transpile(node))
+			// 'export default module'
 		].join('\n\n')
 	},
 	ImportDeclaration: node => {
@@ -125,7 +125,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 	},
 	BinaryExpression: node => {
 		if (node.operator.operator === '|>') {
-			return [transpile(node.right), '(', transpile(node.left), ')'].join('')
+			return `${transpile(node.right)}(${transpile(node.left)})}`
 		}
 
 		return [
@@ -171,7 +171,7 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 			...internals,
 			context: 'patternMatching'
 		})
-		const result = transpile(node.result)
+		const result = transpile(node.result, internals)
 		const parameters = []
 
 		parameterBuilderVisitor(node.pattern, parameters)
@@ -182,10 +182,27 @@ export const visitorsFactory = ({ transpile, createFunction }) => ({
 
 		return `{ pattern: ${pattern}, result: (${transpiledParameters}) => ${result} }`
 	},
-	NoPattern: () => {
-		return "{ type: 'NoPattern' }"
+	NoPattern: (node, internals) => {
+		if (internals.context === 'patternMatching') {
+			return "{ type: 'NoPattern' }"
+		}
+
+		if (!internals.noPatternCount) {
+			internals.noPatternCount = 1
+		} else {
+			internals.noPatternCount += 1
+		}
+
+		return `_${internals.noPatternCount}`
 	},
-	Declaration: node => {
-		return `const ${transpile(node.declarator)} = ${transpile(node.value)}`
+	Declaration: (node, internals) => {
+		if (node.declarator.type === 'NoPattern') {
+			return transpile(node.value, internals)
+		}
+
+		return `const ${transpile(node.declarator, internals)} = ${transpile(
+			node.value,
+			internals
+		)}`
 	}
 })
